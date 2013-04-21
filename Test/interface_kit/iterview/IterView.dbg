@@ -1,0 +1,11 @@
+# window positions
+pos:team:637,16,1427,586
+pos:brkp:472,9,769,90
+# breakpoints
+Iterate__14OShapeIteratorP6BShape;47;/boot/home/beos/Interface Kit/Shape/shape.c++;1;1;
+b_shapeIterator_iterate;102;/boot/home/beos/Interface Kit/Shape/shape.c++;1;1;
+b_window_type_native;374;/boot/home/beos/Interface Kit/Window/window.c++;1;1;
+caml_interprete;894;/boot/home/ocaml/byterun/interp.c;1;1;
+caml_interprete;900;/boot/home/ocaml/byterun/interp.c;1;1;
+caml_interprete;887;/boot/home/ocaml/byterun/interp.c;1;1;
+caml_interprete;867;/boot/home/ocaml/byterun/interp.c;1;1;

@@ -1,0 +1,8 @@
+# window positions
+pos:team:381,132,1171,702
+pos:brkp:472,9,769,90
+# breakpoints
+b_window_quitRequested;432;/boot/home/beos/Interface Kit/Window/window.c++;1;1;
+b_window_quit;416;/boot/home/beos/Interface Kit/Window/window.c++;1;1;
+;52;/boot/home/beos/Interface Kit/Window/window.c++;1;1;
+;71;/boot/home/beos/Interface Kit/Window/window.c++;1;1;

@@ -1,0 +1,3 @@
+install_printer Glue.print_be
+br @ MenuViewWindow 50 
+r

@@ -1,0 +1,4 @@
+potapp.cmo: testWin.cmo constants.cmo 
+potapp.cmx: testWin.cmx constants.cmx 
+potview.cmo: constants.cmo 
+potview.cmx: constants.cmx 

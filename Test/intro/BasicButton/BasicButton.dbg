@@ -1,0 +1,6 @@
+# window positions
+pos:team:3,13,793,583
+pos:brkp:472,9,769,90
+# breakpoints
+b_application_signature;150;/boot/home/beos/Application Kit/Application/application.c++;1;1;
+b_application_signature;137;/boot/home/beos/Application Kit/Application/application.c++;1;1;

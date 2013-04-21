@@ -1,0 +1,51 @@
+### Starting build.
+# Target: trad.ml.depends, tags: { extension:ml, file:trad.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules trad.ml > trad.ml.depends # cached
+# Target: cgram.mly, tags: { extension:mly, file:cgram.mly, ocaml, ocamlyacc, parser, quiet }
+/boot/common/bin/ocamlyacc cgram.mly
++ /boot/common/bin/ocamlyacc cgram.mly
+4 rules never reduced
+5 shift/reduce conflicts.
+# Target: cgram.mli.depends, tags: { extension:mli, file:cgram.mli, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules cgram.mli > cgram.mli.depends # cached
+# Target: struct.ml.depends, tags: { extension:ml, file:struct.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules struct.ml > struct.ml.depends # cached
+# Target: struct.cmo, tags: { byte, compile, extension:ml, file:struct.ml, implem, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o struct.cmo struct.ml # cached
+# Target: cgram.cmi, tags: { byte, compile, extension:mli, file:cgram.mli, interf, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o cgram.cmi cgram.mli # cached
+# Target: clex.mll, tags: { extension:mll, file:clex.mll, lexer, ocaml, ocamllex, quiet }
+/boot/common/bin/ocamllex -q clex.mll # cached
+# Target: clex.ml.depends, tags: { extension:ml, file:clex.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules clex.ml > clex.ml.depends # cached
+# Target: clex.cmo, tags: { byte, compile, extension:ml, file:clex.ml, implem, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o clex.cmo clex.ml # cached
+# Target: generateCpp.ml.depends, tags: { extension:ml, file:generateCpp.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules generateCpp.ml > generateCpp.ml.depends # cached
+# Target: utils.ml.depends, tags: { extension:ml, file:utils.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules utils.ml > utils.ml.depends # cached
+# Target: utils.cmo, tags: { byte, compile, extension:ml, file:utils.ml, implem, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o utils.cmo utils.ml # cached
+# Target: generateCpp.cmo, tags: { byte, compile, extension:ml, file:generateCpp.ml, implem, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o generateCpp.cmo generateCpp.ml # cached
+# Target: generateH.ml.depends, tags: { extension:ml, file:generateH.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules generateH.ml > generateH.ml.depends # cached
+# Target: generateH.cmo, tags: { byte, compile, extension:ml, file:generateH.ml, implem, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o generateH.cmo generateH.ml # cached
+# Target: generateML.ml.depends, tags: { extension:ml, file:generateML.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules generateML.ml > generateML.ml.depends # cached
+# Target: generateML.cmo, tags: { byte, compile, extension:ml, file:generateML.ml, implem, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o generateML.cmo generateML.ml # cached
+# Target: trad.cmo, tags: { byte, compile, extension:ml, file:trad.ml, implem, ocaml, quiet }
+/boot/common/bin/ocamlc.opt -c -o trad.cmo trad.ml # cached
+# Target: cgram.ml.depends, tags: { extension:ml, file:cgram.ml, ocaml, ocamldep, quiet }
+/boot/common/bin/ocamldep -modules cgram.ml > cgram.ml.depends
+# Target: struct.cmx, tags: { compile, extension:ml, file:struct.ml, implem, native, ocaml, quiet }
+/boot/common/bin/ocamlopt.opt -c -o struct.cmx struct.ml # cached
+# Target: cgram.cmx, tags: { compile, extension:ml, file:cgram.ml, implem, native, ocaml, quiet }
+/boot/common/bin/ocamlopt.opt -c -o cgram.cmx cgram.ml
++ /boot/common/bin/ocamlopt.opt -c -o cgram.cmx cgram.ml
+File "cgram.mly", line 438, characters 30-34:
+This pattern matches values of type 'a option
+but is here used to match values of type string
+Command exited with code 2.

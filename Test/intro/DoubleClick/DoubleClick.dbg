@@ -1,0 +1,6 @@
+# window positions
+pos:team:638,143,1428,713
+pos:brkp:472,9,769,90
+# breakpoints
+caml_interprete;900;/boot/home/ocaml/byterun/interp.c;1;1;
+MessageReceived__12OApplicationP8BMessage;70;/boot/home/beos/Application Kit/Application/application.c++;1;1;

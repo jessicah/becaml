@@ -1,0 +1,7 @@
+#load "clex.cmo";;
+#load "cgram.cmo";;
+#use "trad.ml";;
+
+let f = open_in "/boot/develop/headers/be/app/Application.h";;
+
+trad f;;                

@@ -1,0 +1,1 @@
+Support Kit/String/bstring.c++

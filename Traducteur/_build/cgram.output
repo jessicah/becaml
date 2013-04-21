@@ -1,0 +1,2803 @@
+   0  $accept : %entry% $end
+
+   1  identifier : IDENTIFIER
+   2             | OPERATOR EQ
+   3             | OPERATOR NOTEQ
+   4             | OPERATOR EQUAL
+
+   5  literal : integer_literal
+   6          | character_literal
+   7          | floating_literal
+   8          | string_literal
+   9          | boolean_literal
+
+  10  integer_literal : INTEGER
+
+  11  character_literal : CHARACTER
+
+  12  floating_literal : FLOATING
+
+  13  string_literal : STRING
+
+  14  boolean_literal : TRUE
+  15                  | FALSE
+
+  16  translation_unit : statement_list EOF
+
+  17  statement : directive
+  18            | declaration
+  19            | inline_methode
+
+  20  statement_list :
+  21                 | statement statement_list
+
+  22  directive : SHARP IF expression
+  23            | SHARP IFDEF expression
+  24            | SHARP IF EXCLAMATION identifier
+  25            | SHARP IFNDEF identifier
+  26            | SHARP ENDIF
+  27            | SHARP DEFINE identifier LPARENTHESIS param_list RPARENTHESIS expression
+  28            | SHARP DEFINE identifier directive_attribute
+  29            | SHARP DEFINE identifier expression_opt
+  30            | SHARP INCLUDE inclusion
+  31            | SHARP ELIF expression
+  32            | SHARP ELSE directive
+  33            | SHARP ERROR identifier identifier identifier EXCLAMATION
+
+  34  directive_attribute : ATTRIBUTE LPARENTHESIS LPARENTHESIS expression RPARENTHESIS RPARENTHESIS
+
+  35  inclusion : INF filename SUP
+  36            | QUOTE filename QUOTE
+
+  37  filename : identifier
+  38           | identifier DOT identifier
+  39           | identifier DIV filename
+
+  40  declaration : named_enum
+  41              | anonymous_enum
+  42              | abstract_struct
+  43              | abstract_class
+  44              | concrete_class
+  45              | fonction_declaration
+
+  46  anonymous_enum : ENUM LBRACE constant_constructor_list RBRACE SEMICOLON
+
+  47  named_enum : ENUM identifier LBRACE constant_constructor_list RBRACE SEMICOLON
+
+  48  constant_constructor_list :
+  49                            | constant_constructor
+  50                            | constant_constructor COMMA constant_constructor_list
+
+  51  constant_constructor : identifier
+  52                       | identifier EQUAL integer_literal
+
+  53  abstract_class : CLASS identifier SEMICOLON
+
+  54  abstract_struct : STRUCT identifier SEMICOLON
+
+  55  public_methodes : PUBLIC COLON declarations_list
+
+  56  private_methodes :
+  57                   | PRIVATE COLON declarations_list
+
+  58  concrete_class : CLASS identifier heritage LBRACE public_methodes private_methodes RBRACE SEMICOLON
+
+  59  heritage :
+  60           | COLON heritage_list
+
+  61  heritage_list : accessor identifier
+  62                | accessor identifier COMMA heritage_list
+
+  63  accessor : PUBLIC
+  64           | PRIVATE
+
+  65  declarations_list :
+  66                    | methode declarations_list
+  67                    | directive declarations_list
+  68                    | attribute declarations_list
+
+  69  attribute : var_type identifier array_size_opt SEMICOLON
+
+  70  methode : constructor
+  71          | qualifier destructor
+  72          | pure_methode
+  73          | qualifier pure_methode
+  74          | typedef_declaration
+  75          | friend_declaration
+
+  76  qualifier : VIRTUAL
+  77            | STATIC
+  78            | INLINE
+
+  79  constructor : identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON
+  80              | qualifier identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON
+
+  81  destructor : TILDE identifier LPARENTHESIS RPARENTHESIS SEMICOLON
+
+  82  pure_methode : storage_class var_type identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON
+  83               | var_type identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON
+
+  84  typedef_declaration : TYPEDEF identifier inherited_opt SEMICOLON
+
+  85  friend_declaration : FRIEND abstract_class
+  86                     | FRIEND fonction_declaration
+
+  87  var_type : VOID
+  88           | CHAR
+  89           | BOOL
+  90           | FLOAT
+  91           | SHORT
+  92           | identifier
+  93           | var_type STAR
+  94           | var_type AND
+
+  95  param_list :
+  96             | param
+  97             | param COMMA param_list
+
+  98  param : storage_class_opt var_type identifier_opt default_value_opt array_size_and_opt
+
+  99  storage_class : CONST
+
+ 100  default_value : EQUAL expression
+
+ 101  expression : identifier
+ 102             | literal
+ 103             | identifier LPARENTHESIS arguments RPARENTHESIS SEMICOLON
+ 104             | expression_booleenne
+
+ 105  expression_booleenne : expression EQ expression
+
+ 106  expression_list : expression
+ 107                  | expression expression_list
+
+ 108  arguments :
+ 109            | expression
+ 110            | expression COMMA arguments
+
+ 111  inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE
+
+ 112  fonction_declaration : var_type identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON
+
+ 113  storage_class_opt :
+ 114                    | storage_class
+
+ 115  default_value_opt :
+ 116                    | default_value
+
+ 117  expression_opt :
+ 118                 | expression
+
+ 119  methode_storage_class_opt :
+ 120                            | CONST
+
+ 121  identifier_opt :
+ 122                 | identifier
+
+ 123  inherited_opt :
+ 124                | INHERITED
+
+ 125  array_size_and_opt :
+ 126                     | LBRACKET INTEGER RBRACKET
+
+ 127  array_size_opt :
+ 128                 | LBRACKET INTEGER RBRACKET
+
+ 129  %entry% : '\001' translation_unit
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . translation_unit  (129)
+	statement_list : .  (20)
+
+	IDENTIFIER  shift 3
+	SHARP  shift 4
+	BOOL  shift 5
+	CHAR  shift 6
+	CLASS  shift 7
+	ENUM  shift 8
+	FLOAT  shift 9
+	INLINE  shift 10
+	OPERATOR  shift 11
+	SHORT  shift 12
+	STRUCT  shift 13
+	VOID  shift 14
+	EOF  reduce 20
+
+	translation_unit  goto 15
+	identifier  goto 16
+	statement_list  goto 17
+	statement  goto 18
+	directive  goto 19
+	declaration  goto 20
+	inline_methode  goto 21
+	named_enum  goto 22
+	anonymous_enum  goto 23
+	abstract_struct  goto 24
+	abstract_class  goto 25
+	concrete_class  goto 26
+	fonction_declaration  goto 27
+	var_type  goto 28
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	identifier : IDENTIFIER .  (1)
+
+	.  reduce 1
+
+
+state 4
+	directive : SHARP . IF expression  (22)
+	directive : SHARP . IFDEF expression  (23)
+	directive : SHARP . IF EXCLAMATION identifier  (24)
+	directive : SHARP . IFNDEF identifier  (25)
+	directive : SHARP . ENDIF  (26)
+	directive : SHARP . DEFINE identifier LPARENTHESIS param_list RPARENTHESIS expression  (27)
+	directive : SHARP . DEFINE identifier directive_attribute  (28)
+	directive : SHARP . DEFINE identifier expression_opt  (29)
+	directive : SHARP . INCLUDE inclusion  (30)
+	directive : SHARP . ELIF expression  (31)
+	directive : SHARP . ELSE directive  (32)
+	directive : SHARP . ERROR identifier identifier identifier EXCLAMATION  (33)
+
+	ELSE  shift 29
+	IF  shift 30
+	IFNDEF  shift 31
+	DEFINE  shift 32
+	INCLUDE  shift 33
+	IFDEF  shift 34
+	ELIF  shift 35
+	ENDIF  shift 36
+	ERROR  shift 37
+	.  error
+
+
+state 5
+	var_type : BOOL .  (89)
+
+	.  reduce 89
+
+
+state 6
+	var_type : CHAR .  (88)
+
+	.  reduce 88
+
+
+state 7
+	abstract_class : CLASS . identifier SEMICOLON  (53)
+	concrete_class : CLASS . identifier heritage LBRACE public_methodes private_methodes RBRACE SEMICOLON  (58)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 38
+
+
+state 8
+	anonymous_enum : ENUM . LBRACE constant_constructor_list RBRACE SEMICOLON  (46)
+	named_enum : ENUM . identifier LBRACE constant_constructor_list RBRACE SEMICOLON  (47)
+
+	IDENTIFIER  shift 3
+	LBRACE  shift 39
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 40
+
+
+state 9
+	var_type : FLOAT .  (90)
+
+	.  reduce 90
+
+
+state 10
+	inline_methode : INLINE . storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	storage_class  goto 42
+	storage_class_opt  goto 43
+
+
+state 11
+	identifier : OPERATOR . EQ  (2)
+	identifier : OPERATOR . NOTEQ  (3)
+	identifier : OPERATOR . EQUAL  (4)
+
+	EQ  shift 44
+	NOTEQ  shift 45
+	EQUAL  shift 46
+	.  error
+
+
+state 12
+	var_type : SHORT .  (91)
+
+	.  reduce 91
+
+
+state 13
+	abstract_struct : STRUCT . identifier SEMICOLON  (54)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 47
+
+
+state 14
+	var_type : VOID .  (87)
+
+	.  reduce 87
+
+
+state 15
+	%entry% : '\001' translation_unit .  (129)
+
+	.  reduce 129
+
+
+state 16
+	var_type : identifier .  (92)
+
+	.  reduce 92
+
+
+state 17
+	translation_unit : statement_list . EOF  (16)
+
+	EOF  shift 48
+	.  error
+
+
+state 18
+	statement_list : statement . statement_list  (21)
+	statement_list : .  (20)
+
+	IDENTIFIER  shift 3
+	SHARP  shift 4
+	BOOL  shift 5
+	CHAR  shift 6
+	CLASS  shift 7
+	ENUM  shift 8
+	FLOAT  shift 9
+	INLINE  shift 10
+	OPERATOR  shift 11
+	SHORT  shift 12
+	STRUCT  shift 13
+	VOID  shift 14
+	EOF  reduce 20
+
+	identifier  goto 16
+	statement_list  goto 49
+	statement  goto 18
+	directive  goto 19
+	declaration  goto 20
+	inline_methode  goto 21
+	named_enum  goto 22
+	anonymous_enum  goto 23
+	abstract_struct  goto 24
+	abstract_class  goto 25
+	concrete_class  goto 26
+	fonction_declaration  goto 27
+	var_type  goto 28
+
+
+state 19
+	statement : directive .  (17)
+
+	.  reduce 17
+
+
+state 20
+	statement : declaration .  (18)
+
+	.  reduce 18
+
+
+state 21
+	statement : inline_methode .  (19)
+
+	.  reduce 19
+
+
+state 22
+	declaration : named_enum .  (40)
+
+	.  reduce 40
+
+
+state 23
+	declaration : anonymous_enum .  (41)
+
+	.  reduce 41
+
+
+state 24
+	declaration : abstract_struct .  (42)
+
+	.  reduce 42
+
+
+state 25
+	declaration : abstract_class .  (43)
+
+	.  reduce 43
+
+
+state 26
+	declaration : concrete_class .  (44)
+
+	.  reduce 44
+
+
+state 27
+	declaration : fonction_declaration .  (45)
+
+	.  reduce 45
+
+
+state 28
+	var_type : var_type . STAR  (93)
+	var_type : var_type . AND  (94)
+	fonction_declaration : var_type . identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON  (112)
+
+	IDENTIFIER  shift 3
+	STAR  shift 50
+	AND  shift 51
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 52
+
+
+state 29
+	directive : SHARP ELSE . directive  (32)
+
+	SHARP  shift 4
+	.  error
+
+	directive  goto 53
+
+
+state 30
+	directive : SHARP IF . expression  (22)
+	directive : SHARP IF . EXCLAMATION identifier  (24)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	EXCLAMATION  shift 58
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 68
+	expression_booleenne  goto 69
+
+
+state 31
+	directive : SHARP IFNDEF . identifier  (25)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 70
+
+
+state 32
+	directive : SHARP DEFINE . identifier LPARENTHESIS param_list RPARENTHESIS expression  (27)
+	directive : SHARP DEFINE . identifier directive_attribute  (28)
+	directive : SHARP DEFINE . identifier expression_opt  (29)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 71
+
+
+state 33
+	directive : SHARP INCLUDE . inclusion  (30)
+
+	QUOTE  shift 72
+	INF  shift 73
+	.  error
+
+	inclusion  goto 74
+
+
+state 34
+	directive : SHARP IFDEF . expression  (23)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 75
+	expression_booleenne  goto 69
+
+
+state 35
+	directive : SHARP ELIF . expression  (31)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 76
+	expression_booleenne  goto 69
+
+
+state 36
+	directive : SHARP ENDIF .  (26)
+
+	.  reduce 26
+
+
+state 37
+	directive : SHARP ERROR . identifier identifier identifier EXCLAMATION  (33)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 77
+
+
+state 38
+	abstract_class : CLASS identifier . SEMICOLON  (53)
+	concrete_class : CLASS identifier . heritage LBRACE public_methodes private_methodes RBRACE SEMICOLON  (58)
+	heritage : .  (59)
+
+	SEMICOLON  shift 78
+	COLON  shift 79
+	LBRACE  reduce 59
+
+	heritage  goto 80
+
+
+state 39
+	anonymous_enum : ENUM LBRACE . constant_constructor_list RBRACE SEMICOLON  (46)
+	constant_constructor_list : .  (48)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	RBRACE  reduce 48
+
+	identifier  goto 81
+	constant_constructor_list  goto 82
+	constant_constructor  goto 83
+
+
+state 40
+	named_enum : ENUM identifier . LBRACE constant_constructor_list RBRACE SEMICOLON  (47)
+
+	LBRACE  shift 84
+	.  error
+
+
+state 41
+	storage_class : CONST .  (99)
+
+	.  reduce 99
+
+
+state 42
+	storage_class_opt : storage_class .  (114)
+
+	.  reduce 114
+
+
+state 43
+	inline_methode : INLINE storage_class_opt . var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+
+	IDENTIFIER  shift 3
+	BOOL  shift 5
+	CHAR  shift 6
+	FLOAT  shift 9
+	OPERATOR  shift 11
+	SHORT  shift 12
+	VOID  shift 14
+	.  error
+
+	identifier  goto 16
+	var_type  goto 85
+
+
+state 44
+	identifier : OPERATOR EQ .  (2)
+
+	.  reduce 2
+
+
+state 45
+	identifier : OPERATOR NOTEQ .  (3)
+
+	.  reduce 3
+
+
+state 46
+	identifier : OPERATOR EQUAL .  (4)
+
+	.  reduce 4
+
+
+state 47
+	abstract_struct : STRUCT identifier . SEMICOLON  (54)
+
+	SEMICOLON  shift 86
+	.  error
+
+
+state 48
+	translation_unit : statement_list EOF .  (16)
+
+	.  reduce 16
+
+
+state 49
+	statement_list : statement statement_list .  (21)
+
+	.  reduce 21
+
+
+state 50
+	var_type : var_type STAR .  (93)
+
+	.  reduce 93
+
+
+state 51
+	var_type : var_type AND .  (94)
+
+	.  reduce 94
+
+
+state 52
+	fonction_declaration : var_type identifier . LPARENTHESIS param_list RPARENTHESIS SEMICOLON  (112)
+
+	LPARENTHESIS  shift 87
+	.  error
+
+
+state 53
+	directive : SHARP ELSE directive .  (32)
+
+	.  reduce 32
+
+
+state 54
+	integer_literal : INTEGER .  (10)
+
+	.  reduce 10
+
+
+state 55
+	floating_literal : FLOATING .  (12)
+
+	.  reduce 12
+
+
+state 56
+	character_literal : CHARACTER .  (11)
+
+	.  reduce 11
+
+
+state 57
+	string_literal : STRING .  (13)
+
+	.  reduce 13
+
+
+state 58
+	directive : SHARP IF EXCLAMATION . identifier  (24)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 88
+
+
+state 59
+	boolean_literal : FALSE .  (15)
+
+	.  reduce 15
+
+
+state 60
+	boolean_literal : TRUE .  (14)
+
+	.  reduce 14
+
+
+state 61
+	expression : identifier .  (101)
+	expression : identifier . LPARENTHESIS arguments RPARENTHESIS SEMICOLON  (103)
+
+	LPARENTHESIS  shift 89
+	IDENTIFIER  reduce 101
+	INTEGER  reduce 101
+	FLOATING  reduce 101
+	CHARACTER  reduce 101
+	STRING  reduce 101
+	EQ  reduce 101
+	SHARP  reduce 101
+	RBRACE  reduce 101
+	LBRACKET  reduce 101
+	RPARENTHESIS  reduce 101
+	COMMA  reduce 101
+	BOOL  reduce 101
+	CHAR  reduce 101
+	CLASS  reduce 101
+	CONST  reduce 101
+	ENUM  reduce 101
+	FALSE  reduce 101
+	FLOAT  reduce 101
+	FRIEND  reduce 101
+	INLINE  reduce 101
+	OPERATOR  reduce 101
+	PRIVATE  reduce 101
+	SHORT  reduce 101
+	STATIC  reduce 101
+	STRUCT  reduce 101
+	TRUE  reduce 101
+	TYPEDEF  reduce 101
+	VIRTUAL  reduce 101
+	VOID  reduce 101
+	EOF  reduce 101
+
+
+state 62
+	expression : literal .  (102)
+
+	.  reduce 102
+
+
+state 63
+	literal : integer_literal .  (5)
+
+	.  reduce 5
+
+
+state 64
+	literal : character_literal .  (6)
+
+	.  reduce 6
+
+
+state 65
+	literal : floating_literal .  (7)
+
+	.  reduce 7
+
+
+state 66
+	literal : string_literal .  (8)
+
+	.  reduce 8
+
+
+state 67
+	literal : boolean_literal .  (9)
+
+	.  reduce 9
+
+
+state 68
+	directive : SHARP IF expression .  (22)
+	expression_booleenne : expression . EQ expression  (105)
+
+	EQ  shift 90
+	IDENTIFIER  reduce 22
+	SHARP  reduce 22
+	RBRACE  reduce 22
+	BOOL  reduce 22
+	CHAR  reduce 22
+	CLASS  reduce 22
+	CONST  reduce 22
+	ENUM  reduce 22
+	FLOAT  reduce 22
+	FRIEND  reduce 22
+	INLINE  reduce 22
+	OPERATOR  reduce 22
+	PRIVATE  reduce 22
+	SHORT  reduce 22
+	STATIC  reduce 22
+	STRUCT  reduce 22
+	TYPEDEF  reduce 22
+	VIRTUAL  reduce 22
+	VOID  reduce 22
+	EOF  reduce 22
+
+
+state 69
+	expression : expression_booleenne .  (104)
+
+	.  reduce 104
+
+
+state 70
+	directive : SHARP IFNDEF identifier .  (25)
+
+	.  reduce 25
+
+
+71: shift/reduce conflict (shift 3, reduce 117) on IDENTIFIER
+71: shift/reduce conflict (shift 11, reduce 117) on OPERATOR
+state 71
+	directive : SHARP DEFINE identifier . LPARENTHESIS param_list RPARENTHESIS expression  (27)
+	directive : SHARP DEFINE identifier . directive_attribute  (28)
+	directive : SHARP DEFINE identifier . expression_opt  (29)
+	expression_opt : .  (117)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	LPARENTHESIS  shift 91
+	ATTRIBUTE  shift 92
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	SHARP  reduce 117
+	RBRACE  reduce 117
+	BOOL  reduce 117
+	CHAR  reduce 117
+	CLASS  reduce 117
+	CONST  reduce 117
+	ENUM  reduce 117
+	FLOAT  reduce 117
+	FRIEND  reduce 117
+	INLINE  reduce 117
+	PRIVATE  reduce 117
+	SHORT  reduce 117
+	STATIC  reduce 117
+	STRUCT  reduce 117
+	TYPEDEF  reduce 117
+	VIRTUAL  reduce 117
+	VOID  reduce 117
+	EOF  reduce 117
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 93
+	directive_attribute  goto 94
+	expression_opt  goto 95
+	expression_booleenne  goto 69
+
+
+state 72
+	inclusion : QUOTE . filename QUOTE  (36)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 96
+	filename  goto 97
+
+
+state 73
+	inclusion : INF . filename SUP  (35)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 96
+	filename  goto 98
+
+
+state 74
+	directive : SHARP INCLUDE inclusion .  (30)
+
+	.  reduce 30
+
+
+state 75
+	directive : SHARP IFDEF expression .  (23)
+	expression_booleenne : expression . EQ expression  (105)
+
+	EQ  shift 90
+	IDENTIFIER  reduce 23
+	SHARP  reduce 23
+	RBRACE  reduce 23
+	BOOL  reduce 23
+	CHAR  reduce 23
+	CLASS  reduce 23
+	CONST  reduce 23
+	ENUM  reduce 23
+	FLOAT  reduce 23
+	FRIEND  reduce 23
+	INLINE  reduce 23
+	OPERATOR  reduce 23
+	PRIVATE  reduce 23
+	SHORT  reduce 23
+	STATIC  reduce 23
+	STRUCT  reduce 23
+	TYPEDEF  reduce 23
+	VIRTUAL  reduce 23
+	VOID  reduce 23
+	EOF  reduce 23
+
+
+state 76
+	directive : SHARP ELIF expression .  (31)
+	expression_booleenne : expression . EQ expression  (105)
+
+	EQ  shift 90
+	IDENTIFIER  reduce 31
+	SHARP  reduce 31
+	RBRACE  reduce 31
+	BOOL  reduce 31
+	CHAR  reduce 31
+	CLASS  reduce 31
+	CONST  reduce 31
+	ENUM  reduce 31
+	FLOAT  reduce 31
+	FRIEND  reduce 31
+	INLINE  reduce 31
+	OPERATOR  reduce 31
+	PRIVATE  reduce 31
+	SHORT  reduce 31
+	STATIC  reduce 31
+	STRUCT  reduce 31
+	TYPEDEF  reduce 31
+	VIRTUAL  reduce 31
+	VOID  reduce 31
+	EOF  reduce 31
+
+
+state 77
+	directive : SHARP ERROR identifier . identifier identifier EXCLAMATION  (33)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 99
+
+
+state 78
+	abstract_class : CLASS identifier SEMICOLON .  (53)
+
+	.  reduce 53
+
+
+state 79
+	heritage : COLON . heritage_list  (60)
+
+	PRIVATE  shift 100
+	PUBLIC  shift 101
+	.  error
+
+	heritage_list  goto 102
+	accessor  goto 103
+
+
+state 80
+	concrete_class : CLASS identifier heritage . LBRACE public_methodes private_methodes RBRACE SEMICOLON  (58)
+
+	LBRACE  shift 104
+	.  error
+
+
+state 81
+	constant_constructor : identifier .  (51)
+	constant_constructor : identifier . EQUAL integer_literal  (52)
+
+	EQUAL  shift 105
+	RBRACE  reduce 51
+	COMMA  reduce 51
+
+
+state 82
+	anonymous_enum : ENUM LBRACE constant_constructor_list . RBRACE SEMICOLON  (46)
+
+	RBRACE  shift 106
+	.  error
+
+
+state 83
+	constant_constructor_list : constant_constructor .  (49)
+	constant_constructor_list : constant_constructor . COMMA constant_constructor_list  (50)
+
+	COMMA  shift 107
+	RBRACE  reduce 49
+
+
+state 84
+	named_enum : ENUM identifier LBRACE . constant_constructor_list RBRACE SEMICOLON  (47)
+	constant_constructor_list : .  (48)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	RBRACE  reduce 48
+
+	identifier  goto 81
+	constant_constructor_list  goto 108
+	constant_constructor  goto 83
+
+
+state 85
+	var_type : var_type . STAR  (93)
+	var_type : var_type . AND  (94)
+	inline_methode : INLINE storage_class_opt var_type . identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+
+	IDENTIFIER  shift 3
+	STAR  shift 50
+	AND  shift 51
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 109
+
+
+state 86
+	abstract_struct : STRUCT identifier SEMICOLON .  (54)
+
+	.  reduce 54
+
+
+state 87
+	fonction_declaration : var_type identifier LPARENTHESIS . param_list RPARENTHESIS SEMICOLON  (112)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 110
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 88
+	directive : SHARP IF EXCLAMATION identifier .  (24)
+
+	.  reduce 24
+
+
+state 89
+	expression : identifier LPARENTHESIS . arguments RPARENTHESIS SEMICOLON  (103)
+	arguments : .  (108)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	RPARENTHESIS  reduce 108
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 113
+	arguments  goto 114
+	expression_booleenne  goto 69
+
+
+state 90
+	expression_booleenne : expression EQ . expression  (105)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 115
+	expression_booleenne  goto 69
+
+
+state 91
+	directive : SHARP DEFINE identifier LPARENTHESIS . param_list RPARENTHESIS expression  (27)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 116
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 92
+	directive_attribute : ATTRIBUTE . LPARENTHESIS LPARENTHESIS expression RPARENTHESIS RPARENTHESIS  (34)
+
+	LPARENTHESIS  shift 117
+	.  error
+
+
+state 93
+	expression_booleenne : expression . EQ expression  (105)
+	expression_opt : expression .  (118)
+
+	EQ  shift 90
+	IDENTIFIER  reduce 118
+	SHARP  reduce 118
+	RBRACE  reduce 118
+	BOOL  reduce 118
+	CHAR  reduce 118
+	CLASS  reduce 118
+	CONST  reduce 118
+	ENUM  reduce 118
+	FLOAT  reduce 118
+	FRIEND  reduce 118
+	INLINE  reduce 118
+	OPERATOR  reduce 118
+	PRIVATE  reduce 118
+	SHORT  reduce 118
+	STATIC  reduce 118
+	STRUCT  reduce 118
+	TYPEDEF  reduce 118
+	VIRTUAL  reduce 118
+	VOID  reduce 118
+	EOF  reduce 118
+
+
+state 94
+	directive : SHARP DEFINE identifier directive_attribute .  (28)
+
+	.  reduce 28
+
+
+state 95
+	directive : SHARP DEFINE identifier expression_opt .  (29)
+
+	.  reduce 29
+
+
+state 96
+	filename : identifier .  (37)
+	filename : identifier . DOT identifier  (38)
+	filename : identifier . DIV filename  (39)
+
+	DOT  shift 118
+	DIV  shift 119
+	QUOTE  reduce 37
+	SUP  reduce 37
+
+
+state 97
+	inclusion : QUOTE filename . QUOTE  (36)
+
+	QUOTE  shift 120
+	.  error
+
+
+state 98
+	inclusion : INF filename . SUP  (35)
+
+	SUP  shift 121
+	.  error
+
+
+state 99
+	directive : SHARP ERROR identifier identifier . identifier EXCLAMATION  (33)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 122
+
+
+state 100
+	accessor : PRIVATE .  (64)
+
+	.  reduce 64
+
+
+state 101
+	accessor : PUBLIC .  (63)
+
+	.  reduce 63
+
+
+state 102
+	heritage : COLON heritage_list .  (60)
+
+	.  reduce 60
+
+
+state 103
+	heritage_list : accessor . identifier  (61)
+	heritage_list : accessor . identifier COMMA heritage_list  (62)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 123
+
+
+state 104
+	concrete_class : CLASS identifier heritage LBRACE . public_methodes private_methodes RBRACE SEMICOLON  (58)
+
+	PUBLIC  shift 124
+	.  error
+
+	public_methodes  goto 125
+
+
+state 105
+	constant_constructor : identifier EQUAL . integer_literal  (52)
+
+	INTEGER  shift 54
+	.  error
+
+	integer_literal  goto 126
+
+
+state 106
+	anonymous_enum : ENUM LBRACE constant_constructor_list RBRACE . SEMICOLON  (46)
+
+	SEMICOLON  shift 127
+	.  error
+
+
+state 107
+	constant_constructor_list : constant_constructor COMMA . constant_constructor_list  (50)
+	constant_constructor_list : .  (48)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	RBRACE  reduce 48
+
+	identifier  goto 81
+	constant_constructor_list  goto 128
+	constant_constructor  goto 83
+
+
+state 108
+	named_enum : ENUM identifier LBRACE constant_constructor_list . RBRACE SEMICOLON  (47)
+
+	RBRACE  shift 129
+	.  error
+
+
+state 109
+	inline_methode : INLINE storage_class_opt var_type identifier . COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+
+	COLONCOLON  shift 130
+	.  error
+
+
+state 110
+	fonction_declaration : var_type identifier LPARENTHESIS param_list . RPARENTHESIS SEMICOLON  (112)
+
+	RPARENTHESIS  shift 131
+	.  error
+
+
+state 111
+	param_list : param .  (96)
+	param_list : param . COMMA param_list  (97)
+
+	COMMA  shift 132
+	RPARENTHESIS  reduce 96
+
+
+state 112
+	param : storage_class_opt . var_type identifier_opt default_value_opt array_size_and_opt  (98)
+
+	IDENTIFIER  shift 3
+	BOOL  shift 5
+	CHAR  shift 6
+	FLOAT  shift 9
+	OPERATOR  shift 11
+	SHORT  shift 12
+	VOID  shift 14
+	.  error
+
+	identifier  goto 16
+	var_type  goto 133
+
+
+state 113
+	expression_booleenne : expression . EQ expression  (105)
+	arguments : expression .  (109)
+	arguments : expression . COMMA arguments  (110)
+
+	EQ  shift 90
+	COMMA  shift 134
+	RPARENTHESIS  reduce 109
+
+
+state 114
+	expression : identifier LPARENTHESIS arguments . RPARENTHESIS SEMICOLON  (103)
+
+	RPARENTHESIS  shift 135
+	.  error
+
+
+115: shift/reduce conflict (shift 90, reduce 105) on EQ
+state 115
+	expression_booleenne : expression . EQ expression  (105)
+	expression_booleenne : expression EQ expression .  (105)
+
+	EQ  shift 90
+	IDENTIFIER  reduce 105
+	INTEGER  reduce 105
+	FLOATING  reduce 105
+	CHARACTER  reduce 105
+	STRING  reduce 105
+	SHARP  reduce 105
+	RBRACE  reduce 105
+	LBRACKET  reduce 105
+	RPARENTHESIS  reduce 105
+	COMMA  reduce 105
+	BOOL  reduce 105
+	CHAR  reduce 105
+	CLASS  reduce 105
+	CONST  reduce 105
+	ENUM  reduce 105
+	FALSE  reduce 105
+	FLOAT  reduce 105
+	FRIEND  reduce 105
+	INLINE  reduce 105
+	OPERATOR  reduce 105
+	PRIVATE  reduce 105
+	SHORT  reduce 105
+	STATIC  reduce 105
+	STRUCT  reduce 105
+	TRUE  reduce 105
+	TYPEDEF  reduce 105
+	VIRTUAL  reduce 105
+	VOID  reduce 105
+	EOF  reduce 105
+
+
+state 116
+	directive : SHARP DEFINE identifier LPARENTHESIS param_list . RPARENTHESIS expression  (27)
+
+	RPARENTHESIS  shift 136
+	.  error
+
+
+state 117
+	directive_attribute : ATTRIBUTE LPARENTHESIS . LPARENTHESIS expression RPARENTHESIS RPARENTHESIS  (34)
+
+	LPARENTHESIS  shift 137
+	.  error
+
+
+state 118
+	filename : identifier DOT . identifier  (38)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 138
+
+
+state 119
+	filename : identifier DIV . filename  (39)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 96
+	filename  goto 139
+
+
+state 120
+	inclusion : QUOTE filename QUOTE .  (36)
+
+	.  reduce 36
+
+
+state 121
+	inclusion : INF filename SUP .  (35)
+
+	.  reduce 35
+
+
+state 122
+	directive : SHARP ERROR identifier identifier identifier . EXCLAMATION  (33)
+
+	EXCLAMATION  shift 140
+	.  error
+
+
+state 123
+	heritage_list : accessor identifier .  (61)
+	heritage_list : accessor identifier . COMMA heritage_list  (62)
+
+	COMMA  shift 141
+	LBRACE  reduce 61
+
+
+state 124
+	public_methodes : PUBLIC . COLON declarations_list  (55)
+
+	COLON  shift 142
+	.  error
+
+
+state 125
+	concrete_class : CLASS identifier heritage LBRACE public_methodes . private_methodes RBRACE SEMICOLON  (58)
+	private_methodes : .  (56)
+
+	PRIVATE  shift 143
+	RBRACE  reduce 56
+
+	private_methodes  goto 144
+
+
+state 126
+	constant_constructor : identifier EQUAL integer_literal .  (52)
+
+	.  reduce 52
+
+
+state 127
+	anonymous_enum : ENUM LBRACE constant_constructor_list RBRACE SEMICOLON .  (46)
+
+	.  reduce 46
+
+
+state 128
+	constant_constructor_list : constant_constructor COMMA constant_constructor_list .  (50)
+
+	.  reduce 50
+
+
+state 129
+	named_enum : ENUM identifier LBRACE constant_constructor_list RBRACE . SEMICOLON  (47)
+
+	SEMICOLON  shift 145
+	.  error
+
+
+state 130
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON . identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 146
+
+
+state 131
+	fonction_declaration : var_type identifier LPARENTHESIS param_list RPARENTHESIS . SEMICOLON  (112)
+
+	SEMICOLON  shift 147
+	.  error
+
+
+state 132
+	param_list : param COMMA . param_list  (97)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 148
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 133
+	var_type : var_type . STAR  (93)
+	var_type : var_type . AND  (94)
+	param : storage_class_opt var_type . identifier_opt default_value_opt array_size_and_opt  (98)
+	identifier_opt : .  (121)
+
+	IDENTIFIER  shift 3
+	STAR  shift 50
+	AND  shift 51
+	OPERATOR  shift 11
+	LBRACKET  reduce 121
+	RPARENTHESIS  reduce 121
+	COMMA  reduce 121
+	EQUAL  reduce 121
+
+	identifier  goto 149
+	identifier_opt  goto 150
+
+
+state 134
+	arguments : expression COMMA . arguments  (110)
+	arguments : .  (108)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	RPARENTHESIS  reduce 108
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 113
+	arguments  goto 151
+	expression_booleenne  goto 69
+
+
+state 135
+	expression : identifier LPARENTHESIS arguments RPARENTHESIS . SEMICOLON  (103)
+
+	SEMICOLON  shift 152
+	.  error
+
+
+state 136
+	directive : SHARP DEFINE identifier LPARENTHESIS param_list RPARENTHESIS . expression  (27)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 153
+	expression_booleenne  goto 69
+
+
+state 137
+	directive_attribute : ATTRIBUTE LPARENTHESIS LPARENTHESIS . expression RPARENTHESIS RPARENTHESIS  (34)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 154
+	expression_booleenne  goto 69
+
+
+state 138
+	filename : identifier DOT identifier .  (38)
+
+	.  reduce 38
+
+
+state 139
+	filename : identifier DIV filename .  (39)
+
+	.  reduce 39
+
+
+state 140
+	directive : SHARP ERROR identifier identifier identifier EXCLAMATION .  (33)
+
+	.  reduce 33
+
+
+state 141
+	heritage_list : accessor identifier COMMA . heritage_list  (62)
+
+	PRIVATE  shift 100
+	PUBLIC  shift 101
+	.  error
+
+	heritage_list  goto 155
+	accessor  goto 103
+
+
+state 142
+	public_methodes : PUBLIC COLON . declarations_list  (55)
+	declarations_list : .  (65)
+
+	IDENTIFIER  shift 3
+	SHARP  shift 4
+	BOOL  shift 5
+	CHAR  shift 6
+	CONST  shift 41
+	FLOAT  shift 9
+	FRIEND  shift 156
+	INLINE  shift 157
+	OPERATOR  shift 11
+	SHORT  shift 12
+	STATIC  shift 158
+	TYPEDEF  shift 159
+	VIRTUAL  shift 160
+	VOID  shift 14
+	RBRACE  reduce 65
+	PRIVATE  reduce 65
+
+	identifier  goto 161
+	directive  goto 162
+	declarations_list  goto 163
+	methode  goto 164
+	attribute  goto 165
+	var_type  goto 166
+	constructor  goto 167
+	qualifier  goto 168
+	pure_methode  goto 169
+	typedef_declaration  goto 170
+	friend_declaration  goto 171
+	storage_class  goto 172
+
+
+state 143
+	private_methodes : PRIVATE . COLON declarations_list  (57)
+
+	COLON  shift 173
+	.  error
+
+
+state 144
+	concrete_class : CLASS identifier heritage LBRACE public_methodes private_methodes . RBRACE SEMICOLON  (58)
+
+	RBRACE  shift 174
+	.  error
+
+
+state 145
+	named_enum : ENUM identifier LBRACE constant_constructor_list RBRACE SEMICOLON .  (47)
+
+	.  reduce 47
+
+
+state 146
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier . LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+
+	LPARENTHESIS  shift 175
+	.  error
+
+
+state 147
+	fonction_declaration : var_type identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON .  (112)
+
+	.  reduce 112
+
+
+state 148
+	param_list : param COMMA param_list .  (97)
+
+	.  reduce 97
+
+
+state 149
+	identifier_opt : identifier .  (122)
+
+	.  reduce 122
+
+
+state 150
+	param : storage_class_opt var_type identifier_opt . default_value_opt array_size_and_opt  (98)
+	default_value_opt : .  (115)
+
+	EQUAL  shift 176
+	LBRACKET  reduce 115
+	RPARENTHESIS  reduce 115
+	COMMA  reduce 115
+
+	default_value_opt  goto 177
+	default_value  goto 178
+
+
+state 151
+	arguments : expression COMMA arguments .  (110)
+
+	.  reduce 110
+
+
+state 152
+	expression : identifier LPARENTHESIS arguments RPARENTHESIS SEMICOLON .  (103)
+
+	.  reduce 103
+
+
+state 153
+	directive : SHARP DEFINE identifier LPARENTHESIS param_list RPARENTHESIS expression .  (27)
+	expression_booleenne : expression . EQ expression  (105)
+
+	EQ  shift 90
+	IDENTIFIER  reduce 27
+	SHARP  reduce 27
+	RBRACE  reduce 27
+	BOOL  reduce 27
+	CHAR  reduce 27
+	CLASS  reduce 27
+	CONST  reduce 27
+	ENUM  reduce 27
+	FLOAT  reduce 27
+	FRIEND  reduce 27
+	INLINE  reduce 27
+	OPERATOR  reduce 27
+	PRIVATE  reduce 27
+	SHORT  reduce 27
+	STATIC  reduce 27
+	STRUCT  reduce 27
+	TYPEDEF  reduce 27
+	VIRTUAL  reduce 27
+	VOID  reduce 27
+	EOF  reduce 27
+
+
+state 154
+	directive_attribute : ATTRIBUTE LPARENTHESIS LPARENTHESIS expression . RPARENTHESIS RPARENTHESIS  (34)
+	expression_booleenne : expression . EQ expression  (105)
+
+	EQ  shift 90
+	RPARENTHESIS  shift 179
+	.  error
+
+
+state 155
+	heritage_list : accessor identifier COMMA heritage_list .  (62)
+
+	.  reduce 62
+
+
+state 156
+	friend_declaration : FRIEND . abstract_class  (85)
+	friend_declaration : FRIEND . fonction_declaration  (86)
+
+	IDENTIFIER  shift 3
+	BOOL  shift 5
+	CHAR  shift 6
+	CLASS  shift 180
+	FLOAT  shift 9
+	OPERATOR  shift 11
+	SHORT  shift 12
+	VOID  shift 14
+	.  error
+
+	identifier  goto 16
+	abstract_class  goto 181
+	fonction_declaration  goto 182
+	var_type  goto 28
+
+
+state 157
+	qualifier : INLINE .  (78)
+
+	.  reduce 78
+
+
+state 158
+	qualifier : STATIC .  (77)
+
+	.  reduce 77
+
+
+state 159
+	typedef_declaration : TYPEDEF . identifier inherited_opt SEMICOLON  (84)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 183
+
+
+state 160
+	qualifier : VIRTUAL .  (76)
+
+	.  reduce 76
+
+
+state 161
+	constructor : identifier . LPARENTHESIS param_list RPARENTHESIS SEMICOLON  (79)
+	var_type : identifier .  (92)
+
+	LPARENTHESIS  shift 184
+	IDENTIFIER  reduce 92
+	STAR  reduce 92
+	AND  reduce 92
+	OPERATOR  reduce 92
+
+
+state 162
+	declarations_list : directive . declarations_list  (67)
+	declarations_list : .  (65)
+
+	IDENTIFIER  shift 3
+	SHARP  shift 4
+	BOOL  shift 5
+	CHAR  shift 6
+	CONST  shift 41
+	FLOAT  shift 9
+	FRIEND  shift 156
+	INLINE  shift 157
+	OPERATOR  shift 11
+	SHORT  shift 12
+	STATIC  shift 158
+	TYPEDEF  shift 159
+	VIRTUAL  shift 160
+	VOID  shift 14
+	RBRACE  reduce 65
+	PRIVATE  reduce 65
+
+	identifier  goto 161
+	directive  goto 162
+	declarations_list  goto 185
+	methode  goto 164
+	attribute  goto 165
+	var_type  goto 166
+	constructor  goto 167
+	qualifier  goto 168
+	pure_methode  goto 169
+	typedef_declaration  goto 170
+	friend_declaration  goto 171
+	storage_class  goto 172
+
+
+state 163
+	public_methodes : PUBLIC COLON declarations_list .  (55)
+
+	.  reduce 55
+
+
+state 164
+	declarations_list : methode . declarations_list  (66)
+	declarations_list : .  (65)
+
+	IDENTIFIER  shift 3
+	SHARP  shift 4
+	BOOL  shift 5
+	CHAR  shift 6
+	CONST  shift 41
+	FLOAT  shift 9
+	FRIEND  shift 156
+	INLINE  shift 157
+	OPERATOR  shift 11
+	SHORT  shift 12
+	STATIC  shift 158
+	TYPEDEF  shift 159
+	VIRTUAL  shift 160
+	VOID  shift 14
+	RBRACE  reduce 65
+	PRIVATE  reduce 65
+
+	identifier  goto 161
+	directive  goto 162
+	declarations_list  goto 186
+	methode  goto 164
+	attribute  goto 165
+	var_type  goto 166
+	constructor  goto 167
+	qualifier  goto 168
+	pure_methode  goto 169
+	typedef_declaration  goto 170
+	friend_declaration  goto 171
+	storage_class  goto 172
+
+
+state 165
+	declarations_list : attribute . declarations_list  (68)
+	declarations_list : .  (65)
+
+	IDENTIFIER  shift 3
+	SHARP  shift 4
+	BOOL  shift 5
+	CHAR  shift 6
+	CONST  shift 41
+	FLOAT  shift 9
+	FRIEND  shift 156
+	INLINE  shift 157
+	OPERATOR  shift 11
+	SHORT  shift 12
+	STATIC  shift 158
+	TYPEDEF  shift 159
+	VIRTUAL  shift 160
+	VOID  shift 14
+	RBRACE  reduce 65
+	PRIVATE  reduce 65
+
+	identifier  goto 161
+	directive  goto 162
+	declarations_list  goto 187
+	methode  goto 164
+	attribute  goto 165
+	var_type  goto 166
+	constructor  goto 167
+	qualifier  goto 168
+	pure_methode  goto 169
+	typedef_declaration  goto 170
+	friend_declaration  goto 171
+	storage_class  goto 172
+
+
+state 166
+	attribute : var_type . identifier array_size_opt SEMICOLON  (69)
+	pure_methode : var_type . identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (83)
+	var_type : var_type . STAR  (93)
+	var_type : var_type . AND  (94)
+
+	IDENTIFIER  shift 3
+	STAR  shift 50
+	AND  shift 51
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 188
+
+
+state 167
+	methode : constructor .  (70)
+
+	.  reduce 70
+
+
+state 168
+	methode : qualifier . destructor  (71)
+	methode : qualifier . pure_methode  (73)
+	constructor : qualifier . identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON  (80)
+
+	IDENTIFIER  shift 3
+	TILDE  shift 189
+	BOOL  shift 5
+	CHAR  shift 6
+	CONST  shift 41
+	FLOAT  shift 9
+	OPERATOR  shift 11
+	SHORT  shift 12
+	VOID  shift 14
+	.  error
+
+	identifier  goto 190
+	var_type  goto 191
+	destructor  goto 192
+	pure_methode  goto 193
+	storage_class  goto 172
+
+
+state 169
+	methode : pure_methode .  (72)
+
+	.  reduce 72
+
+
+state 170
+	methode : typedef_declaration .  (74)
+
+	.  reduce 74
+
+
+state 171
+	methode : friend_declaration .  (75)
+
+	.  reduce 75
+
+
+state 172
+	pure_methode : storage_class . var_type identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (82)
+
+	IDENTIFIER  shift 3
+	BOOL  shift 5
+	CHAR  shift 6
+	FLOAT  shift 9
+	OPERATOR  shift 11
+	SHORT  shift 12
+	VOID  shift 14
+	.  error
+
+	identifier  goto 16
+	var_type  goto 194
+
+
+state 173
+	private_methodes : PRIVATE COLON . declarations_list  (57)
+	declarations_list : .  (65)
+
+	IDENTIFIER  shift 3
+	SHARP  shift 4
+	BOOL  shift 5
+	CHAR  shift 6
+	CONST  shift 41
+	FLOAT  shift 9
+	FRIEND  shift 156
+	INLINE  shift 157
+	OPERATOR  shift 11
+	SHORT  shift 12
+	STATIC  shift 158
+	TYPEDEF  shift 159
+	VIRTUAL  shift 160
+	VOID  shift 14
+	RBRACE  reduce 65
+
+	identifier  goto 161
+	directive  goto 162
+	declarations_list  goto 195
+	methode  goto 164
+	attribute  goto 165
+	var_type  goto 166
+	constructor  goto 167
+	qualifier  goto 168
+	pure_methode  goto 169
+	typedef_declaration  goto 170
+	friend_declaration  goto 171
+	storage_class  goto 172
+
+
+state 174
+	concrete_class : CLASS identifier heritage LBRACE public_methodes private_methodes RBRACE . SEMICOLON  (58)
+
+	SEMICOLON  shift 196
+	.  error
+
+
+state 175
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS . param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 197
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 176
+	default_value : EQUAL . expression  (100)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 198
+	expression_booleenne  goto 69
+
+
+state 177
+	param : storage_class_opt var_type identifier_opt default_value_opt . array_size_and_opt  (98)
+	array_size_and_opt : .  (125)
+
+	LBRACKET  shift 199
+	RPARENTHESIS  reduce 125
+	COMMA  reduce 125
+
+	array_size_and_opt  goto 200
+
+
+state 178
+	default_value_opt : default_value .  (116)
+
+	.  reduce 116
+
+
+state 179
+	directive_attribute : ATTRIBUTE LPARENTHESIS LPARENTHESIS expression RPARENTHESIS . RPARENTHESIS  (34)
+
+	RPARENTHESIS  shift 201
+	.  error
+
+
+state 180
+	abstract_class : CLASS . identifier SEMICOLON  (53)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 202
+
+
+state 181
+	friend_declaration : FRIEND abstract_class .  (85)
+
+	.  reduce 85
+
+
+state 182
+	friend_declaration : FRIEND fonction_declaration .  (86)
+
+	.  reduce 86
+
+
+state 183
+	typedef_declaration : TYPEDEF identifier . inherited_opt SEMICOLON  (84)
+	inherited_opt : .  (123)
+
+	INHERITED  shift 203
+	SEMICOLON  reduce 123
+
+	inherited_opt  goto 204
+
+
+state 184
+	constructor : identifier LPARENTHESIS . param_list RPARENTHESIS SEMICOLON  (79)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 205
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 185
+	declarations_list : directive declarations_list .  (67)
+
+	.  reduce 67
+
+
+state 186
+	declarations_list : methode declarations_list .  (66)
+
+	.  reduce 66
+
+
+state 187
+	declarations_list : attribute declarations_list .  (68)
+
+	.  reduce 68
+
+
+state 188
+	attribute : var_type identifier . array_size_opt SEMICOLON  (69)
+	pure_methode : var_type identifier . LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (83)
+	array_size_opt : .  (127)
+
+	LBRACKET  shift 206
+	LPARENTHESIS  shift 207
+	SEMICOLON  reduce 127
+
+	array_size_opt  goto 208
+
+
+state 189
+	destructor : TILDE . identifier LPARENTHESIS RPARENTHESIS SEMICOLON  (81)
+
+	IDENTIFIER  shift 3
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 209
+
+
+state 190
+	constructor : qualifier identifier . LPARENTHESIS param_list RPARENTHESIS SEMICOLON  (80)
+	var_type : identifier .  (92)
+
+	LPARENTHESIS  shift 210
+	IDENTIFIER  reduce 92
+	STAR  reduce 92
+	AND  reduce 92
+	OPERATOR  reduce 92
+
+
+state 191
+	pure_methode : var_type . identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (83)
+	var_type : var_type . STAR  (93)
+	var_type : var_type . AND  (94)
+
+	IDENTIFIER  shift 3
+	STAR  shift 50
+	AND  shift 51
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 211
+
+
+state 192
+	methode : qualifier destructor .  (71)
+
+	.  reduce 71
+
+
+state 193
+	methode : qualifier pure_methode .  (73)
+
+	.  reduce 73
+
+
+state 194
+	pure_methode : storage_class var_type . identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (82)
+	var_type : var_type . STAR  (93)
+	var_type : var_type . AND  (94)
+
+	IDENTIFIER  shift 3
+	STAR  shift 50
+	AND  shift 51
+	OPERATOR  shift 11
+	.  error
+
+	identifier  goto 212
+
+
+state 195
+	private_methodes : PRIVATE COLON declarations_list .  (57)
+
+	.  reduce 57
+
+
+state 196
+	concrete_class : CLASS identifier heritage LBRACE public_methodes private_methodes RBRACE SEMICOLON .  (58)
+
+	.  reduce 58
+
+
+state 197
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list . RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+
+	RPARENTHESIS  shift 213
+	.  error
+
+
+state 198
+	default_value : EQUAL expression .  (100)
+	expression_booleenne : expression . EQ expression  (105)
+
+	EQ  shift 90
+	LBRACKET  reduce 100
+	RPARENTHESIS  reduce 100
+	COMMA  reduce 100
+
+
+state 199
+	array_size_and_opt : LBRACKET . INTEGER RBRACKET  (126)
+
+	INTEGER  shift 214
+	.  error
+
+
+state 200
+	param : storage_class_opt var_type identifier_opt default_value_opt array_size_and_opt .  (98)
+
+	.  reduce 98
+
+
+state 201
+	directive_attribute : ATTRIBUTE LPARENTHESIS LPARENTHESIS expression RPARENTHESIS RPARENTHESIS .  (34)
+
+	.  reduce 34
+
+
+state 202
+	abstract_class : CLASS identifier . SEMICOLON  (53)
+
+	SEMICOLON  shift 78
+	.  error
+
+
+state 203
+	inherited_opt : INHERITED .  (124)
+
+	.  reduce 124
+
+
+state 204
+	typedef_declaration : TYPEDEF identifier inherited_opt . SEMICOLON  (84)
+
+	SEMICOLON  shift 215
+	.  error
+
+
+state 205
+	constructor : identifier LPARENTHESIS param_list . RPARENTHESIS SEMICOLON  (79)
+
+	RPARENTHESIS  shift 216
+	.  error
+
+
+state 206
+	array_size_opt : LBRACKET . INTEGER RBRACKET  (128)
+
+	INTEGER  shift 217
+	.  error
+
+
+state 207
+	pure_methode : var_type identifier LPARENTHESIS . param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (83)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 218
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 208
+	attribute : var_type identifier array_size_opt . SEMICOLON  (69)
+
+	SEMICOLON  shift 219
+	.  error
+
+
+state 209
+	destructor : TILDE identifier . LPARENTHESIS RPARENTHESIS SEMICOLON  (81)
+
+	LPARENTHESIS  shift 220
+	.  error
+
+
+state 210
+	constructor : qualifier identifier LPARENTHESIS . param_list RPARENTHESIS SEMICOLON  (80)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 221
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 211
+	pure_methode : var_type identifier . LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (83)
+
+	LPARENTHESIS  shift 207
+	.  error
+
+
+state 212
+	pure_methode : storage_class var_type identifier . LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (82)
+
+	LPARENTHESIS  shift 222
+	.  error
+
+
+state 213
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS . methode_storage_class_opt LBRACE expression_list RBRACE  (111)
+	methode_storage_class_opt : .  (119)
+
+	CONST  shift 223
+	LBRACE  reduce 119
+
+	methode_storage_class_opt  goto 224
+
+
+state 214
+	array_size_and_opt : LBRACKET INTEGER . RBRACKET  (126)
+
+	RBRACKET  shift 225
+	.  error
+
+
+state 215
+	typedef_declaration : TYPEDEF identifier inherited_opt SEMICOLON .  (84)
+
+	.  reduce 84
+
+
+state 216
+	constructor : identifier LPARENTHESIS param_list RPARENTHESIS . SEMICOLON  (79)
+
+	SEMICOLON  shift 226
+	.  error
+
+
+state 217
+	array_size_opt : LBRACKET INTEGER . RBRACKET  (128)
+
+	RBRACKET  shift 227
+	.  error
+
+
+state 218
+	pure_methode : var_type identifier LPARENTHESIS param_list . RPARENTHESIS methode_storage_class_opt SEMICOLON  (83)
+
+	RPARENTHESIS  shift 228
+	.  error
+
+
+state 219
+	attribute : var_type identifier array_size_opt SEMICOLON .  (69)
+
+	.  reduce 69
+
+
+state 220
+	destructor : TILDE identifier LPARENTHESIS . RPARENTHESIS SEMICOLON  (81)
+
+	RPARENTHESIS  shift 229
+	.  error
+
+
+state 221
+	constructor : qualifier identifier LPARENTHESIS param_list . RPARENTHESIS SEMICOLON  (80)
+
+	RPARENTHESIS  shift 230
+	.  error
+
+
+state 222
+	pure_methode : storage_class var_type identifier LPARENTHESIS . param_list RPARENTHESIS methode_storage_class_opt SEMICOLON  (82)
+	param_list : .  (95)
+	storage_class_opt : .  (113)
+
+	CONST  shift 41
+	IDENTIFIER  reduce 113
+	RPARENTHESIS  reduce 95
+	BOOL  reduce 113
+	CHAR  reduce 113
+	FLOAT  reduce 113
+	OPERATOR  reduce 113
+	SHORT  reduce 113
+	VOID  reduce 113
+
+	param_list  goto 231
+	storage_class  goto 42
+	param  goto 111
+	storage_class_opt  goto 112
+
+
+state 223
+	methode_storage_class_opt : CONST .  (120)
+
+	.  reduce 120
+
+
+state 224
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt . LBRACE expression_list RBRACE  (111)
+
+	LBRACE  shift 232
+	.  error
+
+
+state 225
+	array_size_and_opt : LBRACKET INTEGER RBRACKET .  (126)
+
+	.  reduce 126
+
+
+state 226
+	constructor : identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON .  (79)
+
+	.  reduce 79
+
+
+state 227
+	array_size_opt : LBRACKET INTEGER RBRACKET .  (128)
+
+	.  reduce 128
+
+
+state 228
+	pure_methode : var_type identifier LPARENTHESIS param_list RPARENTHESIS . methode_storage_class_opt SEMICOLON  (83)
+	methode_storage_class_opt : .  (119)
+
+	CONST  shift 223
+	SEMICOLON  reduce 119
+
+	methode_storage_class_opt  goto 233
+
+
+state 229
+	destructor : TILDE identifier LPARENTHESIS RPARENTHESIS . SEMICOLON  (81)
+
+	SEMICOLON  shift 234
+	.  error
+
+
+state 230
+	constructor : qualifier identifier LPARENTHESIS param_list RPARENTHESIS . SEMICOLON  (80)
+
+	SEMICOLON  shift 235
+	.  error
+
+
+state 231
+	pure_methode : storage_class var_type identifier LPARENTHESIS param_list . RPARENTHESIS methode_storage_class_opt SEMICOLON  (82)
+
+	RPARENTHESIS  shift 236
+	.  error
+
+
+state 232
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE . expression_list RBRACE  (111)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	.  error
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 237
+	expression_booleenne  goto 69
+	expression_list  goto 238
+
+
+state 233
+	pure_methode : var_type identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt . SEMICOLON  (83)
+
+	SEMICOLON  shift 239
+	.  error
+
+
+state 234
+	destructor : TILDE identifier LPARENTHESIS RPARENTHESIS SEMICOLON .  (81)
+
+	.  reduce 81
+
+
+state 235
+	constructor : qualifier identifier LPARENTHESIS param_list RPARENTHESIS SEMICOLON .  (80)
+
+	.  reduce 80
+
+
+state 236
+	pure_methode : storage_class var_type identifier LPARENTHESIS param_list RPARENTHESIS . methode_storage_class_opt SEMICOLON  (82)
+	methode_storage_class_opt : .  (119)
+
+	CONST  shift 223
+	SEMICOLON  reduce 119
+
+	methode_storage_class_opt  goto 240
+
+
+state 237
+	expression_booleenne : expression . EQ expression  (105)
+	expression_list : expression .  (106)
+	expression_list : expression . expression_list  (107)
+
+	IDENTIFIER  shift 3
+	INTEGER  shift 54
+	FLOATING  shift 55
+	CHARACTER  shift 56
+	STRING  shift 57
+	EQ  shift 90
+	FALSE  shift 59
+	OPERATOR  shift 11
+	TRUE  shift 60
+	RBRACE  reduce 106
+
+	identifier  goto 61
+	literal  goto 62
+	integer_literal  goto 63
+	character_literal  goto 64
+	floating_literal  goto 65
+	string_literal  goto 66
+	boolean_literal  goto 67
+	expression  goto 237
+	expression_booleenne  goto 69
+	expression_list  goto 241
+
+
+state 238
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list . RBRACE  (111)
+
+	RBRACE  shift 242
+	.  error
+
+
+state 239
+	pure_methode : var_type identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON .  (83)
+
+	.  reduce 83
+
+
+state 240
+	pure_methode : storage_class var_type identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt . SEMICOLON  (82)
+
+	SEMICOLON  shift 243
+	.  error
+
+
+state 241
+	expression_list : expression expression_list .  (107)
+
+	.  reduce 107
+
+
+state 242
+	inline_methode : INLINE storage_class_opt var_type identifier COLONCOLON identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt LBRACE expression_list RBRACE .  (111)
+
+	.  reduce 111
+
+
+state 243
+	pure_methode : storage_class var_type identifier LPARENTHESIS param_list RPARENTHESIS methode_storage_class_opt SEMICOLON .  (82)
+
+	.  reduce 82
+
+
+State 71 contains 2 shift/reduce conflicts.
+State 115 contains 1 shift/reduce conflict.
+
+
+142 terminals, 57 nonterminals
+130 grammar rules, 244 states

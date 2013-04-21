@@ -1,0 +1,15 @@
+# window positions
+pos:team:69,14,859,584
+pos:brkp:182,136,479,217
+# breakpoints
+DispatchMessage__7BWindowP8BMessageP8BHandler;14;(null);1;0;
+b_menuBar_addItem;51;/boot/home/beos/Interface Kit/MenuBar/menuBar.c++;1;1;
+b_menuItem_getContentSize;115;/boot/home/beos/Interface Kit/MenuItem/menuItem.c++;1;1;
+;24;/boot/home/beos/Interface Kit/Alert/alert.c++;1;1;
+MouseMoved__11OStringViewG6BPointUlPC8BMessage;89;/boot/home/beos/Interface Kit/StringView/stringView.c++;1;1;
+MessageReceived__11OStringViewP8BMessage;65;/boot/home/beos/Interface Kit/StringView/stringView.c++;1;1;
+b_textView_addFilter;20;/boot/home/beos/Interface Kit/TextView/textView.c++;1;1;
+b_textView_addFilter;17;/boot/home/beos/Interface Kit/TextView/textView.c++;1;1;
+Filter__14OMessageFilterP8BMessagePP8BHandler;135;/boot/home/beos/Application Kit/handler_looper_messageFilter/handler_looper_messageFilter.c++;1;1;
+b_stringView_stringview_bytecode;130;/boot/home/beos/Interface Kit/StringView/stringView.c++;1;1;
+b_stringView_stringview_native;110;/boot/home/beos/Interface Kit/StringView/stringView.c++;1;1;

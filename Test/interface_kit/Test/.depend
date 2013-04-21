@@ -1,0 +1,14 @@
+bitmapMenuItem.cmo: constants.cmo 
+bitmapMenuItem.cmx: constants.cmx 
+main.cmo: menuApp.cmo 
+main.cmx: menuApp.cmx 
+menuApp.cmo: menuViewWindow.cmo constants.cmo 
+menuApp.cmx: menuViewWindow.cmx constants.cmx 
+menuViewWindow.cmo: viewLayoutFactory.cmo testMenuBuilder.cmo stddlg.cmo \
+    postDispatchInvoker.cmo constants.cmo 
+menuViewWindow.cmx: viewLayoutFactory.cmx testMenuBuilder.cmx stddlg.cmx \
+    postDispatchInvoker.cmx constants.cmx 
+stddlg.cmo: constants.cmo 
+stddlg.cmx: constants.cmx 
+testMenuBuilder.cmo: testIcons.cmo constants.cmo bitmapMenuItem.cmo 
+testMenuBuilder.cmx: testIcons.cmx constants.cmx bitmapMenuItem.cmx 
