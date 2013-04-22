@@ -7,7 +7,7 @@
 
 #ifdef __cplusplus 
 extern "C" {
-#endif __cplusplus
+#endif
 		
 void b_glue_remove(void *c_object);
 
