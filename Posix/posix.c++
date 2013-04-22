@@ -1,3 +1,4 @@
+#include<string.h>
 #include "alloc.h"
 #include "mlvalues.h"
 #include "memory.h"
