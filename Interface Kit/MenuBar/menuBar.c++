@@ -1,5 +1,6 @@
 #define BEOS
 
+#include <cstdio>
 #include <MenuBar.h>
 
 #include "alloc.h"
@@ -50,7 +51,7 @@ value b_menuBar_menuBar_nativecode(/*value self,*/ value frame, value name, valu
 								Bool_val(resizeToFit));
 //	caml_leave_blocking_section();
 		menuBar = caml_copy_int32((value)mb);
-		printf("[C++]b_menuBar_menuBar_nativecode menuBar=0x%lx", menuBar);fflush(stdout);
+		printf("[C++]b_menuBar_menuBar_nativecode menuBar=0x%lx\n", menuBar);fflush(stdout);
 //	caml_enter_blocking_section();
 	CAMLreturn(menuBar);
 }

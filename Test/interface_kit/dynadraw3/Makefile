@@ -3,8 +3,8 @@ OCAMLC=ocamlc.opt
 OCAMLOPT=ocamlopt.opt
 OCAMLDEP=ocamldep
 OCAMLMKTOP=ocamlmktop
-OCAMLBEOSLIB=/BeOS/home/beos/libbeos.cma
-OCAMLFLAGS=-g -custom -w mv -ccopt -g -ccopt -L~/beos -I /BeOS/home/beos/  
+OCAMLBEOSLIB=../../../libbeos.cma
+OCAMLFLAGS=-g -custom -w mv -ccopt -g -ccopt -L../../.. -I ../../..
 OCAMLOPTFLAGS=$(INCLUDES)
 OCAML_SOURCES=msgVals.ml tweakWin.ml colorWin.ml filterView.ml dDWindow.ml dDApp.ml main.ml
 OCAML_OBJS=$(OCAML_SOURCES:.ml=.cmo)
@@ -16,7 +16,7 @@ APP=dynadraw3
 all: $(APP) 
 
 $(APP): $(OCAML_OBJS) $(OCAMLBEOSLIB)
-	$(OCAMLC) $(OCAMLFLAGS) -o $(APP) unix.cma  /BeOS/home/beos/libbeos.cma $(OCAML_OBJS) 
+	$(OCAMLC) -verbose $(OCAMLFLAGS) -o $(APP) unix.cma  ../../../libbeos.cma $(OCAML_OBJS) 
 
 
 .SUFFIXES: .ml .cmo .mli .cmi .cmx
