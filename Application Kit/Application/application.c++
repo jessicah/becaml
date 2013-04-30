@@ -9,6 +9,7 @@
 #include "memory.h"
 #include "mlvalues.h"
 #include "signals.h"
+#include "threads.h"
 
 #include "glue.h"
 #include <Application.h>
@@ -127,7 +128,8 @@ bool OApplication::QuitRequested(){
 			caml_register_global_root(&res);
 //			//**acquire_sem(callback_sem);
 				printf("[C++]OApplication::QuitRequested(), appel de callback\n");fflush(stdout);
-				res = callback(*caml_named_value("OApplication::QuitRequested"),app_caml/* *interne*/);
+				caml_c_thread_register();
+				res = caml_callback(*caml_named_value("OApplication::QuitRequested"),app_caml/* *interne*/);
 				printf("[C++]OApplication::QuitRequested(), retour de callback\n");fflush(stdout);
 //			//**release_sem(callback_sem);
 		caml_enter_blocking_section();
@@ -153,6 +155,7 @@ value b_application_signature(value signature)
 //	//**acquire_sem(ocaml_sem);
 //		caml_leave_blocking_section();
 			application = caml_copy_int32((int32)app);
+			caml_c_thread_register();
 			caml_callback(*caml_named_value("OApplication::Set_be_app"), application);
 //		caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);

@@ -18,6 +18,7 @@
 
 #include "glue.h"
 #include "view.h"
+#include "threads.h"
 
 //extern sem_id callback_sem;
 extern sem_id ocaml_sem;
@@ -69,9 +70,9 @@ void OWindow::AddChild(BView *aView, BView *sibling = NULL){
 	CAMLparam1(interne);
 	
 	if (sibling == NULL) 
-		caml_callback2(*caml_named_value("OWindow::AddChild"), interne, caml_copy_int32((value)aView));
+		caml_c_thread_register();caml_callback2(*caml_named_value("OWindow::AddChild"), interne, caml_copy_int32((value)aView));
 	else 
-		caml_callback3(*caml_named_value("OWindow::AddChild_sibling"), interne, caml_copy_int32((value)aView),
+		caml_c_thread_register();caml_callback3(*caml_named_value("OWindow::AddChild_sibling"), interne, caml_copy_int32((value)aView),
 																		   caml_copy_int32((value)sibling));
 	CAMLreturn0;
 }
@@ -118,7 +119,7 @@ printf("[C] OWindow::MenusBeginning 4\n");fflush(stdout);
 printf("[C] OWindow::MenusBeginning 5\n");fflush(stdout);
 //		//**acquire_sem(callback_sem);
 		fun = *caml_named_value("OWindow::MenusBeginning");
-			caml_callback(fun, win_caml);
+			caml_c_thread_register();caml_callback(fun, win_caml);
 //		//**release_sem(callback_sem);
 	caml_enter_blocking_section();
 	
@@ -148,7 +149,7 @@ printf("[C] OWindow::MessageReceived\n");fflush(stdout);
 
 		win_caml  = caml_copy_int32((int32)this);	
 		fun = *caml_named_value("OWindow::MessageReceived");
-		caml_callback2(fun,	win_caml, mess_caml);
+		caml_c_thread_register();caml_callback2(fun,	win_caml, mess_caml);
 	//caml_enter_blocking_section();		
 		//**release_sem(ocaml_sem);
 		CAMLreturn0;
@@ -185,7 +186,7 @@ status_t OWindow::PostMessage(BMessage *message, BHandler *handler, BHandler *re
 		argv[3] = caml_copy_int32((int32)replyHandler);
 		
 		fun = *caml_named_value("Owindow::postMessage_message_handler");
-			res_caml = caml_callbackN(fun, 4, argv);
+			res_caml = caml_c_thread_register();caml_callbackN(fun, 4, argv);
 //		//**release_sem(callback_sem);
 		res = Int32_val(res_caml);
 	caml_enter_blocking_section();
@@ -213,7 +214,7 @@ status_t OWindow::PostMessage(uint32 command){
 	caml_leave_blocking_section();
 		win_caml = caml_copy_int32((int32)this);
 		command_caml = caml_copy_int32(command);
-		res_caml = caml_callback2(fun, win_caml, command_caml);
+		res_caml = caml_c_thread_register();caml_callback2(fun, win_caml, command_caml);
 		res = Int32_val(res_caml);
 	caml_enter_blocking_section();
 	
@@ -242,7 +243,7 @@ status_t OWindow::PostMessage(BMessage *message){
 		win_caml = caml_copy_int32((int32)this);
 		mes_caml = caml_copy_int32((int32)m);
 		fun = *caml_named_value("OWindow::postMessage_message");
-		res_caml = caml_callback2(fun, win_caml, mes_caml);
+		res_caml = caml_c_thread_register();caml_callback2(fun, win_caml, mes_caml);
 		res = Int32_val(res_caml);
 	caml_enter_blocking_section();
 	//**release_sem(ocaml_sem);
@@ -270,7 +271,7 @@ bool OWindow::QuitRequested() {
 		win_caml = caml_copy_int32((int32)this);
 		fun = *caml_named_value("OWindow::QuitRequested");
 		printf("[C++]OWindow::QuitRequested, appel de caml_named_value(\"OWindow::QuitRequested\")\n");fflush(stdout);
-		res = caml_callback(fun, win_caml);
+		res = caml_c_thread_register();caml_callback(fun, win_caml);
 		printf("[C++]OWindow::QuitRequested, retour de caml_named_value(\"OWindow::QuitRequested\")\n");fflush(stdout);
 		res_caml = Val_bool(res);
 	caml_enter_blocking_section();
@@ -290,7 +291,7 @@ void OWindow::Quit() {
 		caml_leave_blocking_section();
 			win_caml = caml_copy_int32((int32)this);
 			fun = *caml_named_value("OWindow::Quit");
-			caml_callback(fun, win_caml);
+			caml_c_thread_register();caml_callback(fun, win_caml);
 		caml_enter_blocking_section();
 	//**release_sem(ocaml_sem);
 	CAMLreturn0;
@@ -311,7 +312,7 @@ void OWindow::Show() {
 			caml_leave_blocking_section();
 				win_caml = caml_copy_int32((int32)this);
 				////**acquire_sem(callback_sem);
-					caml_callback(*caml_named_value("Owindow::Show"), win_caml);
+					caml_c_thread_register();caml_callback(*caml_named_value("Owindow::Show"), win_caml);
 				////**release_sem(callback_sem);
 			caml_enter_blocking_section();
 			CAMLreturn0;

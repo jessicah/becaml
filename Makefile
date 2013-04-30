@@ -4,7 +4,7 @@ OCAMLOPT=ocamlopt
 OCAMLDEP=ocamldep
 OCAMLMKTOP=ocamlmktop
 
-OCAMLFLAGS=-g -custom -w mv -ccopt -L~/beos unix.cma -ccopt -g
+OCAMLFLAGS=-thread -g -custom -w mv -ccopt -L~/beos unix.cma threads.cma -ccopt -g
 OCAMLOPTFLAGS=$(INCLUDES)
 
 OCAML_OBJS=glue.cmo filePanel.cmo interfaceDefs.cmo graphicsDefs.cmo errors.cmo bstring.cmo \
@@ -41,7 +41,7 @@ all: $(LIBOCAML) $(TOPLEVEL)
 
 $(LIBOCAML): $(OCAML_OBJS) $(C_OBJS) 
 	ar rc libbeocaml.a *.o
-	$(OCAMLC) $(OCAMLFLAGS) -a -o $(LIBOCAML) unix.cma $(OCAML_OBJS) -ccopt -L/Data1/ocaml-beos -cclib /Data1/ocaml-beos/libbeocaml.a -cclib $(BELIB)
+	$(OCAMLC) $(OCAMLFLAGS) -a -o $(LIBOCAML) $(OCAML_OBJS) -ccopt -L/Data1/ocaml-beos -cclib /Data1/ocaml-beos/libbeocaml.a -cclib $(BELIB)
 
 ocaml-beos: $(LIBOCAML)
 	$(OCAMLMKTOP) $(OCAMLFLAGS) -o $(TOPLEVEL) $(LIBOCAML) -cclib $(BELIB)

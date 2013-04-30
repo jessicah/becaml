@@ -6,6 +6,7 @@
 #include "callback.h"
 #include "memory.h"
 #include "signals.h"
+#include "threads.h"
 
 #include "glue.h"
 extern "C" {
@@ -64,7 +65,7 @@ status_t OMenu::SetTargetForItems(BHandler *target){
 		caml_target = caml_copy_int32((int32)target);
 	
 		////**acquire_sem(callback_sem);
-			caml_status = caml_callback2(*caml_named_value("Menu#SetTargetForItems"), 
+			caml_status = caml_c_thread_register();caml_callback2(*caml_named_value("Menu#SetTargetForItems"), 
 										 caml_menu, 
 										 caml_target);
 		////**release_sem(callback_sem);

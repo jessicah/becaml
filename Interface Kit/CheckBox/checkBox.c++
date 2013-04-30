@@ -5,6 +5,7 @@
 #include "memory.h"
 #include "mlvalues.h"
 #include "signals.h"
+#include "threads.h"
 
 
 
@@ -52,7 +53,7 @@ status_t OCheckBox::Invoke(BMessage *message){
 //	//**acquire_sem(ocaml_sem);
 		caml_leave_blocking_section();
 			////**acquire_sem(callback_sem);
-				res = callback2(*caml_named_value("OCheckBox#Invoke"), copy_int32((int32)this), 
+				res = caml_c_thread_register();caml_callback2(*caml_named_value("OCheckBox#Invoke"), copy_int32((int32)this), 
 															   copy_int32((int32)message));
 			////**release_sem(callback_sem);
 			res_caml=caml_copy_int32(res);
@@ -74,7 +75,7 @@ status_t OCheckBox::SetTarget(const BHandler *handler, const BLooper *looper = N
 		
 		caml_leave_blocking_section();
 //			//**acquire_sem(callback_sem);
-				res = callback2(*caml_named_value("OCheckBox#SetTarget"), copy_int32((int32)handler), copy_int32((int32)looper));
+				res = caml_c_thread_register();caml_callback2(*caml_named_value("OCheckBox#SetTarget"), copy_int32((int32)handler), copy_int32((int32)looper));
 //			//**release_sem(callback_sem);
 			res_caml = caml_copy_int32(res);
 		caml_enter_blocking_section();

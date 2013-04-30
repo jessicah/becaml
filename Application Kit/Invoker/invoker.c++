@@ -14,6 +14,7 @@
 #include "mlvalues.h"
 #include "memory.h"
 #include "signals.h"
+#include "threads.h"
 
 
 
@@ -83,7 +84,7 @@ status_t OInvoker::SetTarget(const BHandler *hand, const BLooper *loop = NULL){
 		l = caml_copy_int32((int32)loop);
 		
 			////**acquire_sem(callback_sem);		
-				res = callback2(*caml_named_value("OInvoker#setTarget_handler_looper"), h, l);
+				res = caml_c_thread_register();caml_callback2(*caml_named_value("OInvoker#setTarget_handler_looper"), h, l);
 			////**release_sem(callback_sem);
 		caml_enter_blocking_section();
 
@@ -97,7 +98,7 @@ status_t OInvoker::SetTarget(BMessenger messenger){
 
 	caml_leave_blocking_section();
 		////**acquire_sem(callback_sem);
-			res = callback(*caml_named_value("OInvoker#setTarget_messenger"), 
+			res = caml_c_thread_register();caml_callback(*caml_named_value("OInvoker#setTarget_messenger"), 
 							copy_int32((int32)m));
 		////**release_sem(callback_sem);
 	caml_enter_blocking_section();

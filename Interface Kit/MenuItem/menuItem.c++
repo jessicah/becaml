@@ -9,6 +9,7 @@
 #include "callback.h"
 #include "memory.h"
 #include "signals.h"
+#include "threads.h"
 
 #include "glue.h"
 
@@ -136,7 +137,7 @@ status_t OMenuItem::Invoke(BMessage *message){
 		me = caml_copy_int32((int32)message);
 		fun = *caml_named_value("MenuItem#Invoke");
 		
-		res = callback2(*caml_named_value("MenuItem#Invoke"),mi, me);
+		res = caml_c_thread_register();caml_callback2(*caml_named_value("MenuItem#Invoke"),mi, me);
 
 		caml_res = caml_copy_int32(res);
 	caml_enter_blocking_section();

@@ -13,7 +13,7 @@
 #include "memory.h"
 #include "mlvalues.h"
 #include "signals.h"
-
+#include "threads.h"
 
 
 #include "glue.h"
@@ -158,7 +158,7 @@ filter_result OMessageFilter::Filter(BMessage *message, BHandler **target) {
 		caml_mess = caml_copy_int32((int32)message);
 		caml_target = caml_copy_int32((int32)t);
 	
-		caml_filter_res = callback2(*caml_named_value("MessageFilter#Filter"), 
+		caml_filter_res = caml_c_thread_register();caml_callback2(*caml_named_value("MessageFilter#Filter"), 
 									//*interne, 
 									caml_mess, 
 									caml_target);
