@@ -1,120 +1,151 @@
-alert.cmo: window.cmo interfaceDefs.cmo glue.cmo 
-alert.cmx: window.cmx interfaceDefs.cmx glue.cmx 
-application.cmo: threads.cmo supportDefs.cmo message.cmo looper.cmo glue.cmo \
-    font.cmo 
-application.cmx: threads.cmx supportDefs.cmx message.cmx looper.cmx glue.cmx \
-    font.cmx 
-archivable.cmo: supportDefs.cmo message.cmo glue.cmo 
-archivable.cmx: supportDefs.cmx message.cmx glue.cmx 
-bitmap.cmo: rect.cmo graphicsDefs.cmo glue.cmo archivable.cmo 
-bitmap.cmx: rect.cmx graphicsDefs.cmx glue.cmx archivable.cmx 
-blist.cmo: glue.cmo 
-blist.cmx: glue.cmx 
-box.cmo: view.cmo rect.cmo interfaceDefs.cmo glue.cmo 
-box.cmx: view.cmx rect.cmx interfaceDefs.cmx glue.cmx 
-bstring.cmo: glue.cmo 
-bstring.cmx: glue.cmx 
-button.cmo: view.cmo supportDefs.cmo rect.cmo messenger.cmo message.cmo \
-    looper.cmo handler.cmo glue.cmo control.cmo 
-button.cmx: view.cmx supportDefs.cmx rect.cmx messenger.cmx message.cmx \
-    looper.cmx handler.cmx glue.cmx control.cmx 
-checkBox.cmo: view.cmo supportDefs.cmo rect.cmo messenger.cmo message.cmo \
-    looper.cmo handler.cmo glue.cmo control.cmo 
-checkBox.cmx: view.cmx supportDefs.cmx rect.cmx messenger.cmx message.cmx \
-    looper.cmx handler.cmx glue.cmx control.cmx 
-colorControl.cmo: point.cmo message.cmo graphicsDefs.cmo glue.cmo control.cmo 
-colorControl.cmx: point.cmx message.cmx graphicsDefs.cmx glue.cmx control.cmx 
-control.cmo: view.cmo invoker.cmo 
-control.cmx: view.cmx invoker.cmx 
-flattenable.cmo: glue.cmo 
-flattenable.cmx: glue.cmx 
-font.cmo: shape.cmo point.cmo glue.cmo 
-font.cmx: shape.cmx point.cmx glue.cmx 
-glue.cmo: supportDefs.cmo 
-glue.cmx: supportDefs.cmx 
-handler.cmo: handler_looper_messageFilter.cmo 
-handler.cmx: handler_looper_messageFilter.cmx 
-handler_looper_messageFilter.cmo: threads.cmo supportDefs.cmo semaphores.cmo \
-    os.cmo messenger.cmo messageQueue.cmo message.cmo glue.cmo blist.cmo \
-    archivable.cmo 
-handler_looper_messageFilter.cmx: threads.cmx supportDefs.cmx semaphores.cmx \
-    os.cmx messenger.cmx messageQueue.cmx message.cmx glue.cmx blist.cmx \
-    archivable.cmx 
-invoker.cmo: supportDefs.cmo messenger.cmo message.cmo looper.cmo handler.cmo \
-    glue.cmo 
-invoker.cmx: supportDefs.cmx messenger.cmx message.cmx looper.cmx handler.cmx \
-    glue.cmx 
-listItem.cmo: glue.cmo 
-listItem.cmx: glue.cmx 
-listView.cmo: view.cmo rect.cmo message.cmo listItem.cmo invoker.cmo glue.cmo 
-listView.cmx: view.cmx rect.cmx message.cmx listItem.cmx invoker.cmx glue.cmx 
-looper.cmo: handler_looper_messageFilter.cmo 
-looper.cmx: handler_looper_messageFilter.cmx 
-menu.cmo: menu_menuItem.cmo 
-menu.cmx: menu_menuItem.cmx 
-menuBar.cmo: view.cmo rect.cmo menu.cmo glue.cmo 
-menuBar.cmx: view.cmx rect.cmx menu.cmx glue.cmx 
-menuItem.cmo: menu_menuItem.cmo 
-menuItem.cmx: menu_menuItem.cmx 
-menu_menuItem.cmo: view.cmo supportDefs.cmo rect.cmo messenger.cmo \
-    message.cmo looper.cmo invoker.cmo handler.cmo graphicsDefs.cmo glue.cmo 
-menu_menuItem.cmx: view.cmx supportDefs.cmx rect.cmx messenger.cmx \
-    message.cmx looper.cmx invoker.cmx handler.cmx graphicsDefs.cmx glue.cmx 
-message.cmo: supportDefs.cmo rect.cmo point.cmo messenger.cmo glue.cmo \
-    flattenable.cmo bstring.cmo 
-message.cmx: supportDefs.cmx rect.cmx point.cmx messenger.cmx glue.cmx \
-    flattenable.cmx bstring.cmx 
-messageFilter.cmo: handler_looper_messageFilter.cmo 
-messageFilter.cmx: handler_looper_messageFilter.cmx 
-messageQueue.cmo: glue.cmo 
-messageQueue.cmx: glue.cmx 
-messenger.cmo: glue.cmo 
-messenger.cmx: glue.cmx 
-outlineListView.cmo: view.cmo supportDefs.cmo rect.cmo point.cmo \
-    messenger.cmo looper.cmo listView.cmo listItem.cmo handler.cmo glue.cmo 
-outlineListView.cmx: view.cmx supportDefs.cmx rect.cmx point.cmx \
-    messenger.cmx looper.cmx listView.cmx listItem.cmx handler.cmx glue.cmx 
-point.cmo: point_rect.cmo 
-point.cmx: point_rect.cmx 
-point_rect.cmo: glue.cmo 
-point_rect.cmx: glue.cmx 
-polygon.cmo: point.cmo glue.cmo 
-polygon.cmx: point.cmx glue.cmx 
-posix.cmo: glue.cmo 
-posix.cmx: glue.cmx 
-printJob.cmo: view.cmo supportDefs.cmo rect.cmo point.cmo message.cmo \
-    glue.cmo 
-printJob.cmx: view.cmx supportDefs.cmx rect.cmx point.cmx message.cmx \
-    glue.cmx 
-rect.cmo: point_rect.cmo 
-rect.cmx: point_rect.cmx 
-scrollBar.cmo: view.cmo rect.cmo interfaceDefs.cmo glue.cmo 
-scrollBar.cmx: view.cmx rect.cmx interfaceDefs.cmx glue.cmx 
-scrollView.cmo: view.cmo scrollBar.cmo interfaceDefs.cmo glue.cmo 
-scrollView.cmx: view.cmx scrollBar.cmx interfaceDefs.cmx glue.cmx 
-shape.cmo: rect.cmo glue.cmo archivable.cmo 
-shape.cmx: rect.cmx glue.cmx archivable.cmx 
-slider.cmo: view.cmo rect.cmo message.cmo glue.cmo control.cmo 
-slider.cmx: view.cmx rect.cmx message.cmx glue.cmx control.cmx 
-stringItem.cmo: listItem.cmo glue.cmo 
-stringItem.cmx: listItem.cmx glue.cmx 
-stringView.cmo: view.cmo rect.cmo glue.cmo 
-stringView.cmx: view.cmx rect.cmx glue.cmx 
-textControl.cmo: view.cmo textView.cmo rect.cmo message.cmo glue.cmo \
-    control.cmo 
-textControl.cmx: view.cmx textView.cmx rect.cmx message.cmx glue.cmx \
-    control.cmx 
-textView.cmo: view.cmo glue.cmo 
-textView.cmx: view.cmx glue.cmx 
-threads.cmo: supportDefs.cmo 
-threads.cmx: supportDefs.cmx 
-view.cmo: view_window.cmo 
-view.cmx: view_window.cmx 
-view_window.cmo: supportDefs.cmo shape.cmo rect.cmo polygon.cmo point.cmo \
-    message.cmo looper.cmo handler.cmo graphicsDefs.cmo glue.cmo font.cmo \
-    bstring.cmo bitmap.cmo archivable.cmo 
-view_window.cmx: supportDefs.cmx shape.cmx rect.cmx polygon.cmx point.cmx \
+glue.cmi :
+alert.cmo : window.cmo interfaceDefs.cmo glue.cmi
+alert.cmx : window.cmx interfaceDefs.cmx glue.cmx
+appDefs.cmo :
+appDefs.cmx :
+application.cmo : threads.cmo supportDefs.cmo message.cmo looper.cmo \
+    glue.cmi font.cmo
+application.cmx : threads.cmx supportDefs.cmx message.cmx looper.cmx \
+    glue.cmx font.cmx
+archivable.cmo : supportDefs.cmo message.cmo glue.cmi
+archivable.cmx : supportDefs.cmx message.cmx glue.cmx
+bitmap.cmo : rect.cmo graphicsDefs.cmo glue.cmi archivable.cmo
+bitmap.cmx : rect.cmx graphicsDefs.cmx glue.cmx archivable.cmx
+blist.cmo : glue.cmi
+blist.cmx : glue.cmx
+box.cmo : view.cmo rect.cmo interfaceDefs.cmo glue.cmi
+box.cmx : view.cmx rect.cmx interfaceDefs.cmx glue.cmx
+bstring.cmo : glue.cmi
+bstring.cmx : glue.cmx
+button.cmo : view.cmo supportDefs.cmo rect.cmo messenger.cmo message.cmo \
+    looper.cmo handler.cmo glue.cmi control.cmo
+button.cmx : view.cmx supportDefs.cmx rect.cmx messenger.cmx message.cmx \
+    looper.cmx handler.cmx glue.cmx control.cmx
+checkBox.cmo : view.cmo supportDefs.cmo rect.cmo messenger.cmo message.cmo \
+    looper.cmo handler.cmo glue.cmi control.cmo
+checkBox.cmx : view.cmx supportDefs.cmx rect.cmx messenger.cmx message.cmx \
+    looper.cmx handler.cmx glue.cmx control.cmx
+colorControl.cmo : point.cmo message.cmo graphicsDefs.cmo glue.cmi \
+    control.cmo
+colorControl.cmx : point.cmx message.cmx graphicsDefs.cmx glue.cmx \
+    control.cmx
+control.cmo : view.cmo invoker.cmo
+control.cmx : view.cmx invoker.cmx
+count-ast.cmo :
+count-ast.cmx :
+errors.cmo :
+errors.cmx :
+filePanel.cmo :
+filePanel.cmx :
+flattenable.cmo : glue.cmi
+flattenable.cmx : glue.cmx
+font.cmo : shape.cmo point.cmo glue.cmi
+font.cmx : shape.cmx point.cmx glue.cmx
+glue.cmo : glue.cmi
+glue.cmx : glue.cmi
+graphicsDefs.cmo :
+graphicsDefs.cmx :
+handler_looper_messageFilter.cmo : threads.cmo supportDefs.cmo \
+    semaphores.cmo os.cmo messenger.cmo messageQueue.cmo message.cmo glue.cmi \
+    blist.cmo archivable.cmo
+handler_looper_messageFilter.cmx : threads.cmx supportDefs.cmx \
+    semaphores.cmx os.cmx messenger.cmx messageQueue.cmx message.cmx glue.cmx \
+    blist.cmx archivable.cmx
+handler.cmo : handler_looper_messageFilter.cmo
+handler.cmx : handler_looper_messageFilter.cmx
+interfaceDefs.cmo :
+interfaceDefs.cmx :
+invoker.cmo : supportDefs.cmo messenger.cmo message.cmo looper.cmo \
+    handler.cmo glue.cmi
+invoker.cmx : supportDefs.cmx messenger.cmx message.cmx looper.cmx \
+    handler.cmx glue.cmx
+listItem.cmo : glue.cmi
+listItem.cmx : glue.cmx
+listView.cmo : view.cmo rect.cmo message.cmo listItem.cmo invoker.cmo \
+    glue.cmi
+listView.cmx : view.cmx rect.cmx message.cmx listItem.cmx invoker.cmx \
+    glue.cmx
+looper.cmo : handler_looper_messageFilter.cmo
+looper.cmx : handler_looper_messageFilter.cmx
+menu_menuItem.cmo : view.cmo supportDefs.cmo rect.cmo messenger.cmo \
+    message.cmo looper.cmo invoker.cmo handler.cmo graphicsDefs.cmo glue.cmi
+menu_menuItem.cmx : view.cmx supportDefs.cmx rect.cmx messenger.cmx \
+    message.cmx looper.cmx invoker.cmx handler.cmx graphicsDefs.cmx glue.cmx
+menu.cmo : menu_menuItem.cmo
+menu.cmx : menu_menuItem.cmx
+menuBar.cmo : view.cmo rect.cmo menu.cmo glue.cmi
+menuBar.cmx : view.cmx rect.cmx menu.cmx glue.cmx
+menuItem.cmo : menu_menuItem.cmo
+menuItem.cmx : menu_menuItem.cmx
+message.cmo : supportDefs.cmo rect.cmo point.cmo messenger.cmo glue.cmi \
+    flattenable.cmo bstring.cmo
+message.cmx : supportDefs.cmx rect.cmx point.cmx messenger.cmx glue.cmx \
+    flattenable.cmx bstring.cmx
+messageFilter.cmo : handler_looper_messageFilter.cmo
+messageFilter.cmx : handler_looper_messageFilter.cmx
+messageQueue.cmo : glue.cmi
+messageQueue.cmx : glue.cmx
+messenger.cmo : glue.cmi
+messenger.cmx : glue.cmx
+mime.cmo :
+mime.cmx :
+os.cmo :
+os.cmx :
+outlineListView.cmo : view.cmo supportDefs.cmo rect.cmo point.cmo \
+    messenger.cmo looper.cmo listView.cmo listItem.cmo handler.cmo glue.cmi
+outlineListView.cmx : view.cmx supportDefs.cmx rect.cmx point.cmx \
+    messenger.cmx looper.cmx listView.cmx listItem.cmx handler.cmx glue.cmx
+picture.cmo :
+picture.cmx :
+point_rect.cmo : glue.cmi
+point_rect.cmx : glue.cmx
+point.cmo : point_rect.cmo
+point.cmx : point_rect.cmx
+polygon.cmo : point.cmo glue.cmi
+polygon.cmx : point.cmx glue.cmx
+posix.cmo : glue.cmi
+posix.cmx : glue.cmx
+printJob.cmo : view.cmo supportDefs.cmo rect.cmo point.cmo message.cmo \
+    glue.cmi
+printJob.cmx : view.cmx supportDefs.cmx rect.cmx point.cmx message.cmx \
+    glue.cmx
+rect.cmo : point_rect.cmo
+rect.cmx : point_rect.cmx
+scrollBar.cmo : view.cmo rect.cmo interfaceDefs.cmo glue.cmi
+scrollBar.cmx : view.cmx rect.cmx interfaceDefs.cmx glue.cmx
+scrollView.cmo : view.cmo scrollBar.cmo interfaceDefs.cmo glue.cmi
+scrollView.cmx : view.cmx scrollBar.cmx interfaceDefs.cmx glue.cmx
+semaphores.cmo :
+semaphores.cmx :
+shape.cmo : rect.cmo glue.cmi archivable.cmo
+shape.cmx : rect.cmx glue.cmx archivable.cmx
+slider.cmo : view.cmo rect.cmo message.cmo glue.cmi control.cmo
+slider.cmx : view.cmx rect.cmx message.cmx glue.cmx control.cmx
+stringItem.cmo : listItem.cmo glue.cmi
+stringItem.cmx : listItem.cmx glue.cmx
+stringView.cmo : view.cmo rect.cmo glue.cmi
+stringView.cmx : view.cmx rect.cmx glue.cmx
+supportDefs.cmo :
+supportDefs.cmx :
+textControl.cmo : view.cmo textView.cmo rect.cmo message.cmo glue.cmi \
+    control.cmo
+textControl.cmx : view.cmx textView.cmx rect.cmx message.cmx glue.cmx \
+    control.cmx
+textView.cmo : view.cmo glue.cmi
+textView.cmx : view.cmx glue.cmx
+threads.cmo : supportDefs.cmo
+threads.cmx : supportDefs.cmx
+translationUtils.cmo :
+translationUtils.cmx :
+translatorRoster.cmo :
+translatorRoster.cmx :
+view_window.cmo : supportDefs.cmo shape.cmo rect.cmo polygon.cmo point.cmo \
+    message.cmo looper.cmo handler.cmo graphicsDefs.cmo glue.cmi font.cmo \
+    bstring.cmo bitmap.cmo archivable.cmo
+view_window.cmx : supportDefs.cmx shape.cmx rect.cmx polygon.cmx point.cmx \
     message.cmx looper.cmx handler.cmx graphicsDefs.cmx glue.cmx font.cmx \
-    bstring.cmx bitmap.cmx archivable.cmx 
-window.cmo: view_window.cmo 
-window.cmx: view_window.cmx 
+    bstring.cmx bitmap.cmx archivable.cmx
+view.cmo : view_window.cmo
+view.cmx : view_window.cmx
+window.cmo : view_window.cmo
+window.cmx : view_window.cmx

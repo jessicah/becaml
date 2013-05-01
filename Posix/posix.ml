@@ -7,5 +7,5 @@ end
 
 module String =
 struct
-	external memcpy : dst:c_pointer -> src:c_pointer -> len:Size_t.size_t -> c_pointer = "memcpy_be" 
+	external memcpy : dst:pointer -> src:pointer -> len:Size_t.size_t -> pointer = "memcpy_be" 
 end

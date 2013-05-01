@@ -31,27 +31,22 @@ color_control_layout decode_color_control_layout(int matrix) {
 
 class OColorControl : public BColorControl, public Glue {
 		public :
-				OColorControl(/*value self,*/ BPoint leftTop, color_control_layout matrix, 
+				OColorControl(value self, BPoint leftTop, color_control_layout matrix, 
 							  float cellSide, char *name, BMessage *message, bool bufferedDrawing) :
-					BColorControl(leftTop, matrix, cellSide, name, message, bufferedDrawing)//, 
-					//Glue(/*self*/)
-					{
-					
-//					CAMLparam1(self);
-					
-//					CAMLreturn0;
-				}
+					BColorControl(leftTop, matrix, cellSide, name, message, bufferedDrawing), 
+					Glue(self)
+					{}
 };
 
 //*************************
-value b_colorControl_colorControl_native(/*value self,*/ value leftTop, value matrix, value cellSide, 
+value b_colorControl_colorControl_native(value self, value leftTop, value matrix, value cellSide, 
 										 value name, value message, value bufferedDrawing){
-	CAMLparam5(/*self,*/ leftTop, matrix, cellSide, name, message);
-	CAMLxparam1(bufferedDrawing);
+	CAMLparam5(self, leftTop, matrix, cellSide, name);
+	CAMLxparam2( message, bufferedDrawing);
 	CAMLlocal1(caml_cc);
 	OColorControl *cc;
 	
-	cc = new OColorControl(//self,
+	cc = new OColorControl(self,
 										  *(BPoint *)Int32_val(leftTop), 
 										  decode_color_control_layout(Int_val(matrix)), 
 										  Double_val(cellSide), 
@@ -69,7 +64,7 @@ value b_colorControl_colorControl_native(/*value self,*/ value leftTop, value ma
 //********************
 value b_colorControl_colorControl_bytecode(value *argv, int argc){
 
-	return b_colorControl_colorControl_native(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]/*, argv[6]*/);
+	return b_colorControl_colorControl_native(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
 }
 //***************************
 value b_colorControl_setValue(value colorControl, value color){

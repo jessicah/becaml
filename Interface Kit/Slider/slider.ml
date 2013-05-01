@@ -18,12 +18,12 @@ type hash_mark_location =
 | B_HASH_MARKS_RIGHT 
 ;;
 
-external b_slider_slider : c_pointer -> string -> string -> c_pointer -> int32 -> int32 -> thumb_style -> int32 ->
-							int32 -> c_pointer = "b_slider_slider_bytecode" "b_slider_slider_nativecode"
-external b_slider_setHashMarks : c_pointer -> hash_mark_location -> unit = "b_slider_setHashMarks" 
-external b_slider_setLimitLabels : c_pointer -> string -> string -> unit = "b_slider_setLimitLabels"
-external b_slider_setValue : c_pointer -> int32 -> unit = "b_slider_setValue"
-external b_slider_value : c_pointer -> int32 = "b_slider_value"
+external b_slider_slider : pointer -> string -> string -> pointer -> int32 -> int32 -> thumb_style -> int32 ->
+							int32 -> pointer = "b_slider_slider_bytecode" "b_slider_slider_nativecode"
+external b_slider_setHashMarks : pointer -> hash_mark_location -> unit = "b_slider_setHashMarks" 
+external b_slider_setLimitLabels : pointer -> string -> string -> unit = "b_slider_setLimitLabels"
+external b_slider_setValue : pointer -> int32 -> unit = "b_slider_setValue"
+external b_slider_value : pointer -> int32 = "b_slider_value"
 
 class be_slider =
 	object(self)

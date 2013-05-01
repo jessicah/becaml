@@ -15,38 +15,38 @@ type menu_layout =
 | B_ITEMS_IN_MATRIX
 ;;
 
-external b_menu_menu : string -> menu_layout -> c_pointer = "b_menu_menu"
-external b_menu_menu_width_height : string -> float -> float -> c_pointer = "b_menu_menu_width_height"
-external b_menu_addItem : c_pointer -> c_pointer -> bool = "b_menu_addItem"
-external b_menu_addItem_frame : c_pointer -> c_pointer -> c_pointer -> bool = "b_menu_addItem_frame"
-external b_menu_addItem_submenu : c_pointer -> c_pointer -> bool = "b_menu_addItem_submenu"
-external b_menu_addItem_submenu_frame : c_pointer -> c_pointer -> c_pointer -> bool = "b_menu_addItem_submenu_frame"
-external b_menu_addSeparatorItem : c_pointer -> bool = "b_menu_addSeparatorItem"
-external b_menu_countItems : c_pointer -> int32 = "b_menu_countItems"
-external b_menu_itemAt : c_pointer -> int32 -> c_pointer = "b_menu_itemAt"
-external b_menu_removeItem_index : c_pointer -> int32 -> c_pointer = "b_menu_removeItem_index"
-external b_menu_removeItem_item : c_pointer -> c_pointer -> bool = "b_menu_removeItem_item"
-external b_menu_setHighColor : c_pointer -> int -> int -> int -> int -> unit = "b_menu_setHighColor"
-external b_menu_setHighColor_rgb : c_pointer -> rgb_color -> unit = "b_menu_setHighColor_rgb"
-external b_menu_setTargetForItems : c_pointer -> c_pointer -> status_t = "b_menu_setTargetForItems"
-external b_menu_submenuAt : c_pointer -> int32 -> c_pointer = "b_menu_submenuAt"
+external b_menu_menu : string -> menu_layout -> pointer = "b_menu_menu"
+external b_menu_menu_width_height : string -> float -> float -> pointer = "b_menu_menu_width_height"
+external b_menu_addItem : pointer -> pointer -> bool = "b_menu_addItem"
+external b_menu_addItem_frame : pointer -> pointer -> pointer -> bool = "b_menu_addItem_frame"
+external b_menu_addItem_submenu : pointer -> pointer -> bool = "b_menu_addItem_submenu"
+external b_menu_addItem_submenu_frame : pointer -> pointer -> pointer -> bool = "b_menu_addItem_submenu_frame"
+external b_menu_addSeparatorItem : pointer -> bool = "b_menu_addSeparatorItem"
+external b_menu_countItems : pointer -> int32 = "b_menu_countItems"
+external b_menu_itemAt : pointer -> int32 -> pointer = "b_menu_itemAt"
+external b_menu_removeItem_index : pointer -> int32 -> pointer = "b_menu_removeItem_index"
+external b_menu_removeItem_item : pointer -> pointer -> bool = "b_menu_removeItem_item"
+external b_menu_setHighColor : pointer -> int -> int -> int -> int -> unit = "b_menu_setHighColor"
+external b_menu_setHighColor_rgb : pointer -> rgb_color -> unit = "b_menu_setHighColor_rgb"
+external b_menu_setTargetForItems : pointer -> pointer -> status_t = "b_menu_setTargetForItems"
+external b_menu_submenuAt : pointer -> int32 -> pointer = "b_menu_submenuAt"
 
-external b_menuItem_menuItem : string -> c_pointer -> char -> int -> c_pointer = "b_menuItem_menuItem"
-external b_menuItem_draw : c_pointer -> unit = "b_menuItem_draw"
-external b_menuItem_frame : c_pointer -> c_pointer = "b_menuItem_frame"
-external b_menuItem_getContentSize : c_pointer -> float ref -> float ref -> unit = "b_menuItem_getContentSize_prot"
-external b_menuItem_invoke : c_pointer -> status_t = "b_menuItem_invoke"
-external b_menuItem_invoke_message : c_pointer -> c_pointer -> status_t = "b_menuItem_invoke_message"
-external b_menuItem_isMarked : c_pointer -> bool = "b_menuItem_isMarked"
-external b_menuItem_isSelected : c_pointer -> bool = "b_menuItem_isSelected"
-external b_menuItem_label : c_pointer -> string = "b_menuItem_label"
-external b_menuItem_menu : c_pointer -> c_pointer = "b_menuItem_menu"
-external b_menuItem_setEnabled : c_pointer -> bool -> unit = "b_menuItem_setEnabled"
-external b_menuItem_setMarked : c_pointer -> bool -> unit = "b_menuItem_setMarked"
-external b_menuItem_setTarget : c_pointer -> c_pointer -> status_t = "b_menuItem_setTarget"
-external b_menuItem_setTarget_looper : c_pointer -> c_pointer -> c_pointer -> status_t = "b_menuItem_setTarget_looper"
+external b_menuItem_menuItem : string -> pointer -> char -> int -> pointer = "b_menuItem_menuItem"
+external b_menuItem_draw : pointer -> unit = "b_menuItem_draw"
+external b_menuItem_frame : pointer -> pointer = "b_menuItem_frame"
+external b_menuItem_getContentSize : pointer -> float ref -> float ref -> unit = "b_menuItem_getContentSize_prot"
+external b_menuItem_invoke : pointer -> status_t = "b_menuItem_invoke"
+external b_menuItem_invoke_message : pointer -> pointer -> status_t = "b_menuItem_invoke_message"
+external b_menuItem_isMarked : pointer -> bool = "b_menuItem_isMarked"
+external b_menuItem_isSelected : pointer -> bool = "b_menuItem_isSelected"
+external b_menuItem_label : pointer -> string = "b_menuItem_label"
+external b_menuItem_menu : pointer -> pointer = "b_menuItem_menu"
+external b_menuItem_setEnabled : pointer -> bool -> unit = "b_menuItem_setEnabled"
+external b_menuItem_setMarked : pointer -> bool -> unit = "b_menuItem_setMarked"
+external b_menuItem_setTarget : pointer -> pointer -> status_t = "b_menuItem_setTarget"
+external b_menuItem_setTarget_looper : pointer -> pointer -> pointer -> status_t = "b_menuItem_setTarget_looper"
 
-external b_separatorItem_separatorItem : unit -> c_pointer = "b_separatorItem_separatorItem"
+external b_separatorItem_separatorItem : unit -> pointer = "b_separatorItem_separatorItem"
 
 class be_menu =
 	object(self : 'be_menu)
@@ -193,8 +193,11 @@ class be_separatorItem =
 			self#set_interne(b_separatorItem_separatorItem ())
 		
 end;;
-Callback.register "Menu#SetTargetForItems" (fun m_c -> fun t_c -> 
-(*launch_and_get (fun () ->*) ((find m_c)#setTargetForItems (find t_c)))(*)*);;
+(*
+ * Callback.register "Menu#SetTargetForItems" (fun m_c -> fun t_c -> 
+launch_and_get (fun () -> ((find m_c)#setTargetForItems (find t_c)) ;;
+*)
+(*
 Callback.register "MenuItem#Invoke" (fun mi_c -> fun m_c -> 
 		print_string "[OCaml] MenuItem#Invoke\n";flush stdout;
 		let m = try find m_c
@@ -216,3 +219,4 @@ Callback.register "MenuItem#draw" (fun m_c -> ((find m_c) :> be_menuItem)#draw (
 Callback.register "MenuItem#getContentSize" 
 	(fun m_c -> fun w -> fun h -> 
 		((find m_c) :> be_menuItem)#getContentSize ~width:w ~height:h);;
+*)

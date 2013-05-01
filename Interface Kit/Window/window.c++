@@ -27,15 +27,10 @@ extern thread_id beos_thread;
 class OWindow :public BWindow , public Glue{
 	public:
 
-		OWindow(/*value objet,*/ BRect frame, const char *title, window_type type, uint32 flags, 
+		OWindow(value objet, BRect frame, const char *title, window_type type, uint32 flags, 
 				int32 workspaces):
 			BWindow(frame, title, type, flags, workspaces), 
-			Glue(/*objet*/){
-//				CAMLparam1(objet);
-				printf("[C++] construction de OWindow %s 0x%lx 0x%lx\n", this, this->Title());fflush(stdout);
-
-//				CAMLreturn0;
-		}
+			Glue(objet){}
 		~OWindow(){
 			printf("[C++] destruction de OWindow 0x%lx\n", this);fflush(stdout);
 
@@ -336,9 +331,9 @@ extern "C" {
 	value b_asynchronous_controls(value unit);
 	value b_current_workspace(value unit);
 
-	value b_window_type_native(value frame, value title, value type, 
+	value b_window_type_native(value self, value frame, value title, value type, 
 					value flags, value workspaces);
-//	value b_window_type_bytecode(value *argv, int argn);
+	value b_window_type_bytecode(value *argv, int argn);
 //	value b_window(value w);
 	value b_window_look_feel();
 	value b_window_activate(value window, value flag);
@@ -434,9 +429,9 @@ CAMLreturn(caml_copy_int32(B_CURRENT_WORKSPACE));
 }
 
 //***************************
-value b_window_type_native (/*value objet,*/ value frame, value title, value type, value flags, value workspaces){
-	CAMLparam5(/*objet,*/ frame, title, type, flags,workspaces);
-//	CAMLxparam1(workspace);
+value b_window_type_native (value objet, value frame, value title, value type, value flags, value workspaces){
+	CAMLparam5(objet, frame, title, type, flags);
+	CAMLxparam1(workspaces);
 	CAMLlocal1(w);
 	OWindow *win;
 	BRect r;
@@ -455,7 +450,7 @@ value b_window_type_native (/*value objet,*/ value frame, value title, value typ
 	worksp = Int32_val(workspaces);
 	
 	caml_enter_blocking_section();
-	win = new OWindow(/*objet,*/
+	win = new OWindow(objet,
 					  r,
 					  c_title,
 					  decode_type(Int_val(type)),
@@ -469,11 +464,9 @@ value b_window_type_native (/*value objet,*/ value frame, value title, value typ
 	CAMLreturn(w);
 }
 
-value b_window_type_bytecode(value argv0, value argv1, value argv2, value argv3, value argv4/*value *argv, int argn*/) {
-	return(b_window_type_native(argv0, argv1, argv2, argv3, argv4/*, argv[5]*/));
-}
-
-//********************
+value b_window_type_bytecode(value *argv, int argc) {
+	b_window_type_native(argv[0],argv[1],argv[2],argv[3],argv[4],argv[5]);
+} 
 value b_window_quit(value window) {
 	////**acquire_sem(ocaml_sem);
 		CAMLparam1(window);

@@ -26,18 +26,18 @@ extern "C" {
 class OShape: public BShape, public Glue {
 	public :
 
-		OShape(/*value objet*/):
+		OShape(value ocaml_objet):
 			BShape(),
-			Glue(/*objet*/){
+			Glue(ocaml_objet){
 		}
 };
 
 class OShapeIterator : public BShapeIterator, public Glue {
 	public :
 
-		OShapeIterator(/*value objet*/):
+		OShapeIterator(value ocaml_objet):
 			BShapeIterator(),
-			Glue(/*objet*/){
+			Glue(ocaml_objet){
 		}
 
 		status_t Iterate(BShape *shape);
@@ -62,12 +62,12 @@ status_t OShapeIterator::Iterate(BShape *shape){
 }
 
 //***********************
-value b_shapeIterator_shapeIterator(/*value self*/){
-	CAMLparam0(/*self*/);
+value b_shapeIterator_shapeIterator(value self){
+	CAMLparam1(self);
 	CAMLlocal1(os_caml);
 	OShapeIterator *os;
 
-	os = new OShapeIterator(/*self*/);
+	os = new OShapeIterator(self);
 	
 //	//**acquire_sem(ocaml_sem);
 	caml_leave_blocking_section();
@@ -79,12 +79,12 @@ value b_shapeIterator_shapeIterator(/*value self*/){
 }
 
 //***********************
-value b_shape_shape(/*value self*/){
-	CAMLparam0(/*self*/);
+value b_shape_shape(value self){
+	CAMLparam1(self);
 	CAMLlocal1(caml_shape);	
 	OShape *os;
 
-	os = new OShape(/*self*/);
+	os = new OShape(self);
 	caml_shape = caml_copy_int32((int32)os);
 	
 	CAMLreturn(caml_shape);

@@ -8,11 +8,11 @@ open Rect
 open SupportDefs
 open View
 
-external b_button_button : c_pointer -> string -> string -> c_pointer -> int32 -> int32 -> c_pointer = "b_button_button_bytecode" "b_button_button_native"
-external b_button_makeDefault : c_pointer -> bool -> unit = "b_button_makeDefault"
-external b_button_setEnabled : c_pointer -> bool -> unit = "b_button_setEnabled"
-external b_button_setLabel : c_pointer -> string -> unit = "b_button_setLabel"
-external b_button_setTarget_handler : c_pointer -> c_pointer -> status_t = "b_button_setTarget_handler"
+external b_button_button : pointer -> string -> string -> pointer -> int32 -> int32 -> pointer = "b_button_button_bytecode" "b_button_button_native"
+external b_button_makeDefault : pointer -> bool -> unit = "b_button_makeDefault"
+external b_button_setEnabled : pointer -> bool -> unit = "b_button_setEnabled"
+external b_button_setLabel : pointer -> string -> unit = "b_button_setLabel"
+external b_button_setTarget_handler : pointer -> pointer -> status_t = "b_button_setTarget_handler"
 
 class be_button =
 	object(self)

@@ -15,9 +15,9 @@ type button_spacing =
 | B_OFFSET_SPACING 
 ;;
 
-external b_alert_alert : string -> string -> string -> string option -> string option -> button_width -> alert_type -> c_pointer = "b_alert_alert_bytecode" "b_alert_alert_nativecode"
-external b_alert_alert_spacing : string -> string -> string -> string option -> string option -> button_width -> button_spacing -> alert_type -> c_pointer = "b_alert_alert_spacing_bytecode" "b_alert_alert_spacing_nativecode"
-external b_alert_go : c_pointer -> int32 = "b_alert_go"
+external b_alert_alert : string -> string -> string -> string option -> string option -> button_width -> alert_type -> pointer = "b_alert_alert_bytecode" "b_alert_alert_nativecode"
+external b_alert_alert_spacing : string -> string -> string -> string option -> string option -> button_width -> button_spacing -> alert_type -> pointer = "b_alert_alert_spacing_bytecode" "b_alert_alert_spacing_nativecode"
+external b_alert_go : pointer -> int32 = "b_alert_go"
 
 class be_alert = 
 	object(self)

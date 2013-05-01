@@ -3,11 +3,11 @@ open InterfaceDefs
 open ScrollBar
 open View
 
-external b_scrollView_scrollView : string -> c_pointer -> int32 -> int32 -> bool -> bool -> border_style -> c_pointer =
+external b_scrollView_scrollView : string -> pointer -> int32 -> int32 -> bool -> bool -> border_style -> pointer =
 		"b_scrollView_scrollView_bytecode"
 		"b_scrollView_scrollView_nativecode"
 
-external b_scrollView_scrollBar : c_pointer -> orientation -> c_pointer = "b_scrollView_scrollBar"
+external b_scrollView_scrollBar : pointer -> orientation -> pointer = "b_scrollView_scrollBar"
 
 class be_scrollView =
 	object(self)

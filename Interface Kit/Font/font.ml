@@ -13,21 +13,21 @@ type escapement_delta = {
 	space	 : float; 
 };;
 
-external b_plain_font : unit -> c_pointer = "b_plain_font"
-external b_bold_font : unit -> c_pointer = "b_bold_font"
+external b_plain_font : unit -> pointer = "b_plain_font"
+external b_bold_font : unit -> pointer = "b_bold_font"
 
-external b_font_font : 'a -> c_pointer = "b_font_font"
-external b_font_getEscapementsArray : c_pointer -> char array -> int32 -> escapement_delta -> 
-									  c_pointer array ref ->
-									  c_pointer array ref -> unit 
+external b_font_font : 'a -> pointer = "b_font_font"
+external b_font_getEscapementsArray : pointer -> char array -> int32 -> escapement_delta -> 
+									  pointer array ref ->
+									  pointer array ref -> unit 
 									= "b_font_getEscapementsArray_bytecode" 
 									  "b_font_getEscapementsArray_nativecode"
-external b_font_getGlyphShapes : c_pointer -> char array -> int32 -> c_pointer array ref -> unit = "b_font_getGlyphShapes"
-external b_font_getHeight : c_pointer -> font_height ref -> unit = "b_font_getHeight"
-external b_font_printtostream : c_pointer -> unit = "b_font_printtostream"
-external b_font_setSize : c_pointer -> float -> unit = "b_font_setSize"
-external b_font_size : c_pointer -> float  = "b_font_size"
-external b_font_stringWidth : c_pointer -> string -> float = "b_font_stringWidth"
+external b_font_getGlyphShapes : pointer -> char array -> int32 -> pointer array ref -> unit = "b_font_getGlyphShapes"
+external b_font_getHeight : pointer -> font_height ref -> unit = "b_font_getHeight"
+external b_font_printtostream : pointer -> unit = "b_font_printtostream"
+external b_font_setSize : pointer -> float -> unit = "b_font_setSize"
+external b_font_size : pointer -> float  = "b_font_size"
+external b_font_stringWidth : pointer -> string -> float = "b_font_stringWidth"
 
 class be_font = 
 	object(self)

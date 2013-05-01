@@ -18,7 +18,7 @@
 extern "C" {
 	extern sem_id ocaml_sem;
 	value b_stringView_stringview_bytecode(value *argv, int argn);
-	value b_stringView_stringview_native(//value self, 
+	value b_stringView_stringview_native(value self, 
 										 value bounds, 
 										 value name, 
 										 value text, 
@@ -31,9 +31,9 @@ extern "C" {
 
 class OStringView : public BStringView, public Glue {
 		public :
-		OStringView(/*value self,*/ BRect frame, const char *name, const char *text, uint32 resizingMode, uint32 flags) :
+		OStringView(value ocaml_objet, BRect frame, const char *name, const char *text, uint32 resizingMode, uint32 flags) :
 			BStringView(frame, name, text, resizingMode, flags),
-			Glue(/*self*/) {
+			Glue(ocaml_objet) {
 //			CAMLparam1(self);
 			printf("appel de OStringView->OStringView.\n");
 //			CAMLreturn0;
@@ -121,18 +121,18 @@ void OStringView::WindowActivated(bool active){
 }
 */
 //****************
-value b_stringView_stringview_native(//value self, 
+value b_stringView_stringview_native(value self, 
 									 value bounds, 
 									 value name, 
 									 value text, 
 									 value resize_flags, 
 									 value flags) {
-	CAMLparam5(/*self,*/ bounds, name, text, resize_flags, flags);
-	//CAMLxparam1(flags);
+	CAMLparam5(self, bounds, name, text, resize_flags);
+	CAMLxparam1(flags);
 	
 	OStringView *osv;
 	
-	osv = new OStringView(//self,
+	osv = new OStringView(self,
 						  *((BRect *)Int32_val(bounds)),
 						  String_val(name),
 						  String_val(text),
@@ -145,7 +145,7 @@ value b_stringView_stringview_native(//value self,
 //************************
 value b_stringView_stringview_bytecode(value * argv, int argn) {
 
-	return(b_stringView_stringview_native(argv[0], argv[1], argv[2], argv[3], argv[4]/*, argv[5]*/));
+	return(b_stringView_stringview_native(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]));
 }
 
 //***********************

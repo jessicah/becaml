@@ -16,10 +16,14 @@
 #ifdef __cplusplus
 	extern "C" {
 #endif
-		value be(value unit);
+		value b_c_null(value unit);
 		//	value print_be(value be);
 		value b_glue_delete(value objet);
-		void b_glue_remove(void *c_object);
+	//	void b_glue_remove(void *c_object);
+	value b_glue_compare_pointer(value ptr1, value ptr2);
+	value b_glue_associate_c_object(value ocaml_object);
+	
+
 #ifdef __cplusplus
 	}
 #endif
@@ -28,17 +32,25 @@
 //thread_id beos_thread = -1;
 //***********************
 
-Glue::Glue(/*value objet*/) {/*
-	CAMLparam1(objet);
-	interne = (value *)malloc(sizeof(value));
-//	caml_register_global_root(interne);	
-//	caml_register_global_root(&objet);
+Glue::Glue(value ocaml_objet) {
+	CAMLparam1(ocaml_objet);
+	caml_register_global_root(&ocaml_objet);
 
-	*interne = objet;
+	interne = ocaml_objet;
 	CAMLreturn0;
-	*/
 }
 
+value b_glue_associate_c_object(value be_interne) {
+CAMLparam1(be_interne);
+CAMLlocal1(pointer);
+
+Glue *obj = new Glue(be_interne);
+
+pointer=caml_alloc_small(1,Abstract_tag);
+Field(pointer, 1) = (long int)obj;
+
+CAMLreturn(pointer);
+}
 void b_glue_remove(void *c_object){
 	CAMLparam0();
 		printf("[C] destruction de 0x%lx\n", (int32)c_object);fflush(stdout);
@@ -49,15 +61,18 @@ void b_glue_remove(void *c_object){
 	CAMLreturn0;
 }
 
-value be(value unit){ 
+value b_c_null(value unit){ 
  CAMLparam1(unit);
- //CAMLlocal1(val_be);
+ CAMLlocal1(val_be);
 
- //caml_register_global_root(&val_be);
+ val_be = alloc_small(1,Abstract_tag);
+ caml_register_global_root(&val_be);
+ Field(val_be,0) = (value)NULL;
  
- //val_be = copy_int32((value)NULL);
+ CAMLreturn(val_be);
+}
 
- CAMLreturn(caml_copy_int32((value)NULL));
+value b_glue_compare_pointer(value ptr1, value ptr2){
 }
 
 //***************
@@ -72,7 +87,7 @@ value print_be(value be) {
 value b_glue_delete(value objet){
 	CAMLparam1(objet);
 	
-	delete((void*)(int32)Int32_val(objet));
+//	delete((void*)(int32)Int32_val(objet));
 
 	CAMLreturn(Val_unit);
 }

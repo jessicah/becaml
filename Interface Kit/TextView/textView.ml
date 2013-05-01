@@ -1,7 +1,7 @@
 open Glue
 open View
 
-external b_textView_addFilter : c_pointer -> c_pointer -> unit = "b_textView_addFilter"
+external b_textView_addFilter : pointer -> pointer -> unit = "b_textView_addFilter"
 
 class be_textView =
 	object(self)

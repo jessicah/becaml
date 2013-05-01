@@ -1,11 +1,11 @@
 open Glue 
 
-external b_list_list : #be_interne -> int32 -> c_pointer = "b_list_list"
-external b_list_addItem : c_pointer -> c_pointer -> bool = "b_list_addItem"
-external b_list_countItems : c_pointer -> int32 = "b_list_countItems"
-external b_list_firstItem : c_pointer -> c_pointer = "b_list_firstItem"
-external b_list_itemAt : c_pointer -> int32 -> c_pointer = "b_list_itemAt"
-external b_list_removeItem : c_pointer -> int32 -> c_pointer = "b_list_removeItem"
+external b_list_list : #be_interne -> int32 -> pointer = "b_list_list"
+external b_list_addItem : pointer -> pointer -> bool = "b_list_addItem"
+external b_list_countItems : pointer -> int32 = "b_list_countItems"
+external b_list_firstItem : pointer -> pointer = "b_list_firstItem"
+external b_list_itemAt : pointer -> int32 -> pointer = "b_list_itemAt"
+external b_list_removeItem : pointer -> int32 -> pointer = "b_list_removeItem"
 
 class be_list =
 object(self)

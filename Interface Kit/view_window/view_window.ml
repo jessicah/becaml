@@ -38,50 +38,50 @@ external b_asynchronous_controls : unit -> int32 = "b_asynchronous_controls"
 external b_current_workspace : unit -> int32 = "b_current_workspace"
 
 (*Méthodes*)
-external b_view : c_pointer -> string -> int32 -> int32 -> c_pointer = "b_view" 
-external b_view_addChild : c_pointer -> c_pointer -> unit = "b_view_addChild"
-external b_view_allAttached : c_pointer -> unit = "b_view_allAttached"
-external b_view_attachedToWindow : c_pointer -> unit = "b_view_attachedToWindow"
-external b_view_bounds : c_pointer -> c_pointer = "b_view_bounds"
-external b_view_childAt : c_pointer -> int32 -> c_pointer = "b_view_childAt"
-external b_view_countChildren : c_pointer -> int32 = "b_view_countChildren"
-external b_view_draw : c_pointer -> c_pointer -> unit = "b_view_draw"
-external b_view_drawBitmap_destination : c_pointer -> c_pointer -> c_pointer -> unit = "b_view_drawBitmap_destination"
-external b_view_drawString : c_pointer -> string -> c_pointer -> unit = "b_view_drawString"
-external b_view_fillPolygon_aPolygon : c_pointer -> c_pointer -> pattern -> unit = "b_view_fillPolygon_aPolygon"
-external b_view_fillPolygon_pointList : c_pointer -> 'a array -> int32 -> pattern -> unit = "b_view_fillPolygon_pointList"
-external b_view_fillPolygon_pointList_rect : c_pointer -> 'a array -> int32 -> c_pointer -> pattern -> unit = "b_view_fillPolygon_pointList_rect"
-external b_view_fillRect : c_pointer -> c_pointer -> pattern -> unit = "b_view_fillRect"
-external b_view_frame : c_pointer -> c_pointer = "b_view_frame"
-external b_view_getFont : c_pointer -> c_pointer -> unit = "b_view_getFont"
-external b_view_getMouse : c_pointer -> c_pointer -> int32 ref -> bool -> unit = "b_view_getMouse"
-external b_view_highColor : c_pointer -> rgb_color = "b_view_highColor"
-external b_view_invalidate : c_pointer -> unit = "b_view_invalidate"
-external b_view_invalidate_rect : c_pointer -> 'a -> unit = "b_view_invalidate_rect"
-external b_view_isPrinting : c_pointer -> bool = "b_view_isPrinting"
-external b_view_messageReceived : c_pointer -> c_pointer -> unit = "b_view_messageReceived"
-external b_view_mouseDown : c_pointer -> c_pointer -> unit = "b_view_mouseDown"
-(*external b_view_mouseMoved : c_pointer -> c_pointer -> int32 -> c_pointer ->unit = "b_view_mouseMoved"*)
-external b_view_moveBy : c_pointer -> float -> float -> unit = "b_view_moveBy"
-external b_view_movePenTo_pt : c_pointer -> c_pointer -> unit = "b_view_movePenTo_pt"
-external b_view_moveTo : c_pointer -> c_pointer -> unit = "b_view_moveTo"
-external b_view_name : c_pointer -> string = "b_view_name"
-external b_view_resizeBy : c_pointer -> float -> float -> unit = "b_view_resizeBy"
-external b_view_resizeTo : c_pointer -> float -> float -> unit = "b_view_resizeTo"
-external b_view_resizeToPreferred : c_pointer -> unit = "b_view_resizeToPreferred"
-external b_view_setDrawingMode : c_pointer -> drawing_mode -> unit = "b_view_setDrawingMode"
-external b_view_setHighColor : c_pointer -> int -> int -> int -> int -> unit = "b_view_setHighColor"
-external b_view_setHighColor_rgb : c_pointer -> rgb_color -> unit = "b_view_setHighColor_rgb"external b_setfont : c_pointer -> c_pointer -> int32 -> unit = "b_setfont"
+external b_view : <get_interne : unit -> pointer;..> -> pointer -> string -> int32 -> int32 -> pointer = "b_view" 
+external b_view_addChild : pointer -> pointer -> unit = "b_view_addChild"
+external b_view_allAttached : pointer -> unit = "b_view_allAttached"
+external b_view_attachedToWindow : pointer -> unit = "b_view_attachedToWindow"
+external b_view_bounds : pointer -> pointer = "b_view_bounds"
+external b_view_childAt : pointer -> int32 -> pointer = "b_view_childAt"
+external b_view_countChildren : pointer -> int32 = "b_view_countChildren"
+external b_view_draw : pointer -> pointer -> unit = "b_view_draw"
+external b_view_drawBitmap_destination : pointer -> pointer -> pointer -> unit = "b_view_drawBitmap_destination"
+external b_view_drawString : pointer -> string -> pointer -> unit = "b_view_drawString"
+external b_view_fillPolygon_aPolygon : pointer -> pointer -> pattern -> unit = "b_view_fillPolygon_aPolygon"
+external b_view_fillPolygon_pointList : pointer -> 'a array -> int32 -> pattern -> unit = "b_view_fillPolygon_pointList"
+external b_view_fillPolygon_pointList_rect : pointer -> 'a array -> int32 -> pointer -> pattern -> unit = "b_view_fillPolygon_pointList_rect"
+external b_view_fillRect : pointer -> pointer -> pattern -> unit = "b_view_fillRect"
+external b_view_frame : pointer -> pointer = "b_view_frame"
+external b_view_getFont : pointer -> pointer -> unit = "b_view_getFont"
+external b_view_getMouse : pointer -> pointer -> int32 ref -> bool -> unit = "b_view_getMouse"
+external b_view_highColor : pointer -> rgb_color = "b_view_highColor"
+external b_view_invalidate : pointer -> unit = "b_view_invalidate"
+external b_view_invalidate_rect : pointer -> 'a -> unit = "b_view_invalidate_rect"
+external b_view_isPrinting : pointer -> bool = "b_view_isPrinting"
+external b_view_messageReceived : pointer -> pointer -> unit = "b_view_messageReceived"
+external b_view_mouseDown : pointer -> pointer -> unit = "b_view_mouseDown"
+(*external b_view_mouseMoved : pointer -> pointer -> int32 -> pointer ->unit = "b_view_mouseMoved"*)
+external b_view_moveBy : pointer -> float -> float -> unit = "b_view_moveBy"
+external b_view_movePenTo_pt : pointer -> pointer -> unit = "b_view_movePenTo_pt"
+external b_view_moveTo : pointer -> pointer -> unit = "b_view_moveTo"
+external b_view_name : pointer -> string = "b_view_name"
+external b_view_resizeBy : pointer -> float -> float -> unit = "b_view_resizeBy"
+external b_view_resizeTo : pointer -> float -> float -> unit = "b_view_resizeTo"
+external b_view_resizeToPreferred : pointer -> unit = "b_view_resizeToPreferred"
+external b_view_setDrawingMode : pointer -> drawing_mode -> unit = "b_view_setDrawingMode"
+external b_view_setHighColor : pointer -> int -> int -> int -> int -> unit = "b_view_setHighColor"
+external b_view_setHighColor_rgb : pointer -> rgb_color -> unit = "b_view_setHighColor_rgb"external b_setfont : pointer -> pointer -> int32 -> unit = "b_setfont"
 external b_setfontsize : 'a -> float -> unit = "b_setfontsize"
-external b_view_setPenSize : c_pointer -> float -> unit = "b_view_setPenSize"
-external b_view_setScale : c_pointer -> float -> unit = "b_view_setScale"
-external b_view_setViewColor : c_pointer -> int -> int -> int -> int -> unit = "b_view_setViewColor"
-external b_view_setViewColor_rgb : c_pointer -> rgb_color -> unit = "b_view_setViewColor_rgb"
-external b_view_strokePolygon_polygon        : c_pointer -> c_pointer -> bool -> pattern -> unit = "b_view_strokePolygon_polygon" 
-external b_view_strokePolygon_pointList      : c_pointer -> 'a array -> int32 -> bool -> pattern -> unit = "b_view_strokePolygon_pointList" 
-external b_view_strokePolygon_pointList_rect : c_pointer -> 'a array -> int32 -> c_pointer -> bool -> pattern -> unit = "b_view_strokePolygon_pointList_rect_bytecode" "b_view_strokePolygon_pointList_rect_nativecode"
-external b_view_strokeShape                  : c_pointer -> c_pointer -> pattern -> unit = "b_view_strokeShape"
-external b_view_window : c_pointer -> c_pointer = "b_view_window"
+external b_view_setPenSize : pointer -> float -> unit = "b_view_setPenSize"
+external b_view_setScale : pointer -> float -> unit = "b_view_setScale"
+external b_view_setViewColor : pointer -> int -> int -> int -> int -> unit = "b_view_setViewColor"
+external b_view_setViewColor_rgb : pointer -> rgb_color -> unit = "b_view_setViewColor_rgb"
+external b_view_strokePolygon_polygon        : pointer -> pointer -> bool -> pattern -> unit = "b_view_strokePolygon_polygon" 
+external b_view_strokePolygon_pointList      : pointer -> 'a array -> int32 -> bool -> pattern -> unit = "b_view_strokePolygon_pointList" 
+external b_view_strokePolygon_pointList_rect : pointer -> 'a array -> int32 -> pointer -> bool -> pattern -> unit = "b_view_strokePolygon_pointList_rect_bytecode" "b_view_strokePolygon_pointList_rect_nativecode"
+external b_view_strokeShape                  : pointer -> pointer -> pattern -> unit = "b_view_strokeShape"
+external b_view_window : pointer -> pointer = "b_view_window"
 
 type window_look = | B_DOCUMENT_WINDOW_LOOK
 				   | B_TITLED_WINDOW_LOOK 
@@ -112,36 +112,36 @@ type events_mask = | B_LOCK_WINDOW_FOCUS
 				   | B_SUSPEND_VIEW_FOCUS
 				   | B_NO_POINTER_HISTORY
 
-external b_window_type : c_pointer -> string -> window_type -> int32 -> int32 -> c_pointer = (*"b_window_type_bytecode"*) "b_window_type_native" 
+external b_window_type :  <set_interne : pointer -> unit; ..> -> pointer -> string -> window_type -> int32 -> int32 -> pointer = "b_window_type_bytecode" "b_window_type_native" 
 (*
-external b_window_look_feel : c_pointer -> string -> window_look -> window_feel -> int32 -> int32 -> c_pointer = "b_window_look_feel"
+external b_window_look_feel : pointer -> string -> window_look -> window_feel -> int32 -> int32 -> pointer = "b_window_look_feel"
 *)
-external b_window_activate : c_pointer -> bool -> unit = "b_window_activate"
+external b_window_activate : pointer -> bool -> unit = "b_window_activate"
 (*
-external b_window_addChild_sibling : c_pointer -> c_pointer -> c_pointer -> unit = "b_window_addChild_sibling"
+external b_window_addChild_sibling : pointer -> pointer -> pointer -> unit = "b_window_addChild_sibling"
 *)
-external b_window_addChild_view : c_pointer -> c_pointer -> unit = "b_window_addChild_view"
-external b_window_bounds : c_pointer -> c_pointer = "b_window_bounds"
-external b_window_currentFocus : c_pointer -> c_pointer = "b_window_currentFocus"
-external b_window_currentMessage : c_pointer -> c_pointer = "b_window_currentMessage"
-external b_window_instantiate : c_pointer -> c_pointer -> c_pointer = "b_window_instantiate"
-external b_window_isActive : c_pointer -> bool = "b_window_isActive"
-external b_window_messageReceived : c_pointer -> c_pointer -> unit = "b_window_messageReceived"
-external b_window_menusBeginning : c_pointer -> unit = "b_window_menusBeginning"
-external b_window_postMessage_message : c_pointer -> c_pointer -> status_t = "b_window_postMessage_message"
-external b_window_postMessage_command : c_pointer -> int32 -> status_t = "b_window_postMessage_command"
-external b_window_postMessage_handler_message : c_pointer -> c_pointer -> c_pointer -> status_t = "b_window_postMessage_handler_message"
-external b_window_postMessage_handler_message_reply : c_pointer -> c_pointer -> c_pointer -> c_pointer -> status_t = "b_window_postMessage_handler_message_reply"
-external b_window_postMessage_handler_command : c_pointer -> c_pointer -> int32 -> status_t = "b_window_postMessage_handler_command"
-external b_window_postMessage_handler_command_reply : c_pointer -> c_pointer -> int32 -> c_pointer -> status_t = "b_window_postMessage_handler_command_reply"
-external b_window_quit: c_pointer -> unit = "b_window_quit"
-external b_window_quitRequested : c_pointer -> bool = "b_window_quitRequested"
-external b_window_removeChild : c_pointer -> c_pointer -> bool = "b_window_removeChild"
-external b_window_resizeTo : c_pointer -> float -> float -> unit = "b_window_resizeTo"
-external b_window_setTitle : c_pointer -> string -> unit = "b_window_setTitle"
-external b_window_show : c_pointer -> unit = "b_window_show"
-external b_window_title : c_pointer -> string = "b_window_title"
-external b_window_windowActivated : c_pointer -> bool -> unit = "b_window_windowActivated"
+external b_window_addChild_view : pointer -> pointer -> unit = "b_window_addChild_view"
+external b_window_bounds : pointer -> pointer = "b_window_bounds"
+external b_window_currentFocus : pointer -> pointer = "b_window_currentFocus"
+external b_window_currentMessage : pointer -> pointer = "b_window_currentMessage"
+external b_window_instantiate : pointer -> pointer -> pointer = "b_window_instantiate"
+external b_window_isActive : pointer -> bool = "b_window_isActive"
+external b_window_messageReceived : pointer -> pointer -> unit = "b_window_messageReceived"
+external b_window_menusBeginning : pointer -> unit = "b_window_menusBeginning"
+external b_window_postMessage_message : pointer -> pointer -> status_t = "b_window_postMessage_message"
+external b_window_postMessage_command : pointer -> int32 -> status_t = "b_window_postMessage_command"
+external b_window_postMessage_handler_message : pointer -> pointer -> pointer -> status_t = "b_window_postMessage_handler_message"
+external b_window_postMessage_handler_message_reply : pointer -> pointer -> pointer -> pointer -> status_t = "b_window_postMessage_handler_message_reply"
+external b_window_postMessage_handler_command : pointer -> pointer -> int32 -> status_t = "b_window_postMessage_handler_command"
+external b_window_postMessage_handler_command_reply : pointer -> pointer -> int32 -> pointer -> status_t = "b_window_postMessage_handler_command_reply"
+external b_window_quit: pointer -> unit = "b_window_quit"
+external b_window_quitRequested : pointer -> bool = "b_window_quitRequested"
+external b_window_removeChild : pointer -> pointer -> bool = "b_window_removeChild"
+external b_window_resizeTo : pointer -> float -> float -> unit = "b_window_resizeTo"
+external b_window_setTitle : pointer -> string -> unit = "b_window_setTitle"
+external b_window_show : pointer -> unit = "b_window_show"
+external b_window_title : pointer -> string = "b_window_title"
+external b_window_windowActivated : pointer -> bool -> unit = "b_window_windowActivated"
 
 let kB_FOLLOW_ALL = b_follow_all();;
 let kB_FOLLOW_TOP = b_follow_top();;
@@ -173,7 +173,9 @@ class be_view =
 	inherit be_Handler as handler
 
 	method be_view ~frame ~name ~resizingMode ~flags =
-		self#set_interne (b_view ((frame : be_rect)#get_interne()) name resizingMode flags);
+                let p = b_view self ((frame : #be_rect as 'a)#get_interne()) name resizingMode flags
+                in
+                interne <- p
 	
 	method addChild : 'a 'b.
 		aView:(#be_interne as 'a) ->
@@ -402,12 +404,13 @@ and be_window =
 					 ?(workspaces = kB_CURRENT_WORKSPACE) ?archive () = 
 		match window_type,window_look,window_feel,archive with
 		| Some window_type, None, None, None -> 
-			let w = b_window_type 	((frame : be_rect)#get_interne())
+			let w = b_window_type self  ((frame : be_rect)#get_interne())
 											title 
 											window_type 
 											flags 
 								 			workspaces
-			in Printf.printf "[ocaml]b_window_type -> 0x%lX\n" w; flush stdout;
+			in (*Printf.printf "[ocaml]b_window_type -> 0x%lX\n" w;
+                        flush stdout;*)
 			self#set_interne(w)
 		| None, Some (l:window_look), Some (f:window_feel), None ->()
 			(*
@@ -485,8 +488,8 @@ and be_window =
 		Printf.printf "[OCaml] be_window#quitRequested(), appel de b_window_quitrequested \n";flush stdout;
 		b_window_quitRequested (self#get_interne())
 		
-	method removeChild ~aView =
-		b_window_removeChild (self#get_interne()) ((aView : be_view)#get_interne())
+	method removeChild : 'a.(aView:(#be_view as 'a) -> unit) = fun ~aView ->
+		b_window_removeChild (self#get_interne()) (aView#get_interne())
 	
 	method resizeTo ~width ~height =
 		b_window_resizeTo (self#get_interne()) width height
@@ -507,7 +510,7 @@ and be_window =
 
 end
 ;;
-
+(*
 Callback.register "OView::AddChild" (fun w_c -> fun v_c -> 
 									(find w_c : #be_view)#addChild ~aView:(find v_c)  ()) ;;
 Callback.register "OView::AddChild_sibling" (fun w_c -> fun v_c -> fun s_c ->
@@ -524,7 +527,6 @@ let r = try find r_c
 						     r'
 in (find v_c : #be_view)#draw r
 );;
-
 
 Callback.register "OView::DrawString" (fun v_c -> fun s_c -> fun p_c -> 
 let p = (*try*) find p_c
@@ -627,12 +629,15 @@ Callback.register "OWindow::postMessage_message_handler" (
 	~handler:h 
 	~reply_handler:r ()
 );;
+*)
 Callback.register "OWindow::postMessage_message" (
 	fun w_c -> 
 	fun message -> let m = new be_message in 
 				   m#set_interne message;
 				   w_c#postMessage ~message:m ()
 );;
-Callback.register "OWindow::Quit" 			(fun o_c -> (find o_c : #be_window)#quit ()) ;;
+(*
+ * Callback.register "OWindow::Quit" 			(fun o_c -> (find o_c : #be_window)#quit ()) ;;
+ *)
 Callback.register "OWindow::Show" (fun o_c -> o_c#show()) ;;
 

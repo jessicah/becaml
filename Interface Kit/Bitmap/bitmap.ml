@@ -3,12 +3,12 @@ open Glue
 open GraphicsDefs
 open Rect
 
-external b_bitmap_bitmap : c_pointer -> color_space -> bool -> bool -> c_pointer = "b_bitmap_bitmap"
-external b_bitmap_bits : c_pointer -> c_pointer = "b_bitmap_bits"
-external b_bitmap_bounds : c_pointer -> c_pointer = "b_bitmap_bounds"
-external b_bitmap_bitsLength : c_pointer -> int32 = "b_bitmap_bitsLength"
-external b_bitmap_colorSpace : c_pointer -> color_space = "b_bitmap_colorSpace"
-external b_bitmap_setBits : c_pointer -> c_pointer -> int32 -> int32 -> color_space -> unit = "b_bitmap_setBits"
+external b_bitmap_bitmap : pointer -> color_space -> bool -> bool -> pointer = "b_bitmap_bitmap"
+external b_bitmap_bits : pointer -> pointer = "b_bitmap_bits"
+external b_bitmap_bounds : pointer -> pointer = "b_bitmap_bounds"
+external b_bitmap_bitsLength : pointer -> int32 = "b_bitmap_bitsLength"
+external b_bitmap_colorSpace : pointer -> color_space = "b_bitmap_colorSpace"
+external b_bitmap_setBits : pointer -> pointer -> int32 -> int32 -> color_space -> unit = "b_bitmap_setBits"
 
 class be_Bitmap =
 	object(self)

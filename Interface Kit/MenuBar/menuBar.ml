@@ -3,12 +3,12 @@ open Menu;;
 open Rect;;
 open View;;
 
-external b_menuBar_menuBar : c_pointer -> string -> int32 -> menu_layout -> bool -> c_pointer = (*"b_menuBar_menuBar_bytecode"*) "b_menuBar_menuBar_nativecode"
-external b_menuBar_addItem : c_pointer -> c_pointer -> bool = "b_menuBar_addItem"
-external b_menuBar_addItem_frame : c_pointer -> c_pointer -> c_pointer -> bool = "b_menuBar_addItem_frame"
-external b_menuBar_addItem_submenu : c_pointer -> c_pointer -> bool = "b_menuBar_addItem_submenu"
-external b_menuBar_addItem_submenu_index : c_pointer -> c_pointer -> int32 -> bool = "b_menuBar_addItem_submenu_index"
-external b_menuBar_addItem_submenu_frame : c_pointer -> c_pointer -> c_pointer -> bool = "b_menuBar_addItem_submenu_frame"
+external b_menuBar_menuBar : pointer -> string -> int32 -> menu_layout -> bool -> pointer = (*"b_menuBar_menuBar_bytecode"*) "b_menuBar_menuBar_nativecode"
+external b_menuBar_addItem : pointer -> pointer -> bool = "b_menuBar_addItem"
+external b_menuBar_addItem_frame : pointer -> pointer -> pointer -> bool = "b_menuBar_addItem_frame"
+external b_menuBar_addItem_submenu : pointer -> pointer -> bool = "b_menuBar_addItem_submenu"
+external b_menuBar_addItem_submenu_index : pointer -> pointer -> int32 -> bool = "b_menuBar_addItem_submenu_index"
+external b_menuBar_addItem_submenu_frame : pointer -> pointer -> pointer -> bool = "b_menuBar_addItem_submenu_frame"
 
 class be_menuBar =
 	object(self)

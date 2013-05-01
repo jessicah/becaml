@@ -14,41 +14,41 @@ type type_code
 ;;
 
 
-external b_message_message_command : int32 	 -> c_pointer	= "b_message_message_command"
-external b_message_message_message : c_pointer ->c_pointer	= "b_message_message_message"
-external b_message_message         : unit -> c_pointer		= "b_message_message"
-external b_message_        : c_pointer-> unit      = "b_message_"
-(*external b_message_addData :c_pointer-> string -> type_code ->c_pointer-> ssize_t -> bool -> int -> status_t = "b_message_addData"*)
-external b_message_addBool   : c_pointer-> string -> bool   -> status_t = "b_message_addBool"
-external b_message_addInt8   : c_pointer-> string -> int8   -> status_t = "b_message_addInt8"
-external b_message_addInt16  : c_pointer-> string -> int16  -> status_t = "b_message_addInt16"
-external b_message_addInt32  : c_pointer-> string -> int32  -> status_t = "b_message_addInt32"
-external b_message_findInt16 : c_pointer-> string -> int16  ref -> status_t = "b_message_findInt16"
-external b_message_findInt32 : c_pointer-> string -> int32  ref -> status_t = "b_message_findInt32"
-external b_message_findInt16_index : c_pointer-> string -> int16 -> int16 ref -> status_t = "b_message_findInt16_index"
-external b_message_findInt32_index : c_pointer-> string -> int32 -> int32 ref -> status_t = "b_message_findInt32_index"
-external b_message_findPointer : c_pointer-> string ->c_pointer ref -> status_t = "b_message_findPointer"
-external b_message_addInt64  : c_pointer-> string -> int64  -> status_t = "b_message_addInt64"
-external b_message_addFloat  : c_pointer-> string -> bfloat -> status_t = "b_message_addfloat"
-external b_message_addDouble : c_pointer-> string -> double -> status_t = "b_message_addDouble"
-external b_message_addString_string :c_pointer-> string -> string -> status_t = "b_message_addString_string"
-external b_message_addString_be_string :c_pointer-> string ->c_pointer-> status_t = "b_message_addString_be_string"
-external b_message_addPoint :c_pointer-> string ->c_pointer-> status_t = "b_message_addPoint" 
-external b_message_addRect :c_pointer-> string ->c_pointer-> status_t = "b_message_addRect"
-external b_message_addRef :c_pointer-> string ->c_pointer-> status_t = "b_message_addRef"
-external b_message_addMessage :c_pointer-> string ->c_pointer-> status_t = "b_message_addMessage"
-external b_message_addMessenger :c_pointer-> string ->c_pointer-> status_t = "b_message_addMessenger"
-external b_message_addPointer :c_pointer-> string ->c_pointer-> status_t = "b_message_addPointer" 
-external b_message_addFlat :c_pointer-> string ->c_pointer-> int32 -> status_t = "b_message_addFlat"
-external b_message_addSpecifier_message :c_pointer->c_pointer-> status_t = "b_message_addSpecifier_message"
-external b_message_addSpecifier_property :c_pointer-> string -> status_t = "b_message_addSpecifier_property"
-external b_message_addSpecifier_index :c_pointer-> string -> int32 -> status_t = "b_message_addSpecifier_index"
-external b_message_addSpecifier_range :c_pointer-> string -> int32 -> int32 -> status_t = "b_message_addSpecifier_range"
-external b_message_addSpecifier_name :c_pointer-> string -> string -> status_t = "b_message_addSpecifier_name"
-external b_message_countNames :c_pointer-> type_code -> int32 = "b_message_countNames"
-external b_message_findString :c_pointer-> string -> string ref -> status_t = "b_message_findString"
-external b_message_printToStream :c_pointer-> unit = "b_message_printToStream"
-external b_message_what :c_pointer-> int32 = "b_message_what"
+external b_message_message_command : int32 	 -> pointer	= "b_message_message_command"
+external b_message_message_message : pointer ->pointer	= "b_message_message_message"
+external b_message_message         : unit -> pointer		= "b_message_message"
+external b_message_        : pointer-> unit      = "b_message_"
+(*external b_message_addData :pointer-> string -> type_code ->pointer-> ssize_t -> bool -> int -> status_t = "b_message_addData"*)
+external b_message_addBool   : pointer-> string -> bool   -> status_t = "b_message_addBool"
+external b_message_addInt8   : pointer-> string -> int8   -> status_t = "b_message_addInt8"
+external b_message_addInt16  : pointer-> string -> int16  -> status_t = "b_message_addInt16"
+external b_message_addInt32  : pointer-> string -> int32  -> status_t = "b_message_addInt32"
+external b_message_findInt16 : pointer-> string -> int16  ref -> status_t = "b_message_findInt16"
+external b_message_findInt32 : pointer-> string -> int32  ref -> status_t = "b_message_findInt32"
+external b_message_findInt16_index : pointer-> string -> int16 -> int16 ref -> status_t = "b_message_findInt16_index"
+external b_message_findInt32_index : pointer-> string -> int32 -> int32 ref -> status_t = "b_message_findInt32_index"
+external b_message_findPointer : pointer-> string ->pointer ref -> status_t = "b_message_findPointer"
+external b_message_addInt64  : pointer-> string -> int64  -> status_t = "b_message_addInt64"
+external b_message_addFloat  : pointer-> string -> bfloat -> status_t = "b_message_addfloat"
+external b_message_addDouble : pointer-> string -> double -> status_t = "b_message_addDouble"
+external b_message_addString_string :pointer-> string -> string -> status_t = "b_message_addString_string"
+external b_message_addString_be_string :pointer-> string ->pointer-> status_t = "b_message_addString_be_string"
+external b_message_addPoint :pointer-> string ->pointer-> status_t = "b_message_addPoint" 
+external b_message_addRect :pointer-> string ->pointer-> status_t = "b_message_addRect"
+external b_message_addRef :pointer-> string ->pointer-> status_t = "b_message_addRef"
+external b_message_addMessage :pointer-> string ->pointer-> status_t = "b_message_addMessage"
+external b_message_addMessenger :pointer-> string ->pointer-> status_t = "b_message_addMessenger"
+external b_message_addPointer :pointer-> string ->pointer-> status_t = "b_message_addPointer" 
+external b_message_addFlat :pointer-> string ->pointer-> int32 -> status_t = "b_message_addFlat"
+external b_message_addSpecifier_message :pointer->pointer-> status_t = "b_message_addSpecifier_message"
+external b_message_addSpecifier_property :pointer-> string -> status_t = "b_message_addSpecifier_property"
+external b_message_addSpecifier_index :pointer-> string -> int32 -> status_t = "b_message_addSpecifier_index"
+external b_message_addSpecifier_range :pointer-> string -> int32 -> int32 -> status_t = "b_message_addSpecifier_range"
+external b_message_addSpecifier_name :pointer-> string -> string -> status_t = "b_message_addSpecifier_name"
+external b_message_countNames :pointer-> type_code -> int32 = "b_message_countNames"
+external b_message_findString :pointer-> string -> string ref -> status_t = "b_message_findString"
+external b_message_printToStream :pointer-> unit = "b_message_printToStream"
+external b_message_what :pointer-> int32 = "b_message_what"
 
 class be_message =
 	object(self)
@@ -145,7 +145,7 @@ class be_message =
 		| Some i -> b_message_findDouble_index name i aDouble
 	*)
 	
-	method findPointer ~(name :string) ?(index:int32 option) ~(pointer:c_pointer ref) () =
+	method findPointer ~(name :string) ?(index:int32 option) ~(pointer:pointer ref) () =
 		match index with
 		| None -> 	b_message_findPointer (self#get_interne()) name pointer
 		| Some index -> failwith "be_message#findPointer implemente juste avec name, string."

@@ -16,7 +16,7 @@
 extern "C" {
 	extern sem_id ocaml_sem;
 	value b_textControl_textControl_bytecode(value *argv, int argc);
-	value b_textControl_textControl_nativecode(/*value textControl,*/ value frame, value name, value label, value string, value message, value resizingMode, value flags);
+	value b_textControl_textControl_nativecode(value textControl, value frame, value name, value label, value string, value message, value resizingMode, value flags);
 	value b_textControl_resizeToPreferred(value textControl);
 	value b_textControl_setText(value textControl, value text);
 	value b_textControl_text(value textControl);
@@ -25,9 +25,9 @@ extern "C" {
 
 class OTextControl : public BTextControl, public Glue {
 	public :
-			OTextControl(/*value self,*/ BRect frame, char *name, char *label, char *string, BMessage *message, uint32 resizingMode, uint32 flags) :
+			OTextControl(value ocaml_objet, BRect frame, char *name, char *label, char *string, BMessage *message, uint32 resizingMode, uint32 flags) :
 				BTextControl(frame, name, label, string, message, resizingMode, flags),
-				Glue(/*self*/){
+				Glue(ocaml_objet){
 				}
 
 			void MouseDown(BPoint where) {
@@ -38,15 +38,15 @@ class OTextControl : public BTextControl, public Glue {
 
 //***********************************************
 value b_textControl_textControl_bytecode(value *argv, int argc) {
-	return b_textControl_textControl_nativecode(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]/*, argv[7]*/);
+	return b_textControl_textControl_nativecode(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7]);
 }
 
 //************************************************
-value b_textControl_textControl_nativecode(/*value self,*/ value frame, value name, value label, value string, value message, value resizingMode, value flags){
-	CAMLparam5(/*self,*/ frame, name, label, string, message);
-	CAMLxparam2(/*message,*/ resizingMode, flags);
+value b_textControl_textControl_nativecode(value self, value frame, value name, value label, value string, value message, value resizingMode, value flags){
+	CAMLparam5(self, frame, name, label, string);
+	CAMLxparam3(message, resizingMode, flags);
 	
-	OTextControl *bt = new OTextControl(//self,
+	OTextControl *bt = new OTextControl(self,
 										*(BRect *)Int32_val(frame),
 										String_val(name),
 										String_val(label),

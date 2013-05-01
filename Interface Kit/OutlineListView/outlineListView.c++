@@ -1,7 +1,3 @@
-#ifndef BEOS
-	#define BEOS
-#endif
-
 #include <OutlineListView.h>
 #include <ListItem.h>
 #include <stdio.h>
@@ -16,7 +12,7 @@
 extern "C" {
 	extern sem_id ocaml_sem;
 	value b_outlineListView_outlineListView_bytecode(value *argv, int argc);
-	value b_outlineListView_outlineListView_nativecode(/*value self,*/ value frame, value name, value list_view_type, value resizingMode, value flags);	
+	value b_outlineListView_outlineListView_nativecode(value self, value frame, value name, value list_view_type, value resizingMode, value flags);	
 	value b_outlineListView_addItem(value outlineListView, value item);
 	value b_outlineListView_addItem_index(value outlineListView, value item, value index);
 	value b_outlineListView_countItemsUnder(value outlineListView, value underItem, value oneLevelOnly);
@@ -30,10 +26,9 @@ extern "C" {
 
 class OOutlineListView : public BOutlineListView, public Glue {
 	public :
-			OOutlineListView(/*value self,*/ BRect frame, char *name, list_view_type view_type, uint32 resizingMode, uint32 flags) :
+			OOutlineListView(value self, BRect frame, char *name, list_view_type view_type, uint32 resizingMode, uint32 flags) :
 				BOutlineListView(frame, name, view_type, resizingMode, flags),
-				Glue(/*self*/){
-				}
+				Glue(self){}
 			void Draw(BRect updateRect){
 				printf("OOutlineListView::Draw appele.\n");
 				BOutlineListView::Draw(updateRect);
@@ -43,15 +38,15 @@ class OOutlineListView : public BOutlineListView, public Glue {
 
 //*************************
 value b_outlineListView_outlineListView_bytecode(value *argv, int argc){
-	return b_outlineListView_outlineListView_nativecode(argv[0], argv[1], argv[2], argv[3], argv[4]/*, argv[5]*/);
+	return b_outlineListView_outlineListView_nativecode(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
 }
 
 //************************
-value b_outlineListView_outlineListView_nativecode(/*value self,*/ value frame, value name, value list_view_type, value resizingMode, value flags){
-	CAMLparam5(/*self,*/ frame, name, list_view_type, resizingMode, flags);
-//	CAMLxparam1(flags);
+value b_outlineListView_outlineListView_nativecode(value self, value frame, value name, value list_view_type, value resizingMode, value flags){
+	CAMLparam5(self, frame, name, list_view_type, resizingMode);
+	CAMLxparam1(flags);
 
-	OOutlineListView *lv = new OOutlineListView(//self,
+	OOutlineListView *lv = new OOutlineListView(self,
 												*(BRect *)Int32_val(frame),
 												String_val(name),
 												decode_list_view_type(list_view_type),

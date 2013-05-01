@@ -1,6 +1,6 @@
 open Glue
 
-external b_listItem_outlineLevel : c_pointer -> int32 = "b_listItem_outlineLevel"
+external b_listItem_outlineLevel : pointer -> int32 = "b_listItem_outlineLevel"
 
 class be_listItem =
 	object(self)

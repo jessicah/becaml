@@ -8,15 +8,16 @@
 #ifdef __cplusplus 
 extern "C" {
 #endif
-		
+	
+value b_glue_associate_c_object(value ocaml_objet);	
 void b_glue_remove(void *c_object);
 
 
 class Glue {
 		public :
-				Glue(/*value objet*/);
-		//private :
-			//	value *interne;		
+				Glue(value ocaml_object);
+		public :
+		value interne;		
 //				~Glue();
 
 };

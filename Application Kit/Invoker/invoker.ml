@@ -7,37 +7,37 @@ open Message;;
 open Messenger;;
 open SupportDefs;;
 
-external b_invoker_invoker : unit -> c_pointer = "b_invoker_invoker"
-external b_invoker_invoker_messenger : c_pointer -> c_pointer -> c_pointer = "b_invoker_invoker_messenger"
-external b_invoker_invoker_handler : c_pointer -> c_pointer -> c_pointer = "b_invoker_invoker_handler"
-external b_invoker_invoker_handler_looper : c_pointer -> c_pointer -> c_pointer -> c_pointer = "b_invoker_invoker_handler_looper"
+external b_invoker_invoker : unit -> pointer = "b_invoker_invoker"
+external b_invoker_invoker_messenger : pointer -> pointer -> pointer = "b_invoker_invoker_messenger"
+external b_invoker_invoker_handler : pointer -> pointer -> pointer = "b_invoker_invoker_handler"
+external b_invoker_invoker_handler_looper : pointer -> pointer -> pointer -> pointer = "b_invoker_invoker_handler_looper"
 (*
-external b_invoker_ : c_pointer -> unit = "b_invoker_"
-external b_invoker_beginInvokeNotify : c_pointer -> int32 -> unit = "b_invoker_beginInvokeNotify"
+external b_invoker_ : pointer -> unit = "b_invoker_"
+external b_invoker_beginInvokeNotify : pointer -> int32 -> unit = "b_invoker_beginInvokeNotify"
 external b_control_invoked : unit -> int32 = "b_control_invoked" (* A REVOIR*)
-external b_invoker_endInvokeNotify : c_pointer -> unit = "b_invoker_endInvokeNotify"*)
-external b_invoker_invoke_message : c_pointer -> c_pointer -> status_t = "b_invoker_invoke_message"
-external b_invoker_invoke : c_pointer -> status_t = "b_invoker_invoke"
-(*external b_invoker_invokeNotify : c_pointer -> c_pointer -> int32 -> status_t = "b_invoker_invokeNotify"
-external b_invoker_invokeKind_notify : c_pointer -> bool -> int32= "b_invoker_invokeKind_notify"
-external b_invoker_invokeKind : c_pointer -> int32 = "b_invoker_invokeKind"
-external b_invoker_setHandlerForReply : c_pointer -> c_pointer -> status_t = "b_invoker_setHandlerForReply"
-external b_invoker_handlerForReply : c_pointer -> c_pointer = "b_invoker_handlerForReply"
-external b_invoker_setMessage : c_pointer -> c_pointer -> status_t = "b_invoker_setMessage"
+external b_invoker_endInvokeNotify : pointer -> unit = "b_invoker_endInvokeNotify"*)
+external b_invoker_invoke_message : pointer -> pointer -> status_t = "b_invoker_invoke_message"
+external b_invoker_invoke : pointer -> status_t = "b_invoker_invoke"
+(*external b_invoker_invokeNotify : pointer -> pointer -> int32 -> status_t = "b_invoker_invokeNotify"
+external b_invoker_invokeKind_notify : pointer -> bool -> int32= "b_invoker_invokeKind_notify"
+external b_invoker_invokeKind : pointer -> int32 = "b_invoker_invokeKind"
+external b_invoker_setHandlerForReply : pointer -> pointer -> status_t = "b_invoker_setHandlerForReply"
+external b_invoker_handlerForReply : pointer -> pointer = "b_invoker_handlerForReply"
+external b_invoker_setMessage : pointer -> pointer -> status_t = "b_invoker_setMessage"
 *)
-external b_invoker_message :  c_pointer -> c_pointer = "b_invoker_message"
+external b_invoker_message :  pointer -> pointer = "b_invoker_message"
 (*
-external b_invoker_command : c_pointer -> int32 = "b_invoker_command"
+external b_invoker_command : pointer -> int32 = "b_invoker_command"
 *)
-external b_invoker_setTarget_messenger : c_pointer -> c_pointer -> status_t = "b_invoker_setTarget_messenger"
-external b_invoker_setTarget_handler : c_pointer -> c_pointer -> status_t = "b_invoker_setTarget_handler"
-external b_invoker_setTarget_looper : c_pointer -> c_pointer -> c_pointer -> status_t = "b_invoker_setTarget_looper"
-(*external b_invoker_target_looper : c_pointer -> c_pointer -> c_pointer = "b_invoker_target_looper"
-external b_invoker_target : c_pointer -> c_pointer = "b_invoker_target"
-external b_invoker_isTargetLocal : c_pointer -> bool = "b_invoker_isTargetLocal" 
-external b_invoker_messenger : c_pointer -> c_pointer = "b_invoker_messenger"
-external b_invoker_setTimeout : c_pointer -> bigtime_t -> status_t = "b_invoker_setTimeout"
-external b_invoker_timeout : c_pointer -> bigtime_t = "b_invoker_timeout"
+external b_invoker_setTarget_messenger : pointer -> pointer -> status_t = "b_invoker_setTarget_messenger"
+external b_invoker_setTarget_handler : pointer -> pointer -> status_t = "b_invoker_setTarget_handler"
+external b_invoker_setTarget_looper : pointer -> pointer -> pointer -> status_t = "b_invoker_setTarget_looper"
+(*external b_invoker_target_looper : pointer -> pointer -> pointer = "b_invoker_target_looper"
+external b_invoker_target : pointer -> pointer = "b_invoker_target"
+external b_invoker_isTargetLocal : pointer -> bool = "b_invoker_isTargetLocal" 
+external b_invoker_messenger : pointer -> pointer = "b_invoker_messenger"
+external b_invoker_setTimeout : pointer -> bigtime_t -> status_t = "b_invoker_setTimeout"
+external b_invoker_timeout : pointer -> bigtime_t = "b_invoker_timeout"
 *)
 class be_Invoker =
 	object(self)

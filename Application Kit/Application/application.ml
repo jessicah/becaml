@@ -6,13 +6,13 @@ open Message;;
 open SupportDefs;;
 open Threads;;
 
-external b_application_signature : string -> c_pointer = "b_application_signature"
-external b_application_messageReceived : c_pointer -> c_pointer -> unit = "b_application_messageReceived"
-external b_application_readyToRun : c_pointer -> unit = "b_application_readyToRun"
-external b_application_postmessage : c_pointer -> int32 -> status_t = "b_application_postMessage"
-external b_application_run : c_pointer -> thread_id = "b_application_run"
-external b_application_quitRequested : c_pointer -> bool = "b_application_quitRequested"
-external b_app : unit -> c_pointer = "b_app"
+external b_application_signature : string -> pointer = "b_application_signature"
+external b_application_messageReceived : pointer -> pointer -> unit = "b_application_messageReceived"
+external b_application_readyToRun : pointer -> unit = "b_application_readyToRun"
+external b_application_postmessage : pointer -> int32 -> status_t = "b_application_postMessage"
+external b_application_run : pointer -> thread_id = "b_application_run"
+external b_application_quitRequested : pointer -> bool = "b_application_quitRequested"
+external b_app : unit -> pointer = "b_app"
 
 class be_application =
 	object (self)
@@ -77,8 +77,8 @@ let set_be_app a = be_app#set_interne a;;
 
 Callback.register "OApplication::Set_be_app" set_be_app;;
 
-Callback.register "OApplication::AboutRequested" (fun a_c -> 
-(*launch*) (find a_c : #be_application)#aboutRequested ());;
+(*Callback.register "OApplication::AboutRequested" (fun a_c -> 
+launch (find a_c : #be_application)#aboutRequested ());;
 
 Callback.register "OApplication::MessageReceived" (fun a_c -> fun m_c -> 
 		(*print_string "OApplication::MessageReceived\n";flush stdout;*)
@@ -99,3 +99,4 @@ Callback.register "OApplication::MessageReceived" (fun a_c -> fun m_c ->
 		);;
 Callback.register "OApplication::Ready_to_run"  (fun a_c -> (find a_c : #be_application)#readyToRun());;
 Callback.register "OApplication::QuitRequested" (fun a_c -> (find a_c : #be_application)#quitRequested());;
+*)

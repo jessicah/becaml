@@ -9,13 +9,13 @@ type list_view_type =
 | B_SINGLE_SELECTION_LIST 
 | B_MULTIPLE_SELECTION_LIST
 ;;
-external b_listView_addItem : c_pointer -> c_pointer -> bool = "b_listView_addItem"
-external b_listView_addItem_index : c_pointer -> c_pointer -> int32 -> bool = "b_listView_addItem_index"
-external b_listView_currentSelection : c_pointer -> int32 -> int32 = "b_listView_currentSelection"
-external b_listView_itemAt : c_pointer -> int32 -> c_pointer = "b_listView_itemAt"
-external b_listView_itemFrame : c_pointer -> int32 -> c_pointer = "b_listView_itemFrame"
-external b_listView_removeItem : c_pointer -> int32 -> c_pointer = "b_listView_removeItem"
-external b_listView_setSelectionMessage : c_pointer -> c_pointer -> unit = "b_listView_setSelectionMessage"
+external b_listView_addItem : pointer -> pointer -> bool = "b_listView_addItem"
+external b_listView_addItem_index : pointer -> pointer -> int32 -> bool = "b_listView_addItem_index"
+external b_listView_currentSelection : pointer -> int32 -> int32 = "b_listView_currentSelection"
+external b_listView_itemAt : pointer -> int32 -> pointer = "b_listView_itemAt"
+external b_listView_itemFrame : pointer -> int32 -> pointer = "b_listView_itemFrame"
+external b_listView_removeItem : pointer -> int32 -> pointer = "b_listView_removeItem"
+external b_listView_setSelectionMessage : pointer -> pointer -> unit = "b_listView_setSelectionMessage"
 
 class be_listView =
 	object(self)

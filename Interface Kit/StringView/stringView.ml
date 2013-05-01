@@ -2,7 +2,7 @@ open Glue;;
 open Rect;;
 open View;;
 
-external b_stringView_stringview : c_pointer -> string -> string -> int32 -> int32 -> c_pointer = 
+external b_stringView_stringview : pointer -> string -> string -> int32 -> int32 -> pointer = 
 		(*"b_stringView_stringview_bytecode"*) 
 		"b_stringView_stringview_native"
 (*		
@@ -58,9 +58,9 @@ class be_stringview =
 		Printf.printf "be_stringView#WindowActivated non implemente.\n"; flush stdout;
 *)		
 end;;
-
-Callback.register "OStringView::allAttached" (fun o_c -> (find o_c)#allAttached());;
 (*
+Callback.register "OStringView::allAttached" (fun o_c -> (find o_c)#allAttached());;
+
 Callback.register "OStringView#draw" (fun o -> fun r -> let rect = new be_rect 
 														in rect#set_interne r; 
 														o#draw rect);;

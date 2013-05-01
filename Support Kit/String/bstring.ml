@@ -1,8 +1,8 @@
 open Glue;;
 
-external b_string_string_string : string -> c_pointer = "b_string_string_string"
-external b_string_string : c_pointer -> string = "b_string_string"
-external b_string_length : c_pointer -> int32 = "b_string_length"
+external b_string_string_string : string -> pointer = "b_string_string_string"
+external b_string_string : pointer -> string = "b_string_string"
+external b_string_length : pointer -> int32 = "b_string_length"
 
 class be_string =
 	object(self)

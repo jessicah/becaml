@@ -1,8 +1,8 @@
 open Glue
 open ListItem
 
-external b_stringItem_stringItem : string -> int32 -> bool -> c_pointer = "b_stringItem_stringItem"
-external b_stringItem_text : c_pointer -> string = "b_stringItem_text"
+external b_stringItem_stringItem : string -> int32 -> bool -> pointer = "b_stringItem_stringItem"
+external b_stringItem_text : pointer -> string = "b_stringItem_text"
 
 class be_stringItem =
 	object(self)

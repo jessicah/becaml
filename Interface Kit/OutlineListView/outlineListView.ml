@@ -9,18 +9,18 @@ open Rect
 open SupportDefs
 open View
 
-external b_outlineListView_outlineListView : c_pointer -> string -> list_view_type -> int32 -> int32 -> c_pointer =
+external b_outlineListView_outlineListView : pointer -> string -> list_view_type -> int32 -> int32 -> pointer =
 		"b_outlineListView_outlineListView_bytecode" 
 		"b_outlineListView_outlineListView_nativecode"
-external b_outlineListView_addItem : c_pointer -> c_pointer -> bool = "b_outlineListView_addItem"
-external b_outlineListView_addItem_index : c_pointer -> c_pointer -> int32 -> bool = "b_outlineListView_addItem_index"
-external b_outlineListView_countItemsUnder : c_pointer -> c_pointer -> bool -> int32 = "b_outlineListView_countItemsUnder"
-external b_outlineListView_itemUnderAt : c_pointer -> c_pointer -> bool -> int32 -> c_pointer = "b_outlineListView_itemUnderAt"
-external b_outlineListView_fullListIndexOf : c_pointer -> c_pointer -> int32 = "b_outlineListView_fullListIndexOf"
-external b_outlineListView_removeItem : c_pointer -> int32 -> c_pointer = "b_outlineListView_removeItem"
-external b_outlineListView_removeItem_item : c_pointer -> c_pointer -> bool = "b_outlineListView_removeItem_item"
-external b_outlineListView_setTarget_handler : c_pointer -> c_pointer -> status_t = "b_outlineListView_setTarget_handler"
-external b_outlineListView_superitem : c_pointer -> c_pointer -> c_pointer = "b_outlineListView_superitem"
+external b_outlineListView_addItem : pointer -> pointer -> bool = "b_outlineListView_addItem"
+external b_outlineListView_addItem_index : pointer -> pointer -> int32 -> bool = "b_outlineListView_addItem_index"
+external b_outlineListView_countItemsUnder : pointer -> pointer -> bool -> int32 = "b_outlineListView_countItemsUnder"
+external b_outlineListView_itemUnderAt : pointer -> pointer -> bool -> int32 -> pointer = "b_outlineListView_itemUnderAt"
+external b_outlineListView_fullListIndexOf : pointer -> pointer -> int32 = "b_outlineListView_fullListIndexOf"
+external b_outlineListView_removeItem : pointer -> int32 -> pointer = "b_outlineListView_removeItem"
+external b_outlineListView_removeItem_item : pointer -> pointer -> bool = "b_outlineListView_removeItem_item"
+external b_outlineListView_setTarget_handler : pointer -> pointer -> status_t = "b_outlineListView_setTarget_handler"
+external b_outlineListView_superitem : pointer -> pointer -> pointer = "b_outlineListView_superitem"
 
 class be_outlineListView =
 	object(self)

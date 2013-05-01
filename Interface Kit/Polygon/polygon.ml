@@ -1,9 +1,9 @@
 open Glue;;
 open Point;;
 
-external b_polygon_polygon_ : c_pointer -> unit = "b_polygon_polygon_"
-external b_polygon_polygon : c_pointer array -> int32 -> c_pointer = "b_polygon_polygon"
-external b_polygon_printToStream : c_pointer -> unit = "b_polygon_printToStream"
+external b_polygon_polygon_ : pointer -> unit = "b_polygon_polygon_"
+external b_polygon_polygon : pointer array -> int32 -> pointer = "b_polygon_polygon"
+external b_polygon_printToStream : pointer -> unit = "b_polygon_printToStream"
 
 class be_polygon =
 	object(self)

@@ -11,7 +11,7 @@
 extern "C" {
 
 	extern sem_id ocaml_sem;
-	value b_box_box_native(/*value self,*/ value frame, value name, value resizingMode, value flags, value border);
+	value b_box_box_native(value self, value frame, value name, value resizingMode, value flags, value border);
 	value b_box_box_bytecode(value *argv, int argc);
 	value b_box_addChild(value box, value aView);
 	value b_box_allAttached(value box);
@@ -24,15 +24,9 @@ class OBox : public BBox, public Glue
 
 	public :
 	
-		OBox(/*value interne,*/ BRect frame, char *name, int32 resizingMode, int32 flags, border_style border):
+		OBox(value ocaml_objet, BRect frame, char *name, int32 resizingMode, int32 flags, border_style border):
 			BBox(frame, name, resizingMode, flags, border)
-			//, Glue(/*interne*/)
-		{
-
-//			CAMLparam1(interne);
-			
-//			CAMLreturn0;
-			}
+		, Glue(ocaml_objet) {}
 		void AllAttached();
 		void AttachedToWindow(); 
 		void Draw(BRect updateRect);
@@ -98,13 +92,13 @@ void OBox::WindowActivated(bool state){
 }
 
 //*********************
-value b_box_box_native(/*value self,*/ value frame, value name, value resizingMode, value flags, value border){
-	CAMLparam5(/*self,*/ frame, name, resizingMode, flags,border);
-//	CAMLxparam1(border);
+value b_box_box_native(value ocaml_objet, value frame, value name, value resizingMode, value flags, value border){
+	CAMLparam5(ocaml_objet, frame, name, resizingMode, flags);
+	CAMLxparam1(border);
 //	CAMLlocal1(box);
 	OBox *b;
 	
-	b= new OBox(//self,
+	b= new OBox(ocaml_objet,
 					   *(BRect *)Int32_val(frame), 
 					   String_val(name), 
 					   Int32_val(resizingMode), 
@@ -119,7 +113,7 @@ value b_box_box_native(/*value self,*/ value frame, value name, value resizingMo
 
 //*******************
 value b_box_box_bytecode(value *argv, int argc) {
-	return b_box_box_native(argv[0], argv[1], argv[2], argv[3], argv[4]/*, argv[5]*/);
+	return b_box_box_native(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
 }
 
 //*******************************

@@ -8,15 +8,15 @@ open Rect
 open SupportDefs
 open View
 
-external b_checkBox_checkBox : c_pointer -> string -> string -> c_pointer -> int32 -> int32 -> c_pointer = "b_checkBox_checkBox_bytecode" "b_checkBox_checkBox_native"
-external b_checkBox_resizeToPreferred : c_pointer -> unit = "b_checkBox_resizeToPreferred"
-external b_checkBox_invoke : c_pointer -> status_t = "b_checkBox_invoke"
-external b_checkBox_invoke_message : c_pointer -> c_pointer -> status_t = "b_checkBox_invoke_message"
-external b_checkBox_setTarget_handler : c_pointer -> c_pointer -> status_t = "b_checkBox_setTarget_handler"
-external b_checkBox_setTarget_view : c_pointer -> c_pointer -> unit = "b_checkBox_setTarget_view"
-external b_checkBox_setTarget_name : c_pointer -> string -> unit = "b_checkBox_setTarget_name"
-external b_checkBox_setValue : c_pointer -> int32 -> unit = "b_checkBox_setValue"
-external b_checkBox_value : c_pointer -> int32 = "b_checkBox_value"
+external b_checkBox_checkBox : pointer -> string -> string -> pointer -> int32 -> int32 -> pointer = "b_checkBox_checkBox_bytecode" "b_checkBox_checkBox_native"
+external b_checkBox_resizeToPreferred : pointer -> unit = "b_checkBox_resizeToPreferred"
+external b_checkBox_invoke : pointer -> status_t = "b_checkBox_invoke"
+external b_checkBox_invoke_message : pointer -> pointer -> status_t = "b_checkBox_invoke_message"
+external b_checkBox_setTarget_handler : pointer -> pointer -> status_t = "b_checkBox_setTarget_handler"
+external b_checkBox_setTarget_view : pointer -> pointer -> unit = "b_checkBox_setTarget_view"
+external b_checkBox_setTarget_name : pointer -> string -> unit = "b_checkBox_setTarget_name"
+external b_checkBox_setValue : pointer -> int32 -> unit = "b_checkBox_setValue"
+external b_checkBox_value : pointer -> int32 = "b_checkBox_value"
 
 class be_checkBox =
 	object(self)
@@ -56,4 +56,6 @@ class be_checkBox =
 		b_checkBox_value (self#get_interne())
 end;;
 
-Callback.register "OCheckBox#Invoke" (fun c_c -> fun m_c -> ((find c_c): #be_checkBox)#invoke(find m_c));;
+(*
+ * Callback.register "OCheckBox#Invoke" (fun c_c -> fun m_c -> ((find c_c): #be_checkBox)#invoke(find m_c));;
+ *)

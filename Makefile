@@ -55,7 +55,7 @@ ocaml-beos: $(LIBOCAML)
 	$(OCAMLC) $(OCAMLFLAGS) -c $<
 
 .c.o:
-	$(GCC) -DBEOS -c $< -o $*.o
+	$(GCC) -DBEOS -g -c $< -o $*.o
 	
 clean:
 		rm -f $(LIBOCAML) $(TOPLEVEL) libbeocaml.a

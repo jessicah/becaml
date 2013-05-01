@@ -35,7 +35,7 @@ extern "C" {
 	value b_secondary_mouse_button(value unit);
 	value b_tertiary_mouse_button(value unit);
 	
-	value b_view(/*value self,*/ value frame, value name, value resizingMode, value flags);
+	value b_view(value self, value frame, value name, value resizingMode, value flags);
 	value b_view_addChild(value view, value aView);
 	value b_view_allAttached(value view);
 	value b_view_attachedToWindow(value view);
@@ -87,7 +87,7 @@ extern "C" {
 class OView : public BView, public Glue 
 		{
 		public :
-				OView(/*value objet,*/ BRect frame, const char *name, uint32 resizingMode, uint32 flags);
+				OView(value objet, BRect frame, const char *name, uint32 resizingMode, uint32 flags);
 				~OView();
 				void AddChild(BView *child, BView *before = NULL);
 				void AllAttached();
@@ -116,15 +116,9 @@ class OView : public BView, public Glue
 				void WindowActivated(bool active);
 };
 
-OView::OView(/*value objet,*/ BRect frame, const char *name, uint32 resizingMode, uint32 flags) :
+OView::OView(value objet, BRect frame, const char *name, uint32 resizingMode, uint32 flags) :
 		BView(frame, name, resizingMode, flags)
-		, Glue(/*objet*/) 
-	{
-				
-//	CAMLparam1(objet);
-	
-//	CAMLreturn0;
-}
+		, Glue(objet) {}
 
 OView::~OView() {
 	printf("[C++]OView destruction de 0x%lx\n", this);fflush(stdout);
@@ -188,7 +182,7 @@ void OView::AttachedToWindow(){
 //	//**acquire_sem(ocaml_sem);
 //		caml_leave_blocking_section();
 			view_caml = caml_copy_int32((int32)this);
-			callback(*caml_named_value("OView::AttachedToWindow"), view_caml);
+		callback(caml_get_public_method(interne, hash_variant("attachedToWindow")), interne);
 //		caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
 	CAMLreturn0;
@@ -601,13 +595,13 @@ CAMLreturn(caml_res);
 
 
 //******************
-value b_view(/*value self,*/ value frame, value name, value resizingMode, value flags) {
-	CAMLparam4(/*self,*/ frame, name, resizingMode, flags);
+value b_view(value self, value frame, value name, value resizingMode, value flags) {
+	CAMLparam5(self, frame, name, resizingMode, flags);
 	CAMLlocal1(caml_view);
 	
 	OView *ov;
 //	caml_leave_blocking_section();	
-	ov = new OView(//self, 
+	ov = new OView(self, 
 				   *((BRect *)Int32_val(frame)), 
 				   String_val(name), 
 				   Int32_val(resizingMode), 

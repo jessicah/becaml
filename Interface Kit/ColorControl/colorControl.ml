@@ -13,10 +13,10 @@ type color_control_layout =
 | B_CELLS_64x4
 ;;
 
-external b_colorControl_colorControl : c_pointer -> color_control_layout -> float -> string -> c_pointer -> bool -> c_pointer = "b_colorControl_colorControl_bytecode" "b_colorControl_colorControl_native"
-external b_colorControl_setValue : c_pointer -> rgb_color -> unit = "b_colorControl_setValue"
-external b_colorControl_getPreferredSize : c_pointer -> float ref -> float ref -> unit = "b_colorControl_getPreferredSize"
-external b_colorControl_valueAsColor : c_pointer -> rgb_color = "b_colorControl_valueAsColor"
+external b_colorControl_colorControl : pointer -> color_control_layout -> float -> string -> pointer -> bool -> pointer = "b_colorControl_colorControl_bytecode" "b_colorControl_colorControl_native"
+external b_colorControl_setValue : pointer -> rgb_color -> unit = "b_colorControl_setValue"
+external b_colorControl_getPreferredSize : pointer -> float ref -> float ref -> unit = "b_colorControl_getPreferredSize"
+external b_colorControl_valueAsColor : pointer -> rgb_color = "b_colorControl_valueAsColor"
 
 class be_colorControl =
 	object(self)

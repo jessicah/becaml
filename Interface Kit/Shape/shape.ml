@@ -2,10 +2,10 @@ open Archivable
 open Glue
 open Rect
 
-external b_shape_shape: unit -> c_pointer = "b_shape_shape"
-external b_shape_bounds : c_pointer -> c_pointer = "b_shape_bounds"
-external b_shapeIterator_shapeIterator : unit -> c_pointer = "b_shapeIterator_shapeIterator"
-external b_shapeIterator_iterate : c_pointer -> c_pointer -> unit = "b_shapeIterator_iterate"
+external b_shape_shape: unit -> pointer = "b_shape_shape"
+external b_shape_bounds : pointer -> pointer = "b_shape_bounds"
+external b_shapeIterator_shapeIterator : unit -> pointer = "b_shapeIterator_shapeIterator"
+external b_shapeIterator_iterate : pointer -> pointer -> unit = "b_shapeIterator_iterate"
 
 class be_shape =
 	object(self)

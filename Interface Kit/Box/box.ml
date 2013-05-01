@@ -3,11 +3,11 @@ open View;;
 open Rect;;
 open InterfaceDefs;;
 
-external b_box_box : c_pointer -> string -> int32 -> int32 -> border_style -> c_pointer = (*"b_box_box_bytecode"*) "b_box_box_native"
-external b_box_addChild : c_pointer -> c_pointer -> unit = "b_box_addChild" 
-external b_box_allAttached : c_pointer -> unit = "b_box_allAttached"
-external b_box_attachedToWindow : c_pointer -> unit = "b_box_attachedToWindow"
-external b_box_windowActivated : c_pointer -> bool -> unit = "b_box_windowActivated"
+external b_box_box : pointer -> string -> int32 -> int32 -> border_style -> pointer = (*"b_box_box_bytecode"*) "b_box_box_native"
+external b_box_addChild : pointer -> pointer -> unit = "b_box_addChild" 
+external b_box_allAttached : pointer -> unit = "b_box_allAttached"
+external b_box_attachedToWindow : pointer -> unit = "b_box_attachedToWindow"
+external b_box_windowActivated : pointer -> bool -> unit = "b_box_windowActivated"
 
 class be_box =
 	object(self)
