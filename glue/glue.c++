@@ -1,7 +1,3 @@
-#ifndef BEOS
-	#define BEOS
-#endif
-
 #include <SupportDefs.h> 
 
 #include "glue.h"

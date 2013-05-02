@@ -17,7 +17,7 @@
 extern "C" 
 {
  	extern sem_id ocaml_sem;
-	value b_application_signature(value signature);
+	value b_application_signature(value ocaml_objet, value signature);
 	value b_application_messageReceived(value application, value message);
 	value b_application_postMessage(value application, value command);
 	value b_application_quitRequested(value application);
@@ -32,10 +32,10 @@ extern "C"
 	extern sem_id callback_sem;
 }
 
-class OApplication : public BApplication//, public Glue 
+class OApplication : public BApplication, public Glue 
 {
 		public :
-				OApplication(/*value objet,*/  char * signature);
+				OApplication(value objet,  char * signature);
 				~OApplication();
 				void AboutRequested();
 				void MessageReceived(BMessage *message);
@@ -43,12 +43,8 @@ class OApplication : public BApplication//, public Glue
 				bool QuitRequested();
 };
 
-OApplication::OApplication(/*value objet,*/ char *signature) : 
-	BApplication(signature)//, Glue(/*objet*/)
-{
-			/*CAMLparam1(objet);
-			CAMLreturn0;*/
-}
+OApplication::OApplication(value objet, char *signature) : 
+	BApplication(signature), Glue(objet) {}
 OApplication::~OApplication(){
 	printf("destruction de OApplication(0x%lx)\n", this);fflush(stdout);
 //	b_glue_remove((void *)this);
@@ -63,7 +59,7 @@ void OApplication::AboutRequested() {
 			caml_leave_blocking_section();
 				app = caml_copy_int32((int32)this);
 				////**acquire_sem(callback_sem);
-					callback(*caml_named_value("OApplication::AboutRequested"),app/**interne*/);
+					caml_callback(*caml_named_value("OApplication::AboutRequested"),app/**interne*/);
 				////**release_sem(callback_sem);
 			caml_enter_blocking_section();
 	//**release_sem(ocaml_sem);	
@@ -101,16 +97,15 @@ void OApplication::ReadyToRun() {
 	//**acquire_sem(ocaml_sem);
 	//CAMLparam1(interne);
 	CAMLparam0();
-	CAMLlocal1(app_caml);
 	//**release_sem(ocaml_sem);
 	
 	//**acquire_sem(ocaml_sem);
-		caml_leave_blocking_section();
-			app_caml  = caml_copy_int32((int32) this);
+		caml_acquire_runtime_system();
 //			//**acquire_sem(callback_sem);
-				callback(*caml_named_value("OApplication::Ready_to_run"), app_caml/* *interne*/);
+				caml_c_thread_register();
+				caml_callback(caml_get_public_method(interne, hash_variant("readyToRun")), interne);
 //			//**release_sem(callback_sem);
-		caml_enter_blocking_section();
+		caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 	CAMLreturn0;
 }
@@ -139,23 +134,22 @@ bool OApplication::QuitRequested(){
 
 //*********************************
 
-value b_application_signature(value signature)
+value b_application_signature(value ocaml_objet, value signature)
 {
 //	//**acquire_sem(ocaml_sem);
-		CAMLparam1(signature);
+		CAMLparam2(ocaml_objet, signature);
 		CAMLlocal1(application); 
 //	//**release_sem(ocaml_sem);
 	
 	OApplication *app;
 	char * s = String_val(signature);
 //	register_global_root(&self); 
-		app = new OApplication(s);
+		app = new OApplication(ocaml_objet, s);
 	printf("[C] creation be_application (0x%lx)\n", app);fflush(stdout);
 	
 //	//**acquire_sem(ocaml_sem);
 //		caml_leave_blocking_section();
 			application = caml_copy_int32((int32)app);
-			caml_c_thread_register();
 			caml_callback(*caml_named_value("OApplication::Set_be_app"), application);
 //		caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
@@ -264,16 +258,18 @@ value b_application_run(value application)
 	OApplication *app;
 
 //	//**acquire_sem(ocaml_sem);
-//	caml_leave_blocking_section();	
-		app = (OApplication *)Int32_val(application);
-	caml_enter_blocking_section();
-//	//**release_sem(ocaml_sem);
+//	caml_leave_blocking_section();
+	//caml_c_thread_register();
+	app = (OApplication *)Int32_val(application);
+
+	caml_release_runtime_system();
+	//**release_sem(ocaml_sem);
 	
 	res = app->Run();
 	printf("[C++] b_application_run() : retour de app->Run\n");fflush(stdout);
 //	//**acquire_sem(ocaml_sem);
-	caml_leave_blocking_section();
-		res_caml = copy_int32(res);
+	caml_acquire_runtime_system();
+	res_caml = copy_int32(res);
 		
 //	caml_leave_blocking_section();
 //	//**release_sem(ocaml_sem);

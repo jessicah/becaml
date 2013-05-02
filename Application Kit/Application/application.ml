@@ -6,7 +6,7 @@ open Message;;
 open SupportDefs;;
 open Threads;;
 
-external b_application_signature : string -> pointer = "b_application_signature"
+external b_application_signature : #be_interne -> string -> pointer = "b_application_signature"
 external b_application_messageReceived : pointer -> pointer -> unit = "b_application_messageReceived"
 external b_application_readyToRun : pointer -> unit = "b_application_readyToRun"
 external b_application_postmessage : pointer -> int32 -> status_t = "b_application_postMessage"
@@ -20,7 +20,7 @@ class be_application =
 
 	method be_application ?signature ?error ?archive () =
 	     self#set_interne (match signature,error,archive with
-							   | Some s, None, None -> b_application_signature s
+							   | Some s, None, None -> b_application_signature self s
 							   | Some s, Some (e : unit), None -> (self#get_interne())(*b_application_error*)
 							   | None, None, Some (m : unit) ->   (self#get_interne())(*b_application_archive *)
 							   | _ -> failwith "be_application#be_application : parametres incorrects"

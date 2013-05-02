@@ -172,11 +172,11 @@ class be_view =
 	object(self)
 	inherit be_Handler as handler
 
-	method be_view ~frame ~name ~resizingMode ~flags =
-                let p = b_view self ((frame : #be_rect as 'a)#get_interne()) name resizingMode flags
+         method be_view : 'a.frame:(#be_rect as 'a) -> name:string -> resizingMode:int32 -> flags:int32 -> unit =       
+                fun ~frame ~name ~resizingMode ~flags ->
+                let p = b_view self ((frame:#be_rect :> be_rect)#get_interne()) name resizingMode flags
                 in
                 interne <- p
-	
 	method addChild : 'a 'b.
 		aView:(#be_interne as 'a) ->
 		?before:(#be_interne as 'b) ->
@@ -411,7 +411,7 @@ and be_window =
 								 			workspaces
 			in (*Printf.printf "[ocaml]b_window_type -> 0x%lX\n" w;
                         flush stdout;*)
-			self#set_interne(w)
+                        interne <- w
 		| None, Some (l:window_look), Some (f:window_feel), None ->()
 			(*
 			self#set_interne(b_window_look_feel (frame : be_rect)#get_interne() title l 
@@ -488,8 +488,8 @@ and be_window =
 		Printf.printf "[OCaml] be_window#quitRequested(), appel de b_window_quitrequested \n";flush stdout;
 		b_window_quitRequested (self#get_interne())
 		
-	method removeChild : 'a.(aView:(#be_view as 'a) -> unit) = fun ~aView ->
-		b_window_removeChild (self#get_interne()) (aView#get_interne())
+        method removeChild ~aView = 
+		b_window_removeChild (self#get_interne()) ((aView : #be_view :> be_view)#get_interne())
 	
 	method resizeTo ~width ~height =
 		b_window_resizeTo (self#get_interne()) width height

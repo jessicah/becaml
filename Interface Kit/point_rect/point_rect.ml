@@ -172,10 +172,12 @@ BRect OffsetToCopy(BPoint point)
 end;;
 
 
+let new_be_rect () = new be_rect;;
+
 let b_origin = 
 	let p = (new be_point)
 	in
 	p#be_point ~x:0.0 ~y:0.0 ();
 	p
 ;;
-
+Callback.register "new_be_rect" new_be_rect;;

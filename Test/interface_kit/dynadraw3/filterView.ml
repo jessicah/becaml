@@ -40,7 +40,8 @@ class filterView =
 	val angx = ref 0.
 	val angy = ref 0.
 	
-	method filterView ~r =
+        method filterView : 'a.r:(#be_rect as 'a) -> unit = 
+                fun ~r ->
 		view#be_view ~frame:r ~name:"filter" ~resizingMode:kB_FOLLOW_ALL ~flags:kB_WILL_DRAW;
 		
 		curmass := 0.5;

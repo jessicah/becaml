@@ -55,8 +55,8 @@ class be_message =
 
 	inherit be_interne
    
-    method be_message ?command ?message () = 
-	   self#set_interne (match command,message with
+         method be_message ?command ?message () = 
+           interne <- (match command,message with
                  			 | Some (com : int32 ), None -> b_message_message_command com
 				 			 | None, Some (mes : be_message) -> b_message_message_message (mes#get_interne())
 				 			 | None, None -> b_message_message () 

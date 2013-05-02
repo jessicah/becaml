@@ -99,8 +99,11 @@ BView *OWindow::CurrentFocus() {
 void OWindow::MenusBeginning(){
 	//CAMLparam1(interne);
 	//**acquire_sem(ocaml_sem);
-		CAMLparam0();
-		CAMLlocal2(win_caml, fun);
+	CAMLparam0();
+	CAMLlocal2(win_caml, fun);
+		
+	caml_c_thread_register();
+
 printf("[C] OWindow::MenusBeginning 1\n");fflush(stdout);
 		caml_register_global_root(&win_caml);
 printf("[C] OWindow::MenusBeginning 2\n");fflush(stdout);
@@ -108,7 +111,7 @@ printf("[C] OWindow::MenusBeginning 2\n");fflush(stdout);
 printf("[C] OWindow::MenusBeginning 3\n");fflush(stdout);
 	//**release_sem(ocaml_sem);
 	
-	caml_leave_blocking_section();
+//	caml_acquire_runtime_system();
 printf("[C] OWindow::MenusBeginning 4\n");fflush(stdout);
 		win_caml = caml_copy_int32((int32)this);	
 printf("[C] OWindow::MenusBeginning 5\n");fflush(stdout);

@@ -12,9 +12,11 @@
 #include "memory.h"
 #include "mlvalues.h"
 #include "signals.h"
+#include "threads.h"
 
 #include "glue.h"
 #include "graphicsDefs.h"
+#include "message.h"
 #include "point_rect.h"
 
 extern "C" {
@@ -161,11 +163,9 @@ void OView::AddChild(BView *child, BView *before = NULL){
 void OView::AllAttached(){
 //	CAMLparam1(interne);
 	CAMLparam0();
-	CAMLlocal1(view_caml);
 //	//**acquire_sem(ocaml_sem);
 //		caml_leave_blocking_section();
-			view_caml = caml_copy_int32((int32)this);
-			callback(*caml_named_value("OView::AllAttached"),view_caml);
+			caml_callback(caml_get_public_method(interne, hash_variant("allAttached")),interne);
 //		caml_enter_blocking_section();
 	
 //	//**release_sem(ocaml_sem);
@@ -176,12 +176,10 @@ void OView::AllAttached(){
 void OView::AttachedToWindow(){
 //	CAMLparam1(interne);
 	CAMLparam0();
-	CAMLlocal1(view_caml);
 	printf("[C] OView::AttachedToWindow (0x%lx)\n", (int32)this);fflush(stdout);	
 	
 //	//**acquire_sem(ocaml_sem);
 //		caml_leave_blocking_section();
-			view_caml = caml_copy_int32((int32)this);
 		callback(caml_get_public_method(interne, hash_variant("attachedToWindow")), interne);
 //		caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
@@ -189,10 +187,10 @@ void OView::AttachedToWindow(){
 }
 
 //****************************
-void OView::Draw(BRect updateRect) {
+void OView::Draw(BRect updateRect) { //OK en 2013 !!!
 	//**acquire_sem(ocaml_sem);	
 		CAMLparam0();
-		CAMLlocal3(view_caml, rect, fun);
+		CAMLlocal3(view_caml, rect, p_rect);
 		
 //		caml_register_global_root(&view_caml);
 //		caml_register_global_root(&rect);
@@ -201,21 +199,21 @@ void OView::Draw(BRect updateRect) {
 //
 	printf("[C] OView::Draw (0x%lx)\n", (int32)this);fflush(stdout);	
 	
-	BRect *localUpdateRect;
-
-	localUpdateRect = new BRect(updateRect);
+	ORect *localUpdateRect=new ORect(updateRect);
 		//**acquire_sem(ocaml_sem);	
-		caml_leave_blocking_section();
-			
-			view_caml = caml_copy_int32((int32)this);
-			
-			rect = copy_int32((int32)localUpdateRect);
-			
-			fun = *caml_named_value("OView::Draw");
+		caml_c_thread_register();
 
-			callback2(fun, view_caml, rect);
+		caml_acquire_runtime_system();
+			/*Création couple ocaml/C pour localUpdateRect*/
+			p_rect = alloc_small(1,Abstract_tag);
+			Field(p_rect,0) = (long int)localUpdateRect;
+			rect =callback(*caml_named_value("new_be_rect"),p_rect);
+			caml_register_global_root(&rect);
+			localUpdateRect->interne = rect;
 
-		caml_enter_blocking_section();
+			callback2(caml_get_public_method(interne, hash_variant("draw")), interne, rect);
+
+		caml_release_runtime_system();
 		//**release_sem(ocaml_sem);
 	CAMLreturn0;
 }
@@ -318,34 +316,38 @@ void OView::KeyDown(const char *bytes, int32 numBytes){
 void OView::MessageReceived(BMessage *message) {
 	CAMLparam0();
 //	CAMLparam1(interne);
-	BMessage *m;
-	CAMLlocal3(fun, view_caml, ocaml_message);
+	CAMLlocal3(interne, view_caml, ocaml_message);
 
 //	ocaml_message = (value *)malloc(sizeof(value *));
 	printf("[C] OView::MessageReceived avant register\n");fflush(stdout);
-	register_global_root(&fun);
+	caml_c_thread_register();
+	
+//	caml_acquire_runtime_system();
+
 	
 	//m = new BMessage(*message);
 	
 	//register_global_root((value *)&m);
 	
 //	//**acquire_sem(ocaml_sem);
-	caml_leave_blocking_section();
 	
-		view_caml = caml_copy_int32((int32)this);
-		ocaml_message = caml_copy_int32((int32)message);
-		fun = *caml_named_value("OView::MessageReceived");
+	caml_acquire_runtime_system();
+		//Création couple OCaml/C++ pour message
+		OMessage * omess = new OMessage(message);
+		p_omess = alloc_small(1,Abstract_tag);
+		Field(p_omess,0) = (value)omess;
+		omess->interne = caml_callback(*caml_named_value("new_be_message"), p_omess);
+		caml_register_global_root(&(omess->interne));
 		
 		printf("[C++]OView::MessageReceived(message->what=0x%lx) avant appel de callback\n", message->what);fflush(stdout);
 		
-			callback2(fun ,view_caml/* *interne,*/, ocaml_message);
+		caml_callback2(caml_get_public_method(interne, hash_variant("messageReceived")) ,interne, omess->interne);
 		
 		printf("[C++]OView::MessageReceived apres appel de callback\n");fflush(stdout);
 		
-	caml_enter_blocking_section();
+	caml_release_runtime_system();
 //	//**release_sem(ocaml_sem);
 
-	remove_global_root(&fun);
 	//remove_global_root((value *)&m);
 	
 	CAMLreturn0;
@@ -360,34 +362,35 @@ void OView::MouseDown(BPoint where) {
 //		beos_thread = find_thread(NULL);
 //	}
 	CAMLparam0();
-	CAMLlocal3(view_caml, where_caml, fun);
+	CAMLlocal4(view_caml, p_wh,o_where_x, o_where_y);
 //	if(new_lock) {
 //			//**release_sem(ocaml_sem);	
 //	}
 	printf("appel de OView#MouseDown\n");fflush(stdout);
-	BPoint *wh;
-	wh = new BPoint(where);
 //	if (beos_thread != find_thread(NULL)) {
 //		new_lock = true;
 //		//**acquire_sem(ocaml_sem);	
 //		beos_thread = find_thread(NULL);
 //	}
-	caml_leave_blocking_section();
-		register_global_root(&view_caml);
-		view_caml = caml_copy_int32((int32)this);
-		
-		register_global_root(&where_caml);
-		where_caml = caml_copy_int32((int32)wh);
+	caml_c_thread_register();
 
-		register_global_root(&fun);
-		fun = *caml_named_value("OView::MouseDown");
+	caml_acquire_runtime_system();
+		//Création couple OCaml/C++ pour where
+		OPoint *wh;
+		wh = new OPoint(where);
+		p_wh = alloc_small(1,Abstract_tag);
+		Field(p_wh,0) = (long int)wh;
+
+		o_where_x=caml_copy_double(where.x);
+		o_where_y=caml_copy_double(where.y);
+		wh->interne = caml_callback3(*caml_named_value("new_be_point_x_y"), p_wh, o_where_x, o_where_y);
+		caml_register_global_root(&(wh->interne));
 	
-		callback2(fun, view_caml, where_caml);
-	caml_enter_blocking_section();
+		callback2(caml_get_public_method(interne, hash_variant("mouseDown")), interne, wh->interne);
+	caml_release_runtime_system();
 //	if(new_lock)	
 //			//**release_sem(ocaml_sem);
 //	remove_global_root(point_where);
-	wh->~BPoint();
 
 	CAMLreturn0;
 }

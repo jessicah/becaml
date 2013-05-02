@@ -1,8 +1,3 @@
-#include <Message.h>
-#ifndef BEOS
-	#define BEOS
-#endif
-
 #include <stdio.h>
 
 
@@ -12,6 +7,7 @@
 #include "signals.h"
 
 #include "glue.h"
+#include "message.h"
 
 extern "C" 
 {
@@ -56,44 +52,40 @@ extern "C"
  value b_message_what (value message);
 }
 
-class OMessage : public BMessage//, public Glue 
-{
-	public :
-			OMessage(/*value self*/);
-			OMessage(/*value self,*/ uint32 command);
-			OMessage(/*value self,*/ BMessage *message);
-			
-};
-
-OMessage::OMessage(/*value self*/) :
-	BMessage()//, Glue(/*self*/) 
+OMessage::OMessage(value self) :
+	BMessage(), Glue(self) 
 {
 }
 
-OMessage::OMessage(/*value self,*/ uint32 command) :
-	BMessage(command)//, Glue(/*self*/) 
+OMessage::OMessage(value self, uint32 command) :
+	BMessage(command), Glue(self) 
 {
 }
 
-OMessage::OMessage(/*value self,*/ BMessage *message) :
-	BMessage(*message)//, Glue(/*self*/) 
+OMessage::OMessage(BMessage *message) :
+	BMessage(*message), Glue(Val_unit)
+{
+}
+
+OMessage::OMessage(value self, BMessage *message) :
+	BMessage(*message), Glue(self) 
 {
 }
 
 //------
 
-value b_message_message(value unit){
-	CAMLparam1(unit);
-	CAMLlocal1(message);
+value b_message_message(value ocaml_objet){
+	CAMLparam1(ocaml_objet);
+	CAMLlocal1(p_omess);
 //	register_global_root(&self);
 	OMessage *m;
 	
-	m = new OMessage(/*self*/);
-//	caml_leave_blocking_section();
-		message = caml_copy_int32((int32)m);
-//	caml_enter_blocking_section();
+	m = new OMessage(ocaml_objet);
+	caml_register_global_root(&(m->interne));
+	p_omess = alloc(1,Abstract_tag);
+	Field(p_omess,0) = (value)m;
 	
-	CAMLreturn(message);
+	CAMLreturn(p_omess);
 }
 
 //*********************
