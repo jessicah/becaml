@@ -1,7 +1,3 @@
-#ifndef BEOS
-	#define BEOS
-#endif
-
 #include <Message.h>
 #include <View.h>
 #include <Window.h>
@@ -14,10 +10,13 @@
 #include "signals.h"
 #include "threads.h"
 
+#include "bitmap.h"
 #include "glue.h"
 #include "graphicsDefs.h"
 #include "message.h"
 #include "point_rect.h"
+#include "polygon.h"
+#include "shape.h"
 
 extern "C" {
 	extern sem_id callback_sem;
@@ -321,40 +320,37 @@ void OView::KeyDown(const char *bytes, int32 numBytes){
 void OView::MessageReceived(BMessage *message) {
 	CAMLparam0();
 //	CAMLparam1(interne);
-	CAMLlocal3(interne, p_omess, message_ocaml);
+	CAMLlocal2(p_omess, message_ocaml);
 	OMessage * omess; 
 //	ocaml_message = (value *)malloc(sizeof(value *));
 	printf("[C] OView::MessageReceived avant register\n");fflush(stdout);
 	
 //	caml_acquire_runtime_system();
-
-	
 	//m = new BMessage(*message);
-	
 	//register_global_root((value *)&m);
-	
 //	//**acquire_sem(ocaml_sem);
 	caml_c_thread_register();	
 	
 	caml_acquire_runtime_system();
-		//Création couple OCaml/C++ pour message TODO a revoir
+		//Création couple OCaml/C++ pour message 
 		p_omess = alloc_small(1,Abstract_tag);
-		caml_register_global_root(&p_omess);
+		caml_register_global_root(&p_omess); //TODO unregister
 		
-		caml_register_global_root(&message_ocaml);
+		caml_register_global_root(&message_ocaml); //TODO unregister
 		message_ocaml = caml_callback(*caml_named_value("new_be_message"), p_omess);
+	caml_release_runtime_system();		
 		omess = new OMessage(message_ocaml, message);
+	caml_acquire_runtime_system();
 		Field(p_omess,0) = (value)omess;
 		
 		printf("[C++]OView::MessageReceived(message->what=0x%lx) avant appel de callback\n", message->what);fflush(stdout);
 		
-		caml_callback2(caml_get_public_method(interne, hash_variant("messageReceived")) ,interne, omess->interne);
+		caml_callback2(caml_get_public_method(interne, hash_variant("messageReceived")) ,interne, message_ocaml);
 		
 		printf("[C++]OView::MessageReceived apres appel de callback\n");fflush(stdout);
 		
 	caml_release_runtime_system();
 //	//**release_sem(ocaml_sem);
-
 	//remove_global_root((value *)&m);
 	
 	CAMLreturn0;
@@ -384,15 +380,18 @@ void OView::MouseDown(BPoint where) {
 		//Création couple OCaml/C++ pour where
 		OPoint *wh;
 		p_wh = alloc_small(1,Abstract_tag);
-		Field(p_wh,0) = (long int)wh;
+		caml_register_global_root(&p_wh);
 
 		o_where_x = caml_copy_double(where.x);
 		o_where_y = caml_copy_double(where.y);
 		point_caml = caml_callback3(*caml_named_value("new_be_point_x_y"), p_wh, o_where_x, o_where_y);
-		wh = new OPoint(point_caml, where);
-		caml_register_global_root(&(wh->interne));
+		caml_register_global_root(&point_caml);
+	caml_release_runtime_system();
 	
-		callback2(caml_get_public_method(interne, hash_variant("mouseDown")), interne, wh->interne);
+	wh = new OPoint(point_caml, where);
+	
+	caml_acquire_runtime_system();
+		callback2(caml_get_public_method(interne, hash_variant("mouseDown")), interne, point_caml);
 	caml_release_runtime_system();
 //	if(new_lock)	
 //			//**release_sem(ocaml_sem);
@@ -612,15 +611,17 @@ value b_view(value self, value frame, value name, value resizingMode, value flag
 //	caml_leave_blocking_section();	
 	caml_release_runtime_system();
 		ov = new OView(self, 
-					   *((BRect *)Int32_val(frame)), 
-					   String_val(name), 
-					   Int32_val(resizingMode), 
-					   Int32_val(flags));
+				   *((ORect *)Field(frame,0)), 
+				   String_val(name), 
+				   Int32_val(resizingMode), 
+				   Int32_val(flags));
 	caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
 //	register_global_root(&caml_view);
 	
-	caml_view = caml_copy_int32((int32)ov);
+	caml_view = alloc_small(1,Abstract_tag);
+	Field(caml_view,0) = (value)ov;
+
 	CAMLreturn(caml_view);
 
 }
@@ -628,9 +629,14 @@ value b_view(value self, value frame, value name, value resizingMode, value flag
 //***********************
 value b_view_addChild(value view, value aView){
 	CAMLparam2(view, aView);
+	OView * oview = (OView *)Field(view,0);
+	BView * bview = (BView *)Field(aView,0);
+	OView * cview = (OView *)Field(aView,0);
 
-	((BView *)Int32_val(view))->BView::AddChild((BView *)Int32_val(aView));
-	
+	caml_release_runtime_system();
+		oview->BView::AddChild(bview);
+	caml_acquire_runtime_system();
+
 	CAMLreturn(Val_unit);
 }
 
@@ -639,7 +645,7 @@ value b_view_allAttached(value view){
 	CAMLparam1(view);
 	OView *v;
 
-	v =((OView *)Int32_val(view));
+	v =((OView *)Field(view,0));
 	
 //	caml_enter_blocking_section();
 		v->BView::AllAttached();
@@ -653,7 +659,7 @@ value b_view_attachedToWindow(value view){
 	CAMLparam1(view);
 	OView *v;
 
-	v =((OView *)Int32_val(view));
+	v =((OView *)Field(view,0));
 	
 //	caml_enter_blocking_section();
 		v->BView::AttachedToWindow();
@@ -689,7 +695,7 @@ value b_view_childAt(value view, value index){
 	CAMLlocal1(caml_child);
 
 //	caml_leave_blocking_section();
-		caml_child = caml_copy_int32((int32) ((BView *)Int32_val(view))->BView::ChildAt(Int32_val(index)));
+		caml_child = caml_copy_int32((int32) ((OView *)Field(view,0))->BView::ChildAt(Int32_val(index)));
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_child);
@@ -702,7 +708,7 @@ value b_view_countChildren(value view){
 	CAMLlocal1(caml_count);
 	
 //	caml_leave_blocking_section();
-		caml_count = caml_copy_int32(((BView *)Int32_val(view))->BView::CountChildren());
+		caml_count = caml_copy_int32(((OView *)Field(view,0))->BView::CountChildren());
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_count);
@@ -731,8 +737,7 @@ value b_view_drawBitmap_destination(value view, value image, value destination) 
 	CAMLparam3(view, image, destination);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->BView::DrawBitmap((BBitmap *)Int32_val(image),
-												   *((BRect *)Int32_val(destination)));
+	((OView *)Field(view,0))->BView::DrawBitmap((BBitmap *)Field(image,0), *((ORect *)Field(destination,0)));
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -745,7 +750,7 @@ value b_view_drawString(value view, value chaine, value point) {
 	
 //	caml_leave_blocking_section();
 	s= String_val(chaine);
-	((BView *)Int32_val(view ))->BView::DrawString(s, *(BPoint *)Int32_val(point));
+	((OView *)Field(view,0))->BView::DrawString(s, *(OPoint *)Field(point,0));
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -757,7 +762,7 @@ value b_view_fillPolygon_aPolygon(value view, value aPolygon, value aPattern){
 
 //	caml_leave_blocking_section();
 	
-	((BView *)Int32_val(view ))->BView::FillPolygon((BPolygon *)Int32_val(aPolygon), 
+	((OView *)Field(view,0))->BView::FillPolygon((OPolygon *)Field(aPolygon,0), 
 											 decode_pattern(aPattern));
 //	caml_enter_blocking_section();
 	CAMLreturn(Val_unit);
@@ -770,9 +775,9 @@ value b_view_fillPolygon_pointList(value view, value pointList, value numPoints,
 	
 //	caml_leave_blocking_section();
 	for(int i=0 ; i<Int32_val(numPoints) ; i++)	
-			point_liste[i] = *(BPoint *)Int32_val(Field(pointList, i));
+			point_liste[i] = *(OPoint *)Field(Field(pointList, i),0);
 	
-	((BView *)Int32_val(view))->BView::FillPolygon(point_liste, 
+	((OView *)Field(view,0))->BView::FillPolygon(point_liste, 
 											Int32_val(numPoints), 
 											decode_pattern(aPattern));
 //	caml_enter_blocking_section();
@@ -787,12 +792,12 @@ value b_view_fillPolygon_pointList_rect(value view, value pointList, value numPo
 //	caml_leave_blocking_section();
 
 	for(int i=0 ; i<Int32_val(numPoints) ; i++)	
-			point_liste[i] = *(BPoint *)Int32_val(Field(pointList, i) );
+			point_liste[i] = *(OPoint *)Field(Field(pointList, i) ,0);
 	
 
-	((BView *)Int32_val(view ))->BView::FillPolygon(point_liste, 
+	((OView *)Field(view,0))->BView::FillPolygon(point_liste, 
 											 Int32_val(numPoints), 
-											 *(BRect *)Int32_val(rect), 
+											 *(ORect *)Field(rect,0), 
 											 decode_pattern(aPattern));
 //	caml_enter_blocking_section();
 	
@@ -805,7 +810,7 @@ value b_view_fillRect(value view, value rect, value aPattern) {
 	
 //	caml_leave_blocking_section();
 
-	((BView *)Int32_val(view))->BView::FillRect(*(BRect *)Int32_val(rect),
+	((OView *)Field(view,0))->BView::FillRect(*(ORect *)Field(rect,0),
 										 decode_pattern(aPattern));
 
 //	caml_enter_blocking_section();
@@ -821,7 +826,7 @@ value b_view_frame(value view){
 	BRect *r;
 	
 //	caml_leave_blocking_section();
-		r = new BRect(((BView *)Int32_val(view))->BView::Frame());
+		r = new BRect(((OView *)Field(view,0))->BView::Frame());
 		caml_frame =caml_copy_int32((int32)r);  
 //	caml_enter_blocking_section();
 	
@@ -835,7 +840,7 @@ value b_view_getFont(value view, value font){
 
 	font_c = new(BFont);
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view))->BView::GetFont(font_c);
+	((OView *)Field(view,0))->BView::GetFont(font_c);
 		
 	Store_field(font, 0, copy_int32((value)font_c));
 //	caml_enter_blocking_section();
@@ -850,7 +855,7 @@ value b_view_getMouse(value view, value location, value buttons, value checkMess
 	uint32 boutons;
 	
 //		caml_leave_blocking_section();
-		((BView *)Int32_val(view ))->BView::GetMouse((BPoint *)Int32_val(location), 
+		((OView *)Field(view,0))->BView::GetMouse((OPoint *)Field(location,0), 
 											  &boutons, 
 											  (bool)Bool_val(checkMessageQueue));
 		Store_field(buttons, 0, copy_int32(boutons));
@@ -866,7 +871,7 @@ value b_view_highColor(value view) {
 	rgb_color rgb_color;
 
 //	caml_leave_blocking_section();
-	rgb_color = ((BView *)Int32_val(view))->BView::HighColor();
+	rgb_color = ((OView *)Field(view,0))->BView::HighColor();
 	
 	register_global_root(&color);
 	color = caml_alloc(4, 0 /*tuple */);
@@ -883,7 +888,7 @@ value b_view_highColor(value view) {
 value b_view_invalidate(value view) {
 	CAMLparam1(view);
 	OView *v;
-	v = (OView *)Int32_val(view );
+	v = (OView *)Field(view,0);
 	
 //	caml_enter_blocking_section();
 		v->BView::Invalidate();
@@ -898,8 +903,8 @@ value b_view_invalidate_rect(value view, value rect) {
 	OView *v;
 	BRect r;
 
-	v =(OView *)Int32_val(view );
-	r = *(BRect*)Int32_val(rect);
+	v =(OView *)Field(view,0);
+	r = *(ORect *)Field(rect,0);
 	
 //	caml_enter_blocking_section();
 		v->BView::Invalidate(r);
@@ -913,7 +918,7 @@ value b_view_isPrinting(value view) {
 	CAMLparam1(view);
 	CAMLlocal1(caml_bool);
 //	caml_leave_blocking_section();
-		caml_bool = Val_bool( ((BView *)Int32_val(view ))->BView::IsPrinting() );
+		caml_bool = Val_bool( ((OView *)Field(view,0))->BView::IsPrinting() );
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_bool);
@@ -924,8 +929,8 @@ value b_view_messageReceived(value view, value message) {
 	CAMLparam2(view, message);
 	OView *v;
 	BMessage *m;
-	v = (OView *)Int32_val(view);
-	m = (BMessage *)Int32_val(message);
+	v = (OView *)Field(view,0);
+	m = (OMessage *)Field(message,0);
 	
 	printf("[C++]appel de b_view_messageReceived what = %c%c%c%c.\n",
 					m->what >> 24, 
@@ -948,7 +953,7 @@ value b_view_mouseDown(value view, value point){
 	printf("[C]b_view_mouseDown\n");fflush(stdout);
 	
 //	caml_leave_blocking_section();
-		((BView *)Int32_val(view ))->BView::MouseDown(*(BPoint *)Int32_val(point));
+		((BView *)Field(view,0))->BView::MouseDown(*(OPoint *)Field(point,0));
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -959,9 +964,9 @@ value b_view_mouseMoved(value view, value where, value code, value a_message){
 	CAMLparam4(view, where, code, a_message);
 	
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->BView::MouseMoved(*(BPoint *)Int32_val(where),
+	((OView *)Field(view,0))->BView::MouseMoved(*(OPoint *)Field(where,0),
 												   Int32_val(code),
-												   (BMessage *)Int32_val(a_message));
+												   (OMessage *)Field(a_message,0));
 //	caml_enter_blocking_section();
 
 	CAMLreturn(Val_unit);
@@ -972,7 +977,7 @@ value b_view_moveBy(value view, value dh, value dv){
 	CAMLparam3(view, dh, dv);
 
 //	caml_leave_blocking_section();
-			((BView *)Int32_val(view))->MoveBy(Double_val(dh), Double_val(dv));
+			((OView *)Field(view,0))->MoveBy(Double_val(dh), Double_val(dv));
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -985,8 +990,8 @@ value b_view_movePenTo_pt(value view, value pt){
 	BPoint p;
 
 //	//**acquire_sem(ocaml_sem);
-		ov = (OView *)Int32_val(view);
-		p =	*(BPoint *)Int32_val(pt);
+		ov = (OView *)Field(view,0);
+		p =	*(OPoint *)Field(pt,0);
 //	caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
 
@@ -1000,7 +1005,7 @@ value b_view_movePenTo_pt(value view, value pt){
 value b_view_moveTo(value view, value where){
 	CAMLparam2(view, where);
 
-	((BView *)Int32_val(view))->BView::MoveTo(*(BPoint *)Int32_val(where));
+	((OView *)Field(view,0))->BView::MoveTo(*(OPoint *)Field(where,0));
 	
 	CAMLreturn(Val_unit);
 }
@@ -1011,7 +1016,7 @@ value b_view_name(value view){
 	CAMLlocal1(caml_name);
 	
 //	caml_leave_blocking_section();
-		caml_name = caml_copy_string(((BView *)Int32_val(view))->BView::Name());
+		caml_name = caml_copy_string(((OView *)Field(view,0))->BView::Name());
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(caml_name);
@@ -1022,7 +1027,7 @@ value b_view_resizeBy(value view, value horizontal, value vertical) {
 	CAMLparam3(view, horizontal, vertical);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view))->BView::ResizeBy(Double_val(horizontal), Double_val(vertical));
+	((OView *)Field(view,0))->BView::ResizeBy(Double_val(horizontal), Double_val(vertical));
 //	caml_enter_blocking_section();
 		
 	CAMLreturn(Val_unit);
@@ -1033,7 +1038,7 @@ value b_view_resizeTo(value view, value width, value height) {
 	CAMLparam3(view, width, height);
 
 //	caml_leave_blocking_section();
-		((BView *)Int32_val(view))->BView::ResizeTo(Double_val(width), Double_val(height));
+		((OView *)Field(view,0))->BView::ResizeTo(Double_val(width), Double_val(height));
 //	caml_enter_blocking_section();
 		
 	CAMLreturn(Val_unit);
@@ -1044,7 +1049,7 @@ value b_view_resizeToPreferred(value view){
 	CAMLparam1(view);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view))->BView::ResizeToPreferred();
+	((OView *)Field(view,0))->BView::ResizeToPreferred();
 //	caml_enter_blocking_section();
 		
 	CAMLreturn(Val_unit);
@@ -1056,7 +1061,7 @@ value b_view_setDrawingMode(value view, value mode){
 	CAMLparam2(view, mode);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view))->SetDrawingMode(decode_drawing_mode(mode));
+	((OView *)Field(view,0))->SetDrawingMode(decode_drawing_mode(mode));
 //	caml_enter_blocking_section();
 
 	CAMLreturn(Val_unit);			
@@ -1068,7 +1073,7 @@ value b_setfont(value view, value font, value properties){
 	CAMLparam3(view, font, properties);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view))->SetFont(
+	((OView *)Field(view,0))->SetFont(
 									   (BFont *)Int32_val(font), 
 									   Int32_val(properties)
 									  );
@@ -1083,7 +1088,7 @@ value b_setfontsize(value view, value points) {
 	CAMLparam2(view, points);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->SetFontSize(Double_val(points));
+	((OView *)Field(view,0))->SetFontSize(Double_val(points));
 //	caml_enter_blocking_section();
 
 	CAMLreturn(Val_unit);
@@ -1094,7 +1099,7 @@ value b_view_setHighColor(value view, value red, value green, value blue, value 
 	CAMLparam5(view, red, green, blue, alpha);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->SetHighColor(Int_val(red),
+	((OView *)Field(view,0))->SetHighColor(Int_val(red),
 											  Int_val(green),
 											  Int_val(blue),
 											  Int_val(alpha));
@@ -1114,7 +1119,7 @@ value b_view_setHighColor_rgb(value view, value color){
 	couleur.blue  = Int_val(Field(color, 2));
 	couleur.alpha = Int_val(Field(color, 3));
 	
-	((BView *)Int32_val(view ))->SetHighColor(couleur);
+	((OView *)Field(view,0))->SetHighColor(couleur);
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -1125,7 +1130,7 @@ value b_view_setPenSize(value view, value size) {
 	CAMLparam2(view, size);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->BView::SetScale(Double_val(size));
+	((OView *)Field(view,0))->BView::SetScale(Double_val(size));
 //	caml_enter_blocking_section();
 
 	CAMLreturn(Val_unit);
@@ -1136,7 +1141,7 @@ value b_view_setScale(value view, value ratio) {
 	CAMLparam2(view, ratio);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->SetScale(Double_val(ratio));
+	((OView *)Field(view,0))->SetScale(Double_val(ratio));
 //	caml_enter_blocking_section();
 
 	CAMLreturn(Val_unit);
@@ -1147,7 +1152,7 @@ value b_view_setViewColor(value view, value red, value green, value blue, value 
 	CAMLparam5(view, red, green, blue, alpha);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->BView::SetViewColor(Int_val(red),
+	((OView *)Field(view,0))->BView::SetViewColor(Int_val(red),
 													 Int_val(green),
 													 Int_val(blue),
 													 Int_val(alpha));
@@ -1167,7 +1172,7 @@ value b_view_setViewColor_rgb(value view, value color){
 	couleur.blue  = Int_val(Field(color, 2));
 	couleur.alpha = Int_val(Field(color, 3));
 	
-	((BView *)Int32_val(view ))->BView::SetViewColor(couleur);
+	((OView *)Field(view,0))->BView::SetViewColor(couleur);
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -1178,7 +1183,7 @@ value b_view_strokePolygon_polygon(value view, value polygon, value isClosed, va
 	CAMLparam4(view, polygon, isClosed, aPattern);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->StrokePolygon((BPolygon *)Int32_val(polygon), 
+	((OView *)Field(view,0))->StrokePolygon((BPolygon *)Int32_val(polygon), 
 											   Bool_val(isClosed), 
 											   decode_pattern(aPattern));
 	
@@ -1194,9 +1199,9 @@ value b_view_strokePolygon_pointList(value view, value pointList, value numPoint
 
 //	caml_leave_blocking_section();
 	for(int i=0 ; i<Int32_val(numPoints) ; i++)	
-		point_liste[i] = *(BPoint *)Int32_val(Field(pointList, i) );
+		point_liste[i] = *(OPoint *)Field(Field(pointList, i),0);
 
-	((BView *)Int32_val(view ))->StrokePolygon(point_liste,
+	((OView *)Field(view,0))->StrokePolygon(point_liste,
 											 Int32_val(numPoints),
 											 Bool_val(isClosed), 
 											 decode_pattern(aPattern));
@@ -1213,10 +1218,10 @@ value b_view_strokePolygon_pointList_rect_nativecode(value view, value pointList
 
 //	caml_leave_blocking_section();
 	for(int i=0 ; i<Int32_val(numPoints) ; i++)	
-		point_liste[i] = *(BPoint *)Int32_val(Field(pointList, i) );
+		point_liste[i] = *(OPoint *)Field(Field(pointList, i),0);
 
 
-	((BView *)Int32_val(view ))->StrokePolygon(point_liste,
+	((OView *)Field(view,0))->StrokePolygon(point_liste,
 											 Int32_val(numPoints),
 											 *(BRect *)Int32_val(rect ),
 											 Bool_val(isClosed), 
@@ -1236,7 +1241,7 @@ value b_view_strokeShape(value view, value shape, value pattern){
 	CAMLparam3(view, shape, pattern);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view ))->BView::StrokeShape((BShape *)Int32_val(shape), 
+	((OView *)Field(view,0))->BView::StrokeShape((OShape *)Field(shape,0), 
 											   		decode_pattern(pattern));
 //	caml_enter_blocking_section();
 	
@@ -1249,7 +1254,7 @@ value b_view_windowActivated(value view, value active){
 	CAMLparam2(view, active);
 
 //	caml_leave_blocking_section();
-	((BView *)Int32_val(view))->BView::WindowActivated(Bool_val(active));
+	((OView *)Field(view,0))->BView::WindowActivated(Bool_val(active));
 	caml_enter_blocking_section();
 
 	CAMLreturn(Val_unit);
@@ -1261,7 +1266,7 @@ value b_view_window(value view) {
 	CAMLlocal1(window);
 	
 //	caml_leave_blocking_section();
-		window =caml_copy_int32((value)((OView *)Int32_val(view))->Window());
+		window =caml_copy_int32((value)((OView *)Field(view,0))->Window());
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(window);

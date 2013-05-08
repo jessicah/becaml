@@ -25,16 +25,18 @@ class tweakWin =
 	val sleepage = new be_slider
 
 	method tweakWin hand (imass:int32) (idrag:int32) (iwidth:int32) (isleepage:int32) =
-		window#be_window ~frame:(let r = new be_rect in r#be_rect ~left:610. 
-																  ~top:50. 
-																  ~right:760. 
-																  ~bottom:500. 
-																  ();
-																  r) 
-						  ~title:"Tweakables" 
-						  ~window_type:B_FLOATING_WINDOW 
-						  ~flags:Int32.zero 
-						  ();
+		window#be_window ~frame:(let r = new be_rect 
+                                         in 
+                                         r#be_rect ~left:610. 
+                                                   ~top:50. 
+                                                   ~right:760. 
+                                                   ~bottom:500. 
+                                                   ();
+                                         r) 
+                                 ~title:"Tweakables" 
+                                 ~window_type:B_FLOATING_WINDOW 
+                                 ~flags:Int32.zero 
+                                 ();
 		handler := hand;
 		let tv = new be_view
 		in

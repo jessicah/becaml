@@ -283,17 +283,16 @@ void OWindow::SetLayout(BLayout* layout) {
 #endif
 
 void OWindow::Show() {
-//			CAMLparam1(interne);
-			CAMLparam0();
-			CAMLlocal1(win_caml);
-			printf("[C++]OWindow#Show\n");fflush(stdout);
-			caml_leave_blocking_section();
-				win_caml = caml_copy_int32((int32)this);
-				////**acquire_sem(callback_sem);
-					caml_callback(*caml_named_value("Owindow::Show"), win_caml);
-				////**release_sem(callback_sem);
-			caml_enter_blocking_section();
-			CAMLreturn0;
+//	CAMLparam1(interne);
+	CAMLparam0();
+	CAMLlocal1(win_caml);
+	printf("[C++]OWindow#Show\n");fflush(stdout);
+	caml_acquire_runtime_system();
+		////**acquire_sem(callback_sem);
+		caml_callback(caml_get_public_method(interne, hash_variant("show")), interne);
+		////**release_sem(callback_sem);
+	caml_release_runtime_system ();
+	CAMLreturn0;
 }
 		
 void OWindow::UpdateIfNeeded() {
@@ -441,7 +440,8 @@ value b_window_type_native (value objet, value frame, value title, value type, v
 				  worksp);
 		printf("[C] b_window_type_native : OWindow = 0x%lX\n", (int32)win);fflush(stdout);
 	caml_acquire_runtime_system();
-	w = caml_copy_int32((int32)win);
+	w = alloc_small(1, Abstract_tag);
+	Field(w,0) = (value) win;
 
 	CAMLreturn(w);
 }
@@ -495,25 +495,32 @@ value b_window_show(value window){
 
 	owindow = (OWindow *)(Field(window,0));
 	caml_release_runtime_system();
-		owindow->Show();
+		owindow->BWindow::Show();
  	caml_acquire_runtime_system();
 	CAMLreturn(Val_unit);
 }
 
 //----------
 value b_window_bounds(value window) {
-		CAMLparam1(window);
-		CAMLlocal1(rect);
+	CAMLparam1(window);
+	CAMLlocal2(p_rect, ocaml_rect);
 	
-	BRect *r = new BRect((((BWindow *)(Int32_val(window)))->Bounds()));
-	
+	p_rect = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&p_rect); //TODO unregister
+
+	ocaml_rect = callback(*caml_named_value("new_be_rect"), p_rect);
+	caml_register_global_root(&ocaml_rect);//TODO unregister
+
+	caml_release_runtime_system();
+		ORect *r = new ORect(ocaml_rect, (((OWindow *)(Field(window,0)))->Bounds()));
+	caml_acquire_runtime_system();
 	////**acquire_sem(ocaml_sem);
 	//caml_leave_blocking_section();
-		rect = caml_copy_int32((value)r);
-// 	caml_enter_blocking_section();
+	Field(p_rect,0) = (value)r;
+	// 	caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
 	
-	CAMLreturn(rect);
+	CAMLreturn(p_rect);
 }
 
 value b_window_removeChild(value window, value aView){
@@ -535,7 +542,7 @@ value b_window_addChild_view(value window, value aView){
 	BView * bview;
 	
 	bwin = ((OWindow *)Field(window,0));
-	bview = ((OView *)Field(aView,0));
+	bview = ((BView *)Field(aView,0));
 	
 	bwin->BWindow::AddChild(bview);
 	

@@ -40,7 +40,7 @@ thumb_style decode_thumb_style(value thumb_style){
 }
 
 //**************************
-class OSlider : public BSlider//, public Glue 
+class OSlider : public BSlider TODO//, public Glue 
 	{
 		public :
 				OSlider(/*value self,*/ BRect frame, char *name, char *label, BMessage *message, int32 minValue, int32 maxValue, thumb_style thumbType, uint32 resizingMode, uint32 flags) :

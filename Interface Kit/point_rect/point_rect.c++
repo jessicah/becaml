@@ -57,7 +57,7 @@ value b_point_point_point(value interne, value point){
 
 	OPoint *p;
 	
-	p = new OPoint(interne, *(BPoint *)Int32_val(point));
+	p = new OPoint(interne, *(BPoint *)Field(point,0));
 	be_point = copy_int32((int32)p);
 
 	CAMLreturn(be_point);
@@ -81,7 +81,7 @@ value b_point_printtostream(value point)
 {
  CAMLparam1(point);
  
- ((BPoint *)Int32_val(point))->PrintToStream();
+ ((BPoint *)Field(point,0))->PrintToStream();
  
  CAMLreturn(Val_unit);
 }
@@ -91,7 +91,7 @@ value b_point_printtostream(value point)
 value b_point_set(value point, value x, value y){
 	CAMLparam3(point, x, y);
 
-	((BPoint *)Int32_val(point))->Set(Double_val(x), Double_val(y));
+	((BPoint *)Field(point,0))->Set(Double_val(x), Double_val(y));
 	 
 	CAMLreturn(Val_unit);
 }
@@ -100,7 +100,7 @@ value b_point_set(value point, value x, value y){
 value b_point_set_x(value point, value x){
 	CAMLparam2(point, x);
 
-	((BPoint *)Int32_val(point))->x = Double_val(x);
+	((BPoint *)Field(point,0))->x = Double_val(x);
 	 
 	CAMLreturn(Val_unit);
 }
@@ -109,7 +109,7 @@ value b_point_set_x(value point, value x){
 value b_point_set_y(value point, value y){
 	CAMLparam2(point, y);
 
-	((BPoint *)Int32_val(point))->y = Double_val(y);
+	((BPoint *)Field(point,0))->y = Double_val(y);
 	 
 	CAMLreturn(Val_unit);
 }
@@ -123,7 +123,7 @@ value b_point_x(value point){
 	CAMLlocal1(caml_x);
 
 //	caml_leave_blocking_section();
-		caml_x = caml_copy_double(((BPoint *)Int32_val(point))->x);
+		caml_x = caml_copy_double(((BPoint *)Field(point,0))->x);
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_x);
@@ -135,7 +135,7 @@ value b_point_y(value point){
 	CAMLlocal1(caml_y);
 
 //	caml_leave_blocking_section();
-		caml_y = caml_copy_double(((BPoint *)Int32_val(point))->y);
+		caml_y = caml_copy_double(((BPoint *)Field(point,0))->y);
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_y);
@@ -170,8 +170,8 @@ value b_rect_rect_leftTop(value interne, value leftTop, value rightBottom) {
 
 	ORect *r;
 	r = new ORect(interne,
-						 *(BPoint *)Int32_val(leftTop), 
-						 *(BPoint *)Int32_val(rightBottom));
+						 *(BPoint *)Field(leftTop,0), 
+						 *(BPoint *)Field(rightBottom,0));
 					 
 //	caml_leave_blocking_section();
 		rect = caml_copy_int32((int32)r);
@@ -187,7 +187,7 @@ value b_rect_rect(value interne, value rect_param) {
 
 	ORect *r;
 	r = new ORect(interne,
-						 *(BRect *)Int32_val(rect_param));
+						 *(BRect *)Field(rect_param,0));
 	
 //	caml_leave_blocking_section();
 		rect = caml_copy_int32((int32)r);
@@ -214,7 +214,7 @@ value b_rect(value interne) {
 value b_rect_insetBy_x_y(value rect, value x, value y){
 	CAMLparam3(rect, x, y);
 	
-	((BRect *)Int32_val(rect))->BRect::InsetBy(Double_val(x), Double_val(y));
+	((BRect *)Field(rect,0))->BRect::InsetBy(Double_val(x), Double_val(y));
 	
 	CAMLreturn(Val_unit);
 }
@@ -225,7 +225,7 @@ value b_rect_left(value rect){
 	CAMLlocal1(caml_left);
 
 //	caml_leave_blocking_section();
-		caml_left = caml_copy_double(((BRect *)Int32_val(rect))->left);
+		caml_left = caml_copy_double(((BRect *)Field(rect,0))->left);
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_left);
@@ -237,7 +237,7 @@ value b_rect_top(value rect){
 	CAMLlocal1(caml_top);
 
 //	caml_leave_blocking_section();
-		caml_top = caml_copy_double(((BRect *)Int32_val(rect))->top);
+		caml_top = caml_copy_double(((BRect *)Field(rect,0))->top);
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_top);
@@ -249,7 +249,7 @@ value b_rect_right(value rect){
 	CAMLlocal1(caml_right);
 
 //	caml_leave_blocking_section();
-		caml_right = caml_copy_double(((BRect *)Int32_val(rect))->right);
+		caml_right = caml_copy_double(((ORect *)Field(rect,0))->right);
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_right);
@@ -261,7 +261,7 @@ value b_rect_bottom(value rect){
 	CAMLlocal1(caml_bottom);
 
 //	caml_leave_blocking_section();
-		caml_bottom = caml_copy_double(((BRect *)Int32_val(rect))->bottom);
+		caml_bottom = caml_copy_double(((BRect *)Field(rect,0))->bottom);
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_bottom);
@@ -271,7 +271,7 @@ value b_rect_bottom(value rect){
 value b_rect_offsetBy_x_y(value rect, value x, value y){
 	CAMLparam3(rect, x, y);
 	
-	((BRect *)Int32_val(rect))->BRect::OffsetBy(Double_val(x), Double_val(y));
+	((BRect *)Field(rect,0))->BRect::OffsetBy(Double_val(x), Double_val(y));
 	
 	CAMLreturn(Val_unit);
 }
@@ -280,7 +280,7 @@ value b_rect_offsetBy_x_y(value rect, value x, value y){
 value b_rect_offsetTo_point(value rect, value point) {
 	CAMLparam2(rect, point);
 
-	((BRect *)Int32_val(rect))->OffsetTo(*((BPoint *)Int32_val(point)));
+	((BRect *)Field(rect,0))->OffsetTo(*((BPoint *)Field(point,0)));
 
 	CAMLreturn(Val_unit);
 }
@@ -289,7 +289,7 @@ value b_rect_offsetTo_point(value rect, value point) {
 value b_rect_offsetTo(value rect, value x, value y) {
 	CAMLparam3(rect, x, y);
 
-	((BRect *)Int32_val(rect))->OffsetTo(Double_val(x), Double_val(y));
+	((BRect *)Field(rect,0))->OffsetTo(Double_val(x), Double_val(y));
 
 	CAMLreturn(Val_unit);
 }
@@ -298,7 +298,7 @@ value b_rect_offsetTo(value rect, value x, value y) {
 value b_rect_set(value rect, value left, value top, value right, value bottom) {
 	CAMLparam5(rect, left, top, right, bottom) ;
 
-	((BRect *)Int32_val(rect))->Set(
+	((BRect *)Field(rect,0))->Set(
 								   (float)Double_val(left), 
 								   (float)Double_val(top), 
 								   (float)Double_val(right), 
@@ -312,7 +312,7 @@ value b_rect_set(value rect, value left, value top, value right, value bottom) {
 value b_rect_printtostream(value rect) {
 	CAMLparam1(rect);
 
-	((BRect *)Int32_val(rect))->PrintToStream();
+	((BRect *)Field(rect,0))->PrintToStream();
 	
 	CAMLreturn(Val_unit);
 }
@@ -323,7 +323,7 @@ value b_rect_width(value rect) {
 	CAMLlocal1(caml_width);
 
 //	caml_leave_blocking_section();
-		caml_width = caml_copy_double(((BRect *)Int32_val(rect))->Width());
+		caml_width = caml_copy_double(((BRect *)Field(rect,0))->Width());
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_width);

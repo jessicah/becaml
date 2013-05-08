@@ -1,12 +1,7 @@
 #include <stdio.h>
-#ifndef BEOS
-	#define BEOS
-#endif
 
 #include <Rect.h>
 #include <Shape.h> 
-
-#include "glue.h"
 
 #include "alloc.h"
 #include "callback.h"
@@ -15,11 +10,13 @@
 #include "signals.h"
 #include "threads.h"
 
+#include "glue.h"
+
 extern "C" {
 	extern sem_id ocaml_sem;
-	value b_shape_shape(/*value self*/);
-	value b_shape_bounds(/*value self*/);
-	value b_shapeIterator_shapeIterator(/*value self*/);
+	value b_shape_shape(value self);
+	value b_shape_bounds(value self);
+	value b_shapeIterator_shapeIterator(value self);
 	value b_shapeIterator_iterate(value shapeIterator, value shape);
 }
 

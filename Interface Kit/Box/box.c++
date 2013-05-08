@@ -96,21 +96,26 @@ void OBox::WindowActivated(bool state){
 value b_box_box_native(value ocaml_objet, value frame, value name, value resizingMode, value flags, value border){
 	CAMLparam5(ocaml_objet, frame, name, resizingMode, flags);
 	CAMLxparam1(border);
-//	CAMLlocal1(box);
+	CAMLlocal1(p_box);
 	OBox *b;
 	
+	p_box = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&p_box);
+
 	caml_release_runtime_system();
 		b= new OBox(ocaml_objet,
-						   *(ORect *)Field(frame,0), 
-						   String_val(name), 
-						   Int32_val(resizingMode), 
-						   Int32_val(flags), 
-						   decode_border_style(border));
-		printf("C 0x%lx : %lx\n", b, sizeof(OBox));
+				   *(ORect *)Field(frame,0), 
+				   String_val(name), 
+				   Int32_val(resizingMode), 
+				   Int32_val(flags), 
+				   decode_border_style(border));
 	caml_acquire_runtime_system();
-//	box = copy_int32((value)b);
 	
-	CAMLreturn(caml_copy_int32((int32)b));
+	printf("C 0x%lx : %lx\n", b, sizeof(OBox));
+	
+	Field(p_box,0) = (value)b;
+
+	CAMLreturn(p_box);
 }
 
 //*******************

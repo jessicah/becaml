@@ -74,9 +74,6 @@ class ddApp =
 		~button0Label:"Cool!" ();
 		alert#go();
 
-	method run () =
-		application#run();
-
 	method quitRequested() =
 		if !bt then (tweakWin#quit());
 		if !bc then (colorWin#quit());

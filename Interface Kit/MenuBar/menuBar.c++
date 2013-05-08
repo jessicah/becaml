@@ -5,8 +5,11 @@
 #include "memory.h"
 #include "signals.h"
 #include "threads.h"
+
 #include "glue.h"
 #include "menu.h"
+#include "menuItem.h"
+#include "point_rect.h"
 
 extern "C" {
 	extern sem_id ocaml_sem;
@@ -43,7 +46,7 @@ value b_menuBar_menuBar_nativecode(value self, value frame, value name, value re
 	
 	caml_release_runtime_system();
 		OMenuBar *mb = new OMenuBar(self,
-						*(BRect *)Int32_val(frame),
+						*(ORect *)Field(frame,0),
 						String_val(name),
 						Int32_val(resizingMode),
 						decode_menu_layout(Int_val(layout)),
@@ -65,21 +68,21 @@ value b_menuBar_menuBar_bytecode(value *argv, int argn){
 //***********************
 value b_menuBar_addItem(value menuBar, value menuItem) {
 	CAMLparam2(menuBar, menuItem);
-	BMenu *me = (BMenuBar *)Int32_val(menuBar);
-	BMenuItem *mi = (BMenuItem *)Int32_val(menuItem);
+	BMenu *me = (OMenuBar *)Field(menuBar,0);
+	BMenuItem *mi = (OMenuItem *)Field(menuItem,0);
 	
-	CAMLreturn(Val_bool(((BMenuBar *)Int32_val(menuBar))->BMenuBar::AddItem((BMenuItem *)Int32_val(menuItem))));
+	CAMLreturn(Val_bool(((OMenuBar *)Field(menuBar,0))->BMenuBar::AddItem((OMenuItem *)Field(menuItem,0))));
 }
 
 //***********************
 value b_menuBar_addItem_frame(value menuBar, value menuItem, value frame) {
 	CAMLparam3(menuBar, menuItem, frame);
 
-	BMenu *me = (BMenuBar *)Int32_val(menuBar);
-	BMenuItem *mi = (BMenuItem *)Int32_val(menuItem);
+	BMenu *me = (OMenuBar *)Field(menuBar,0);
+	BMenuItem *mi = (OMenuItem *)Field(menuItem,0);
 	
-	CAMLreturn(Val_bool(((BMenuBar *)Int32_val(menuBar))->BMenuBar::AddItem((BMenuItem *)Int32_val(menuItem),
-																			*(BRect *)Int32_val(frame)
+	CAMLreturn(Val_bool(((OMenuBar *)Field(menuBar,0))->BMenuBar::AddItem((OMenuItem *)Field(menuItem,0),
+																			*(ORect *)Field(frame,0)
 														   		  		   )));
 }
 
@@ -97,15 +100,15 @@ value b_menuBar_addItem_submenu(value menuBar, value submenu) {
 value b_menuBar_addItem_submenu_index(value menuBar, value submenu, value index){
 	CAMLparam3(menuBar, submenu, index);
 
-	CAMLreturn(Val_bool(((BMenuBar *)Int32_val(menuBar))->BMenuBar::AddItem((BMenu *)Int32_val(submenu), Int32_val(index))));
+	CAMLreturn(Val_bool(((OMenuBar *)Field(menuBar,0))->BMenuBar::AddItem((OMenu *)Field(submenu,0), Int32_val(index))));
 }
 
 //***********************
 value b_menuBar_addItem_submenu_frame(value menuBar, value submenu, value frame) {
 	CAMLparam3(menuBar, submenu, frame);
 
-	CAMLreturn(Val_bool(((BMenuBar *)Int32_val(menuBar))->BMenuBar::AddItem((BMenu *)Int32_val(submenu),
-																  			*(BRect *)Int32_val(frame)
+	CAMLreturn(Val_bool(((OMenuBar *)Field(menuBar,0))->BMenuBar::AddItem((OMenu *)Field(submenu,0),
+																  			*(ORect *)Field(frame,0)
 																		   )));
 }
 

@@ -40,7 +40,7 @@ class OApplication : public BApplication, public Glue
 				OApplication(value objet,  char * signature);
 				~OApplication();
 				void AboutRequested();
-				virtual void MessageReceived(BMessage *message);
+				void MessageReceived(BMessage *message);
 				void ReadyToRun();
 				bool QuitRequested();
 };
@@ -85,13 +85,16 @@ void OApplication::MessageReceived(BMessage *message) {
 			p_omess = alloc_small(1,Abstract_tag);
 			caml_register_global_root(&ocaml_message);
 			ocaml_message = caml_callback(*caml_named_value("new_be_message"), p_omess);
-	 		caml_release_runtime_system();
+	 		caml_register_global_root(&ocaml_message);
+			
+			caml_release_runtime_system();
 				OMessage *omess = new OMessage(ocaml_message, message);	
 			caml_acquire_runtime_system();
+			
 			Field(p_omess,0) = (value)omess;
 			
 			fun = caml_get_public_method(interne, hash_variant("messageReceived"));
-			caml_callback2(fun, interne, omess->interne);
+			caml_callback2(fun, interne, ocaml_message);
 		caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 	CAMLreturn0;
