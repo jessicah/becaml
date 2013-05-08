@@ -3,7 +3,7 @@ open Menu;;
 open Rect;;
 open View;;
 
-external b_menuBar_menuBar : pointer -> string -> int32 -> menu_layout -> bool -> pointer = (*"b_menuBar_menuBar_bytecode"*) "b_menuBar_menuBar_nativecode"
+external b_menuBar_menuBar : #be_interne -> pointer -> string -> int32 -> menu_layout -> bool -> pointer = "b_menuBar_menuBar_bytecode" "b_menuBar_menuBar_nativecode"
 external b_menuBar_addItem : pointer -> pointer -> bool = "b_menuBar_addItem"
 external b_menuBar_addItem_frame : pointer -> pointer -> pointer -> bool = "b_menuBar_addItem_frame"
 external b_menuBar_addItem_submenu : pointer -> pointer -> bool = "b_menuBar_addItem_submenu"
@@ -18,7 +18,7 @@ class be_menuBar =
 					  ~name ?(resizingMode = Int32.logor kB_FOLLOW_LEFT_RIGHT kB_FOLLOW_TOP)
 					  ?(layout = B_ITEMS_IN_ROW)
 					  ?(resizeToFit = true) ()=
-		self#set_interne (b_menuBar_menuBar (frame#get_interne()) name resizingMode layout resizeToFit)
+		self#set_interne (b_menuBar_menuBar self (frame#get_interne()) name resizingMode layout resizeToFit)
 
 	method addItem : 'a 'b 'c. ?item:(#be_interne as 'a) ->  
 							   ?index:int32 ->

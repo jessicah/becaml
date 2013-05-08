@@ -8,6 +8,7 @@
 #include "memory.h"
 #include "mlvalues.h"
 #include "signals.h"
+#include "threads.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -30,9 +31,10 @@
 
 Glue::Glue(value ocaml_objet) {
 	CAMLparam1(ocaml_objet);
-	caml_register_global_root(&ocaml_objet);
-
-	interne = ocaml_objet;
+	caml_acquire_runtime_system();
+		caml_register_global_root(&ocaml_objet);
+		interne = ocaml_objet;
+	caml_release_runtime_system();
 	CAMLreturn0;
 }
 

@@ -17,7 +17,7 @@ open FilterView;;
 open MsgVals;;
 
 let rect = new be_rect;;
-rect#be_rect ~left:50. ~top:50. ~right:600. ~bottom:600. ();;
+let _ = rect#be_rect ~left:50. ~top:50. ~right:600. ~bottom:600. ();;
 
 class dDWindow =
 	object(self)
@@ -45,16 +45,16 @@ class dDWindow =
 		in 
 		menu#be_menu ~name:"File" ();
 		ignore(menu#addItem ~item: (let mi = new be_menuItem 
-									in 
-									print_string "[OCaml] dDWindow constructeur : creation de l'item 'About'\n";flush stdout;
-									mi#be_menuItem ~label:"About" 
-													  ~message:(let m = new be_message 
-													  			in m#be_message ~command:kB_ABOUT_REQUESTED 
-																				(); 
-																m) 
-													   (); 
-									mi) 
-							 ());
+                                            in 
+                                            print_string "[OCaml] dDWindow constructeur : creation de l'item 'About'\n";flush stdout;
+                                            mi#be_menuItem ~label:"About" 
+                                                           ~message:(let m = new be_message 
+                                                                     in 
+                                                                     m#be_message ~command:kB_ABOUT_REQUESTED (); 
+								     m) 
+							   (); 
+					    mi) 
+				    ());
 		ignore(menu#addItem ~item:(let mi = new be_menuItem 
 								   in 
 								   mi#be_menuItem ~label:"Quit" 

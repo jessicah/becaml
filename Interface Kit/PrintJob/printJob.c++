@@ -1,4 +1,3 @@
-#define BEOS
 
 #include "mlvalues.h"
 #include "alloc.h"

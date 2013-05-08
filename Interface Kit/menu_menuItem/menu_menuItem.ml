@@ -15,8 +15,8 @@ type menu_layout =
 | B_ITEMS_IN_MATRIX
 ;;
 
-external b_menu_menu : string -> menu_layout -> pointer = "b_menu_menu"
-external b_menu_menu_width_height : string -> float -> float -> pointer = "b_menu_menu_width_height"
+external b_menu_menu : #be_interne -> string -> menu_layout -> pointer = "b_menu_menu"
+external b_menu_menu_width_height : #be_interne -> string -> float -> float -> pointer = "b_menu_menu_width_height"
 external b_menu_addItem : pointer -> pointer -> bool = "b_menu_addItem"
 external b_menu_addItem_frame : pointer -> pointer -> pointer -> bool = "b_menu_addItem_frame"
 external b_menu_addItem_submenu : pointer -> pointer -> bool = "b_menu_addItem_submenu"
@@ -31,7 +31,7 @@ external b_menu_setHighColor_rgb : pointer -> rgb_color -> unit = "b_menu_setHig
 external b_menu_setTargetForItems : pointer -> pointer -> status_t = "b_menu_setTargetForItems"
 external b_menu_submenuAt : pointer -> int32 -> pointer = "b_menu_submenuAt"
 
-external b_menuItem_menuItem : string -> pointer -> char -> int -> pointer = "b_menuItem_menuItem"
+external b_menuItem_menuItem : #be_interne -> string -> pointer -> char -> int -> pointer = "b_menuItem_menuItem"
 external b_menuItem_draw : pointer -> unit = "b_menuItem_draw"
 external b_menuItem_frame : pointer -> pointer = "b_menuItem_frame"
 external b_menuItem_getContentSize : pointer -> float ref -> float ref -> unit = "b_menuItem_getContentSize_prot"
@@ -54,8 +54,9 @@ class be_menu =
 
 	method be_menu ~name ?(width : float option) ?(height : float option) ?(menu_layout = B_ITEMS_IN_COLUMN) () =
 		match width,height with
-		| None, None -> self#set_interne(b_menu_menu name menu_layout)
-		| Some width, Some height -> self#set_interne(b_menu_menu_width_height name width height)
+		| None, None -> self#set_interne(b_menu_menu self name menu_layout)
+		| Some width, Some height ->
+                                self#set_interne(b_menu_menu_width_height self name width height)
 		| _ -> failwith "be_menu#be_menu : paramètres incorrects\n"
 
 	method addItem : 'a 'b 'c. ?item:(#be_interne as 'a) ->  
@@ -129,7 +130,7 @@ and be_menuItem =
 	inherit be_Invoker
 
 	method be_menuItem ~label ~(message : be_message) ?(shortcut='\000') ?(modifiers=0) ()=
-		self#set_interne(b_menuItem_menuItem label (message#get_interne()) shortcut modifiers)
+                interne <- (b_menuItem_menuItem self label (message#get_interne()) shortcut modifiers)
 	
 	method draw () =
 		b_menuItem_draw (self#get_interne())

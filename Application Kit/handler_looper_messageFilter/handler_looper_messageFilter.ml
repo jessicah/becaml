@@ -401,3 +401,13 @@ Callback.register "MessageFilter#Filter" (
 	fun target_c -> let target = new be_Handler in target#set_interne target_c;
 	messageFilter#filter ~message ~target
 );;
+
+Callback.register "new_be_handler" 
+(
+  fun p_handler -> 
+          let handler = new be_Handler
+          in
+          handler#set_interne p_handler;
+          handler
+)
+;;

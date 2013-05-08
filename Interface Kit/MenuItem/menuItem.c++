@@ -1,6 +1,3 @@
-#ifndef BEOS
-	#define BEOS
-#endif
 
 #include <MenuItem.h>
 #include <stdio.h>
@@ -12,12 +9,15 @@
 #include "threads.h"
 
 #include "glue.h"
+#include "handler.h"
+#include "menuItem.h"
+#include "message.h"
 
 extern "C" {
 //	extern sem_id callback_sem;
 	extern sem_id ocaml_sem;
 //	extern thread_id beos_thread;
-	value b_menuItem_menuItem(/*value self,*/ value label, value message, value shortcut, value modifiers);
+	value b_menuItem_menuItem(value self, value label, value message, value shortcut, value modifiers);
 	value b_menuItem_draw(value menuItem);
 	value b_menuItem_frame(value menuItem);
 	value b_menuItem_getContentSize_prot(value menuItem, value width, value height);
@@ -35,27 +35,14 @@ extern "C" {
 	value b_separatorItem_separatorItem(value unit);
 }
 
-class OMenuItem : public BMenuItem//, public Glue 
-{
-	public :
-			OMenuItem(/*value self,*/ char *label, BMessage *message, char shortcut, uint32 modifiers);
-			~OMenuItem(){
-				b_glue_remove(this);
-			}
-			void Draw(void);
-			void Draw2();
-			void GetContentSize(float *width, float *height);
-			void GetContentSize_prot(float *width, float *height);
-			status_t Invoke(BMessage *message = NULL);
-			status_t Invoke_prot(BMessage *message = NULL);
-			bool IsSelected2();
-};
-
-OMenuItem::OMenuItem(/*value self,*/ char *label, BMessage *message, char shortcut, uint32 modifiers):
-	BMenuItem(label, message, shortcut, modifiers)//, Glue(/*self*/) 
+OMenuItem::OMenuItem(value self, char *label, BMessage *message, char shortcut, uint32 modifiers):
+	BMenuItem(label, message, shortcut, modifiers), Glue(self) 
 {
 }
 
+OMenuItem::~OMenuItem(){
+	b_glue_remove(this);
+}
 
 void OMenuItem::Draw(void) {
 //	CAMLparam1(interne);
@@ -137,7 +124,7 @@ status_t OMenuItem::Invoke(BMessage *message){
 		me = caml_copy_int32((int32)message);
 		fun = *caml_named_value("MenuItem#Invoke");
 		
-		res = caml_c_thread_register();caml_callback2(*caml_named_value("MenuItem#Invoke"),mi, me);
+		res = caml_callback2(*caml_named_value("MenuItem#Invoke"),mi, me);
 
 		caml_res = caml_copy_int32(res);
 	caml_enter_blocking_section();
@@ -169,19 +156,24 @@ OSeparatorItem::OSeparatorItem(/*value self*/):
 
 
 //***********************
-value b_menuItem_menuItem(/*value self,*/ value label, value message, value shortcut, value modifiers) {
-	CAMLparam4(/*self,*/ label, message, shortcut, modifiers);
+value b_menuItem_menuItem(value self, value label, value message, value shortcut, value modifiers) {
+	CAMLparam5(self, label, message, shortcut, modifiers);
 	CAMLlocal1(menuItem);
 	
 //	caml_leave_blocking_section();
-	OMenuItem *mi = new OMenuItem(//self,
-								  String_val(label), 
-								  (BMessage *)Int32_val(message),
-								  (char)Int_val(shortcut), 
-								  Int_val(modifiers)
-								 );
-			
-	menuItem = caml_copy_int32((value)mi);
+	caml_release_runtime_system();
+		OMessage *m = (OMessage *)Field(message,0); 
+	
+		OMenuItem *mi = new OMenuItem(self,
+					      String_val(label), 
+			       		      m, 
+		    			      (char)Int_val(shortcut), 
+	   	 			      Int_val(modifiers)
+					     );
+	caml_acquire_runtime_system();
+
+	menuItem = alloc_small(1, Abstract_tag);
+	Field(menuItem,0)=(value)mi;
 //	caml_enter_blocking_section();
 	CAMLreturn(menuItem);
 
@@ -314,7 +306,7 @@ value b_menuItem_menu(value menuItem){
 value b_menuItem_setEnabled(value menuItem, value enabled) {
 	CAMLparam2(menuItem, enabled);
  	
-	((BMenuItem *)Int32_val(menuItem))->BMenuItem::SetEnabled(Bool_val(enabled));
+	((OMenuItem *)Field(menuItem,0))->BMenuItem::SetEnabled(Bool_val(enabled));
 	
 	CAMLreturn(Val_unit);
 }
@@ -323,7 +315,7 @@ value b_menuItem_setEnabled(value menuItem, value enabled) {
 value b_menuItem_setMarked(value menuItem, value flag) {
 	CAMLparam2(menuItem, flag);
  	
-	((BMenuItem *)Int32_val(menuItem))->BMenuItem::SetMarked(Bool_val(flag));
+	((OMenuItem *)Field(menuItem,0))->BMenuItem::SetMarked(Bool_val(flag));
 	
 	CAMLreturn(Val_unit);
 }
@@ -333,8 +325,8 @@ value b_menuItem_setTarget(value menuItem, value handler) {
 	CAMLparam2(menuItem, handler);
 	CAMLlocal1(caml_status);
 	
-	BHandler * h = (BHandler *)Int32_val(handler);
-	OMenuItem * mi = (OMenuItem *)Int32_val(menuItem);
+	OHandler *h = (OHandler *)Field(handler,0);
+	OMenuItem *mi = (OMenuItem *)Field(menuItem,0);
 	
 //	caml_leave_blocking_section();
 		caml_status = caml_copy_int32((int32)mi->BMenuItem::SetTarget(h));

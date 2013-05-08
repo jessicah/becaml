@@ -495,6 +495,7 @@ and be_window =
 		b_window_resizeTo (self#get_interne()) width height
 	
 	method show () =
+		Printf.printf "[OCaml] be_window#show(), appel de b_window_show \n";flush stdout;
 		b_window_show (self#get_interne())
 
 	

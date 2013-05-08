@@ -1,6 +1,3 @@
-#ifndef BEOS
-	#define BEOS
-#endif
 #include <Handler.h>
 #include <Looper.h>
 #include <MessageFilter.h>
@@ -16,7 +13,7 @@
 #include "threads.h"
 
 
-#include "glue.h"
+#include "handler.h"
 
 extern "C" 
 {
@@ -102,44 +99,35 @@ extern "C"
 	value b_MessageFilter_looper(value messageFilter);
 }
 
-class OHandler : public BHandler//, public Glue 
+
+OHandler::OHandler(value handler_ocaml, BHandler *handler) :
+		Glue(handler_ocaml)
 {
-	public :
-			OHandler(/*value handler_ocaml*/);
-			OHandler(/*value handler_ocaml,*/ char *name);
-			OHandler(/*value handler_ocaml,*/ BMessage *message);
+	BMessage *archive = new BMessage();
+        handler->Archive(archive);
+	Instantiate(archive);
+}
 
-};
-
-OHandler::OHandler(/*value handler_ocaml*/) :
- 	BHandler()
-//		, Glue(/*handler_ocaml*/)
+OHandler::OHandler(value handler_ocaml, char *name) :
+ 	BHandler(name), Glue(handler_ocaml)
 {
 }
 
-OHandler::OHandler(/*value handler_ocaml,*/ char *name) :
- 	BHandler(name)
-//		, 	Glue(/*handler_ocaml*/)
-{
-}
-
-OHandler::OHandler(/*value handler_ocaml,*/ BMessage *message) :
- 	BHandler(message)
-//		, 	Glue(/*handler_ocaml*/)
+OHandler::OHandler(value handler_ocaml, BMessage *message) :
+ 	BHandler(message) ,Glue(handler_ocaml)
 {
 }
 
 //******************************************************************************
-class OMessageFilter : public BMessageFilter//, public Glue 
+class OMessageFilter : public BMessageFilter, public Glue 
 {
 	public :
-			OMessageFilter(/*value self,*/ uint32 command);
+			OMessageFilter(value self, uint32 command);
 			filter_result Filter(BMessage *message, BHandler **target);
 };
 
-OMessageFilter::OMessageFilter(/*value self,*/ uint32 command) :
-	BMessageFilter(command)
-//		,Glue(/*self*/)
+OMessageFilter::OMessageFilter(value self, uint32 command) :
+	BMessageFilter(command), Glue(self)
 {
 }
 
@@ -158,7 +146,7 @@ filter_result OMessageFilter::Filter(BMessage *message, BHandler **target) {
 		caml_mess = caml_copy_int32((int32)message);
 		caml_target = caml_copy_int32((int32)t);
 	
-		caml_filter_res = caml_c_thread_register();caml_callback2(*caml_named_value("MessageFilter#Filter"), 
+		caml_filter_res = caml_callback2(*caml_named_value("MessageFilter#Filter"), 
 									//*interne, 
 									caml_mess, 
 									caml_target);
@@ -203,13 +191,13 @@ value b_handler_handler(value self, value unit) {
 	CAMLlocal1(handler);
   
 	OHandler *ohandler_c;
-  
-  	ohandler_c = new OHandler(/*self*/);
-  	printf("C 0x%lx : %lx\n", ohandler_c, sizeof(OHandler));
+	
+       	caml_release_runtime_system(); 
+	  	ohandler_c = new OHandler(self, (char *)NULL);
+  	caml_acquire_runtime_system();
+	printf("C 0x%lx : %lx\n", ohandler_c, sizeof(OHandler));
 		
-	caml_leave_blocking_section();
-			handler = caml_copy_int32((int32)ohandler_c);
-  	caml_enter_blocking_section();
+	handler = caml_copy_int32((int32)ohandler_c);
 	
 	CAMLreturn(handler);
 }
@@ -222,12 +210,12 @@ value b_handler_handler_name(value self, value name) {
   CAMLlocal1(handler);
  
   OHandler *ohandler_c;
-  ohandler_c = new OHandler(/*self,*/ String_val(name));
-  	printf("C 0x%lx : %lx\n", ohandler_c, sizeof(OHandler));
+  caml_release_runtime_system();
+	  ohandler_c = new OHandler(self, String_val(name));
+  caml_acquire_runtime_system();
+  printf("C 0x%lx : %lx\n", ohandler_c, sizeof(OHandler));
   
-	caml_leave_blocking_section();
-	  	handler = caml_copy_int32((value)ohandler_c);
-  	caml_enter_blocking_section();
+  handler = caml_copy_int32((value)ohandler_c);
   CAMLreturn(handler);
 
 }
@@ -238,12 +226,12 @@ value b_handler_handler_message(value self, value message) {
 	CAMLlocal1(handler);
 	
 	OHandler *ohandler_c;
-	ohandler_c = new OHandler(/*self,*/ (BMessage *)Int32_val(message));
-  	printf("C 0x%lx : %lx\n", ohandler_c, sizeof(OHandler));
+	caml_release_runtime_system();
+		ohandler_c = new OHandler(self, (BMessage *)Int32_val(message));
+  	caml_acquire_runtime_system();
+	printf("C 0x%lx : %lx\n", ohandler_c, sizeof(OHandler));
   
-	caml_leave_blocking_section();
-		handler = caml_copy_int32((value)ohandler_c);
- 	caml_enter_blocking_section();
+	handler = caml_copy_int32((value)ohandler_c);
 	
 	CAMLreturn(handler);
 }
@@ -649,8 +637,10 @@ value b_MessageFilter_MessageFilter_command(value self, value command){
 	CAMLparam2(self, command);
 	
 	OMessageFilter *mf;
-	mf = new OMessageFilter(/*self,*/ Int32_val(command));
-  	printf("C 0x%lx : %lx\n", mf, sizeof(OMessageFilter));
+	caml_release_runtime_system();
+		mf = new OMessageFilter(self, Int32_val(command));
+	caml_acquire_runtime_system();
+	printf("C 0x%lx : %lx\n", mf, sizeof(OMessageFilter));
 	
 	CAMLreturn(copy_int32((int32)mf));
 }

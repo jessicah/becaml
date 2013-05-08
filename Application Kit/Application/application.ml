@@ -9,7 +9,7 @@ open Threads;;
 external b_application_signature : #be_interne -> string -> pointer = "b_application_signature"
 external b_application_messageReceived : pointer -> pointer -> unit = "b_application_messageReceived"
 external b_application_readyToRun : pointer -> unit = "b_application_readyToRun"
-external b_application_postmessage : pointer -> int32 -> status_t = "b_application_postMessage"
+external b_application_postMessage : pointer -> int32 -> status_t = "b_application_postMessage"
 external b_application_run : pointer -> thread_id = "b_application_run"
 external b_application_quitRequested : pointer -> bool = "b_application_quitRequested"
 external b_app : unit -> pointer = "b_app"
@@ -37,7 +37,7 @@ class be_application =
 		| None -> failwith "arguments manquants dans be_application#postMessage\n" (*a ameliorer*)
 		| Some command -> Printf.printf "[OCaml] be_application#postMessage ~command:0x%lx\n" command;
 						  flush stdout;
-						  b_application_postmessage (self#get_interne()) command
+						  b_application_postMessage (self#get_interne()) command
 (*	method be_application_ () = b_application_ self#get_interne()
 	method appResources () = b_application_appResources self#get_interne()
     method aboutRequested : unit -> unit(* b_application_aboutRequested self#get_interne()*)

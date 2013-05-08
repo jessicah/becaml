@@ -1,11 +1,9 @@
-#define BEOS
+#include <Errors.h>
 
 #include "mlvalues.h"
 #include "alloc.h"
 #include "memory.h"
 #include "signals.h"
-
-#include <Errors.h>
 
 extern "C" {
 		value k_B_NO_ERROR(value unit);

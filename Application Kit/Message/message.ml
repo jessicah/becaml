@@ -14,8 +14,8 @@ type type_code
 ;;
 
 
-external b_message_message_command : int32 	 -> pointer	= "b_message_message_command"
-external b_message_message_message : pointer ->pointer	= "b_message_message_message"
+external b_message_message_command : #be_interne -> int32 	-> pointer	= "b_message_message_command"
+external b_message_message_message : #be_interne -> pointer -> pointer	= "b_message_message_message"
 external b_message_message         : unit -> pointer		= "b_message_message"
 external b_message_        : pointer-> unit      = "b_message_"
 (*external b_message_addData :pointer-> string -> type_code ->pointer-> ssize_t -> bool -> int -> status_t = "b_message_addData"*)
@@ -57,11 +57,11 @@ class be_message =
    
          method be_message ?command ?message () = 
            interne <- (match command,message with
-                 			 | Some (com : int32 ), None -> b_message_message_command com
-				 			 | None, Some (mes : be_message) -> b_message_message_message (mes#get_interne())
-				 			 | None, None -> b_message_message () 
-				 			 | Some _, Some _ -> failwith "Constructeur be_message : 2 paramètres au lieu d'un ou zéro"
-							)
+                 			 | Some (com : int32 ), None -> b_message_message_command self com
+                                         | None, Some (mes : be_message) -> b_message_message_message self (mes#get_interne())
+                                         | None, None -> b_message_message () 
+                                         | Some _, Some _ -> failwith "Constructeur be_message : 2 paramètres au lieu d'un ou zéro"
+                        )
 
 	method be_message_ = b_message_ (self#get_interne())
 	(*method addData ~name ~type_code ~data ~numBytes ?(fixedSize = true) ?(numItems = 1) () = 
@@ -100,11 +100,12 @@ class be_message =
 			b_message_addFlat (self#get_interne()) name ((flattenable : be_flattenable)#get_interne()) numItems
 	method b_message_addSpecifier ?message ?property ?index ?range ?name () =
 		match message,property,index,range,name with
-		| Some m, None, None, None, None     -> b_message_addSpecifier_message  (self#get_interne()) ((m : be_message)#get_interne())
-		| None, Some p, None, None, None     -> b_message_addSpecifier_property (self#get_interne()) p
-		| None, Some p, Some i, None, None   -> b_message_addSpecifier_index    (self#get_interne()) p i
-		| None, Some p, Some i, Some r, None -> b_message_addSpecifier_range    (self#get_interne()) p i r
-		| None, Some p, None, None, Some n   -> b_message_addSpecifier_name     (self#get_interne()) p n
+                | Some m, None, None, None, None     ->
+                                b_message_addSpecifier_message  interne ( (m : be_message)#get_interne() : pointer )
+		| None, Some p, None, None, None     -> b_message_addSpecifier_property interne p
+		| None, Some p, Some i, None, None   -> b_message_addSpecifier_index    interne p i
+		| None, Some p, Some i, Some r, None -> b_message_addSpecifier_range    interne p i r
+		| None, Some p, None, None, Some n   -> b_message_addSpecifier_name     interne p n
 		| _ -> failwith "be_message#addSpecifier : paramètres incorrects"
 	method countNames ~type_code = 
 		b_message_countNames (self#get_interne()) type_code
@@ -160,6 +161,16 @@ class be_message =
 		b_message_printToStream (self#get_interne())
 
 	method what =
-		b_message_what (self#get_interne())
+		b_message_what interne
 end
 ;;
+
+let new_be_message p_c = 
+        let m = new be_message
+        in
+        m#set_interne p_c;
+        m
+;;
+
+Callback.register "new_be_message" new_be_message;;
+

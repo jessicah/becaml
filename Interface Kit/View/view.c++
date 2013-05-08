@@ -191,6 +191,7 @@ void OView::Draw(BRect updateRect) { //OK en 2013 !!!
 	//**acquire_sem(ocaml_sem);	
 		CAMLparam0();
 		CAMLlocal3(view_caml, rect, p_rect);
+		ORect *localUpdateRect;
 		
 //		caml_register_global_root(&view_caml);
 //		caml_register_global_root(&rect);
@@ -199,18 +200,22 @@ void OView::Draw(BRect updateRect) { //OK en 2013 !!!
 //
 	printf("[C] OView::Draw (0x%lx)\n", (int32)this);fflush(stdout);	
 	
-	ORect *localUpdateRect=new ORect(updateRect);
 		//**acquire_sem(ocaml_sem);	
-		caml_c_thread_register();
 
 		caml_acquire_runtime_system();
 			/*Création couple ocaml/C pour localUpdateRect*/
+			caml_register_global_root(&p_rect);
 			p_rect = alloc_small(1,Abstract_tag);
-			Field(p_rect,0) = (long int)localUpdateRect;
-			rect =callback(*caml_named_value("new_be_rect"),p_rect);
+			
 			caml_register_global_root(&rect);
-			localUpdateRect->interne = rect;
-
+			rect = rect =callback(*caml_named_value("new_be_rect"),p_rect);
+			
+			caml_release_runtime_system();
+				localUpdateRect=new ORect(rect, updateRect);
+			caml_acquire_runtime_system();
+			
+			Field(p_rect,0) = (value)localUpdateRect;
+			
 			callback2(caml_get_public_method(interne, hash_variant("draw")), interne, rect);
 
 		caml_release_runtime_system();
@@ -316,11 +321,10 @@ void OView::KeyDown(const char *bytes, int32 numBytes){
 void OView::MessageReceived(BMessage *message) {
 	CAMLparam0();
 //	CAMLparam1(interne);
-	CAMLlocal3(interne, view_caml, ocaml_message);
-
+	CAMLlocal3(interne, p_omess, message_ocaml);
+	OMessage * omess; 
 //	ocaml_message = (value *)malloc(sizeof(value *));
 	printf("[C] OView::MessageReceived avant register\n");fflush(stdout);
-	caml_c_thread_register();
 	
 //	caml_acquire_runtime_system();
 
@@ -330,14 +334,17 @@ void OView::MessageReceived(BMessage *message) {
 	//register_global_root((value *)&m);
 	
 //	//**acquire_sem(ocaml_sem);
+	caml_c_thread_register();	
 	
 	caml_acquire_runtime_system();
-		//Création couple OCaml/C++ pour message
-		OMessage * omess = new OMessage(message);
+		//Création couple OCaml/C++ pour message TODO a revoir
 		p_omess = alloc_small(1,Abstract_tag);
+		caml_register_global_root(&p_omess);
+		
+		caml_register_global_root(&message_ocaml);
+		message_ocaml = caml_callback(*caml_named_value("new_be_message"), p_omess);
+		omess = new OMessage(message_ocaml, message);
 		Field(p_omess,0) = (value)omess;
-		omess->interne = caml_callback(*caml_named_value("new_be_message"), p_omess);
-		caml_register_global_root(&(omess->interne));
 		
 		printf("[C++]OView::MessageReceived(message->what=0x%lx) avant appel de callback\n", message->what);fflush(stdout);
 		
@@ -362,7 +369,7 @@ void OView::MouseDown(BPoint where) {
 //		beos_thread = find_thread(NULL);
 //	}
 	CAMLparam0();
-	CAMLlocal4(view_caml, p_wh,o_where_x, o_where_y);
+	CAMLlocal4(point_caml, p_wh,o_where_x, o_where_y);
 //	if(new_lock) {
 //			//**release_sem(ocaml_sem);	
 //	}
@@ -372,18 +379,17 @@ void OView::MouseDown(BPoint where) {
 //		//**acquire_sem(ocaml_sem);	
 //		beos_thread = find_thread(NULL);
 //	}
-	caml_c_thread_register();
 
 	caml_acquire_runtime_system();
 		//Création couple OCaml/C++ pour where
 		OPoint *wh;
-		wh = new OPoint(where);
 		p_wh = alloc_small(1,Abstract_tag);
 		Field(p_wh,0) = (long int)wh;
 
-		o_where_x=caml_copy_double(where.x);
-		o_where_y=caml_copy_double(where.y);
-		wh->interne = caml_callback3(*caml_named_value("new_be_point_x_y"), p_wh, o_where_x, o_where_y);
+		o_where_x = caml_copy_double(where.x);
+		o_where_y = caml_copy_double(where.y);
+		point_caml = caml_callback3(*caml_named_value("new_be_point_x_y"), p_wh, o_where_x, o_where_y);
+		wh = new OPoint(point_caml, where);
 		caml_register_global_root(&(wh->interne));
 	
 		callback2(caml_get_public_method(interne, hash_variant("mouseDown")), interne, wh->interne);
@@ -604,11 +610,13 @@ value b_view(value self, value frame, value name, value resizingMode, value flag
 	
 	OView *ov;
 //	caml_leave_blocking_section();	
-	ov = new OView(self, 
-				   *((BRect *)Int32_val(frame)), 
-				   String_val(name), 
-				   Int32_val(resizingMode), 
-				   Int32_val(flags));
+	caml_release_runtime_system();
+		ov = new OView(self, 
+					   *((BRect *)Int32_val(frame)), 
+					   String_val(name), 
+					   Int32_val(resizingMode), 
+					   Int32_val(flags));
+	caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
 //	register_global_root(&caml_view);
 	
@@ -659,15 +667,20 @@ value b_view_attachedToWindow(value view){
 //*************************
 value b_view_bounds(value view) {
 	CAMLparam1(view);
-	CAMLlocal1(bounds);
+	CAMLlocal2(ocaml_rect, p_rect);
 	
 //	caml_leave_blocking_section();
-		BRect *rect = new BRect(((BView *)Int32_val(view))->BView::Bounds());
-//	caml_enter_blocking_section();
-	
-	bounds = caml_copy_int32((int32)rect);
+	p_rect = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&p_rect); //TODO unregister
 
-	CAMLreturn(bounds);
+        ocaml_rect = caml_callback(*caml_named_value("new_be_rect"), p_rect);
+	caml_release_runtime_system();
+		ORect *orect = new ORect(ocaml_rect, ((OView *)Field(view,0))->BView::Bounds());
+	caml_acquire_runtime_system();
+//	caml_enter_blocking_section();
+	Field(p_rect,0) = (value)orect;	
+
+	CAMLreturn(p_rect);
 }
 
 //**********************
@@ -699,16 +712,16 @@ value b_view_countChildren(value view){
 value b_view_draw(value view, value updateRect) {
 	CAMLparam2(view, updateRect);
 	OView *v;
-	BRect r;
+	ORect *r;
 	
 //	//**acquire_sem(ocaml_sem);
 //	caml_leave_blocking_section();
-		v = (OView *)Int32_val(view );
-		r = *(BRect *)Int32_val(updateRect);
+	v = (OView *)Field(view, 0);
+	r = (ORect *)Field(updateRect, 0);
 //	caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
 	
-		v->BView::Draw(r);
+	v->BView::Draw(*r);
 //	caml_leave_blocking_section();
 	CAMLreturn(Val_unit);
 }
@@ -920,10 +933,10 @@ value b_view_messageReceived(value view, value message) {
 					m->what >> 8,
 					m->what  );fflush(stdout);
 //	caml_leave_blocking_section();
-		caml_enter_blocking_section();
-		if (m->what != '_MSI')
+	caml_release_runtime_system();
+	if (m->what != '_MSI')
 				(v)->BView::MessageReceived(m);
-		caml_leave_blocking_section();
+	caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
 	printf("[C]b_view_messageReceived fin\n");fflush(stdout);
 	CAMLreturn(Val_unit);

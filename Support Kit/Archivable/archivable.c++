@@ -1,5 +1,4 @@
 #include <Archivable.h>
-#define BEOS
 
 #include "alloc.h"
 #include "memory.h"

@@ -1,7 +1,3 @@
-#ifndef BEOS
-	#define BEOS
-#endif
-
 #include "alloc.h"
 #include "memory.h"
 #include "signals.h"
@@ -9,10 +5,11 @@
 #include <List.h>
 #include <stdio.h>
 #include "glue.h"
+#include "threads.h"
 
 extern "C" {
 	extern sem_id ocaml_sem;
-	value b_list_list(/*value self,*/ value count);
+	value b_list_list(value self, value count);
 	value b_list_addItem(value list, value item);
 	value b_list_countItems(value list);
 	value b_list_firstItem(value list);
@@ -20,31 +17,29 @@ extern "C" {
 	value b_list_removeItem(value list, value index);
 }
 
-class OList : public BList//, public Glue 
+class OList : public BList, public Glue 
 {
 	public :
-		OList(/*value interne,*/ int32 count):
-			BList(count)//, Glue(/*interne*/)
-		{
-	
+		OList(value interne, int32 count):
+			BList(count), Glue(interne) {
 //			CAMLparam1(interne);
-		
 //			CAMLreturn0;
 		}
 };
 
 //******************
-value b_list_list(/*value self,*/ value count){
-	CAMLparam1(/*self,*/ count);
+value b_list_list(value self, value count){
+	CAMLparam2(self, count);
 	CAMLlocal1(list);
 	//register_global_root(&list);
 	
 //	caml_leave_blocking_section();	
 		OList *bl;
-		bl = new OList(/*self,*/ Int32_val(count));
-	
-		printf("[C] b_list_list 0x%lx : %lx\n", bl, sizeof(OList));fflush(stdout);
-		list = caml_copy_int32((uint32)bl);
+	caml_release_runtime_system();
+		bl = new OList(self, Int32_val(count));
+	caml_acquire_runtime_system();	
+	printf("[C] b_list_list 0x%lx : %lx\n", bl, sizeof(OList));fflush(stdout);
+	list = caml_copy_int32((uint32)bl);
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(list);

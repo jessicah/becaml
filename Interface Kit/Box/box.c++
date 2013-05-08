@@ -7,6 +7,7 @@
 
 #include "glue.h"
 #include "interfaceDefs.h"
+#include "point_rect.h"
 
 extern "C" {
 
@@ -98,14 +99,15 @@ value b_box_box_native(value ocaml_objet, value frame, value name, value resizin
 //	CAMLlocal1(box);
 	OBox *b;
 	
-	b= new OBox(ocaml_objet,
-					   *(BRect *)Int32_val(frame), 
-					   String_val(name), 
-					   Int32_val(resizingMode), 
-					   Int32_val(flags), 
-					   decode_border_style(border));
-	printf("C 0x%lx : %lx\n", b, sizeof(OBox));
-
+	caml_release_runtime_system();
+		b= new OBox(ocaml_objet,
+						   *(ORect *)Field(frame,0), 
+						   String_val(name), 
+						   Int32_val(resizingMode), 
+						   Int32_val(flags), 
+						   decode_border_style(border));
+		printf("C 0x%lx : %lx\n", b, sizeof(OBox));
+	caml_acquire_runtime_system();
 //	box = copy_int32((value)b);
 	
 	CAMLreturn(caml_copy_int32((int32)b));

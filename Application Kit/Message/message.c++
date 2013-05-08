@@ -5,6 +5,7 @@
 #include "mlvalues.h"
 #include "memory.h"
 #include "signals.h"
+#include "threads.h"
 
 #include "glue.h"
 #include "message.h"
@@ -13,8 +14,8 @@ extern "C"
 {
  extern sem_id ocaml_sem;
  value b_message_message(value unit);
- value b_message_message_command(value command);
- value b_message_message_message(value message);
+ value b_message_message_command(value self, value command);
+ value b_message_message_message(value self, value message);
  value b_message_();
  value b_message_countNames();
  value b_message_addSpecifier_message();
@@ -61,12 +62,12 @@ OMessage::OMessage(value self, uint32 command) :
 	BMessage(command), Glue(self) 
 {
 }
-
+/*
 OMessage::OMessage(BMessage *message) :
 	BMessage(*message), Glue(Val_unit)
 {
 }
-
+*/
 OMessage::OMessage(value self, BMessage *message) :
 	BMessage(*message), Glue(self) 
 {
@@ -79,8 +80,9 @@ value b_message_message(value ocaml_objet){
 	CAMLlocal1(p_omess);
 //	register_global_root(&self);
 	OMessage *m;
-	
-	m = new OMessage(ocaml_objet);
+	caml_release_runtime_system();	
+		m = new OMessage(ocaml_objet);
+	caml_acquire_runtime_system();
 	caml_register_global_root(&(m->interne));
 	p_omess = alloc(1,Abstract_tag);
 	Field(p_omess,0) = (value)m;
@@ -89,28 +91,31 @@ value b_message_message(value ocaml_objet){
 }
 
 //*********************
-value b_message_message_command(/*value self,*/ value command){
-	CAMLparam1(/*self,*/ command);
+value b_message_message_command(value self, value command){
+	CAMLparam2(self, command);
 	CAMLlocal1(message);
 //	register_global_root(&self);
 	OMessage *m;
 	uint32 c = Int32_val(command);
-	m = new OMessage(c);
+	caml_release_runtime_system();
+		m = new OMessage(self, c);
+	caml_acquire_runtime_system();
 //	caml_leave_blocking_section();
-		message = copy_int32((int32)m);
+		message = alloc_small(1,Abstract_tag);
+		Field(message,0) = (value)m;
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(message);
 }
 
 //*************************
-value b_message_message_message(/*value self,*/ value mess){
-	CAMLparam1(/*self,*/ mess);
+value b_message_message_message(value self, value mess){
+	CAMLparam2(self, mess);
 	CAMLlocal1(message);
 //	register_global_root(&self);
 	OMessage *m;
-	
-	m = new OMessage(/*self,*/ (BMessage *)Int32_val(mess));
+//TODO fonction a revoir	
+	m = new OMessage(self, (BMessage *)Field(mess,0)); 
 	
 //	caml_leave_blocking_section();
 		message = caml_copy_int32((int32)m);
@@ -334,12 +339,14 @@ value b_message_printToStream(value message) {
 
 }
 
-value b_message_what(value message) {
-	CAMLparam1(message);
+value b_message_what(value p_message) {
+	CAMLparam1(p_message);
 	CAMLlocal1(caml_res);
 	//BMessage *m = new BMessage( *(BMessage *)(Int32_val(message)));
 //	caml_leave_blocking_section();
-		 caml_res = caml_copy_int32( ( (BMessage *)(Int32_val(message)))->what);
+	OMessage *m = (OMessage*)Field(p_message,0);
+	
+	caml_res = caml_copy_int32(m->what);
 //	caml_enter_blocking_section();
 	CAMLreturn(caml_res);
 }

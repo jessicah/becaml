@@ -5,9 +5,9 @@
 extern "C" {
 
  extern sem_id ocaml_sem;
- value b_point_point(value unit);
- value b_point_point_point(/*value interne,*/ value point);
- value b_point_point_x_y(/*value interne,*/ value x, value y);
+ value b_point_point(value interne);
+ value b_point_point_point(value interne, value point);
+ value b_point_point_x_y(value interne, value x, value y);
  
  value b_point_set(value point, value x, value y);
  value b_point_set_x(value point, value x);
@@ -17,10 +17,10 @@ extern "C" {
  value b_point_x(value point);
  value b_point_y(value point);
  
- value b_rect_rect_left(value left, value top, value right, value bottom); 
- value b_rect_rect_leftTop(/*value interne,*/ value leftTop, value rightBottom);
- value b_rect_rect(/*value interne,*/ value rect_param);
- value b_rect(/*value unit*/);
+ value b_rect_rect_left(value interne, value left, value top, value right, value bottom); 
+ value b_rect_rect_leftTop(value interne, value leftTop, value rightBottom);
+ value b_rect_rect(value interne, value rect_param);
+ value b_rect(value interne);
  value b_rect_insetBy_x_y(value rect, value x, value y);
  value b_rect_left(value rect);
  value b_rect_top(value rect);
@@ -36,38 +36,41 @@ extern "C" {
 }
 
 //**************************
-value b_point_point(value unit){
-	CAMLparam1(unit);
+value b_point_point(value interne){
+	CAMLparam1(interne);
 	CAMLlocal1(point);
 	////register_global_root(&point); INUTILE
 	OPoint *p;
-	p = new OPoint(/*interne*/);
+	caml_release_runtime_system();
+		p = new OPoint(interne);
+	caml_acquire_runtime_system();
 	point = copy_int32((int32)p);
 
 	CAMLreturn(point);
 }
 
 //*******************************
-value b_point_point_point(/*value interne,*/ value point){
-	CAMLparam1(/*interne,*/ point);
+value b_point_point_point(value interne, value point){
+	CAMLparam2(interne, point);
 	CAMLlocal1(be_point);
 	//register_global_root(&be_point);
 
 	OPoint *p;
 	
-	p = new OPoint(/*interne,*/ *(BPoint *)Int32_val(point));
+	p = new OPoint(interne, *(BPoint *)Int32_val(point));
 	be_point = copy_int32((int32)p);
 
 	CAMLreturn(be_point);
 }
 
 //*******************************
-value b_point_point_x_y(/*value interne,*/ value x, value y){
-	CAMLparam2(/*interne,*/ x, y);
+value b_point_point_x_y(value interne, value x, value y){
+	CAMLparam3(interne, x, y);
 	CAMLlocal1(be_point);
 	//register_global_root(&be_point);
-	
-	OPoint *p = new OPoint(/*interne,*/ Double_val(x), Double_val(y));
+	caml_release_runtime_system();	
+		OPoint *p = new OPoint(interne, Double_val(x), Double_val(y));
+	caml_acquire_runtime_system();
 	be_point = copy_int32((int32)p);
 
 	CAMLreturn(be_point);
@@ -139,32 +142,34 @@ value b_point_y(value point){
  }
 
 //************************
-value b_rect_rect_left(/*value interne,*/ value left, value top, value right, value bottom) {
-	CAMLparam4(/*interne,*/ left,top,right,bottom);
+value b_rect_rect_left(value interne, value left, value top, value right, value bottom) {
+	CAMLparam5(interne, left,top,right,bottom);
 	CAMLlocal1(rect);
 	////register_global_root(&rect);
 	
-	ORect *r = new ORect(//interne,
+	caml_release_runtime_system();
+		ORect *r = new ORect(interne,
 						 Double_val(left),
 						 Double_val(top),
 						 Double_val(right),
 						 Double_val(bottom));
-						 
+	caml_acquire_runtime_system();						 
 //	caml_leave_blocking_section();
-		rect = caml_copy_int32((int32)r);
+	rect = alloc_small(1,Abstract_tag);
+	Field(rect,0) = (value)r;
 //	caml_enter_blocking_section();
 //	printf("[C] creation de be_rect : 0x%lX\n", rect);fflush(stdout);
 	CAMLreturn(rect);
 	
 }
 
-value b_rect_rect_leftTop(/*value interne,*/ value leftTop, value rightBottom) {
-	CAMLparam2(/*interne,*/ leftTop, rightBottom);
+value b_rect_rect_leftTop(value interne, value leftTop, value rightBottom) {
+	CAMLparam3(interne, leftTop, rightBottom);
 	CAMLlocal1(rect);
 	//register_global_root(&rect);
 
 	ORect *r;
-	r = new ORect(//interne,
+	r = new ORect(interne,
 						 *(BPoint *)Int32_val(leftTop), 
 						 *(BPoint *)Int32_val(rightBottom));
 					 
@@ -175,13 +180,13 @@ value b_rect_rect_leftTop(/*value interne,*/ value leftTop, value rightBottom) {
 	CAMLreturn(rect);
 }
 
-value b_rect_rect(/*value interne,*/ value rect_param) {
-	CAMLparam1(/*interne,*/ rect_param);
+value b_rect_rect(value interne, value rect_param) {
+	CAMLparam2(interne, rect_param);
 	CAMLlocal1(rect);
 	//register_global_root(&rect);
 
 	ORect *r;
-	r = new ORect(/*interne,*/
+	r = new ORect(interne,
 						 *(BRect *)Int32_val(rect_param));
 	
 //	caml_leave_blocking_section();
@@ -191,13 +196,13 @@ value b_rect_rect(/*value interne,*/ value rect_param) {
 	CAMLreturn(rect);
 }
 
-value b_rect(/*value interne*/) {
-	CAMLparam0(/*interne*/);
+value b_rect(value interne) {
+	CAMLparam1(interne);
 	CAMLlocal1(rect);
 	//register_global_root(&rect);
 
 	ORect *r;
-	r = new ORect(/*interne*/);
+	r = new ORect(interne);
 //	caml_leave_blocking_section();
 		rect = caml_copy_int32((int32)r);
 //	caml_enter_blocking_section();
@@ -330,7 +335,7 @@ value b_rect_height(value rect){
 	CAMLlocal1(caml_height);
 
 //	caml_leave_blocking_section();
-		caml_height = caml_copy_double(((BRect *)Int32_val(rect))->Height());
+		caml_height = caml_copy_double(((ORect *)Field(rect,0))->BRect::Height());
 //	caml_enter_blocking_section();
 
 	CAMLreturn(caml_height);

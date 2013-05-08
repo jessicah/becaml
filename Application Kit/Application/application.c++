@@ -11,8 +11,10 @@
 #include "signals.h"
 #include "threads.h"
 
-#include "glue.h"
 #include <Application.h>
+
+#include "glue.h"
+#include "message.h"
 
 extern "C" 
 {
@@ -38,7 +40,7 @@ class OApplication : public BApplication, public Glue
 				OApplication(value objet,  char * signature);
 				~OApplication();
 				void AboutRequested();
-				void MessageReceived(BMessage *message);
+				virtual void MessageReceived(BMessage *message);
 				void ReadyToRun();
 				bool QuitRequested();
 };
@@ -69,26 +71,28 @@ void OApplication::AboutRequested() {
 void OApplication::MessageReceived(BMessage *message) {
 	//**acquire_sem(ocaml_sem);
 		CAMLparam0();
-		CAMLlocal3(app_caml, mess_caml,fun);
-			caml_register_global_root(&app_caml);
-			caml_register_global_root(&mess_caml);
-			caml_register_global_root(&fun);
+		CAMLlocal3(p_omess,ocaml_message,fun);
 	//**release_sem(ocaml_sem);
-
+	
 	BMessenger messenger = message->ReturnAddress();
-
+	
 	printf("[C++] OApplication::MessageReceived message = 0x%lX, what= %c%c%c%c\n",message, message->what >>24, message->what >>16, message->what >>8, message->what);fflush(stdout);
 	
 		//**acquire_sem(ocaml_sem);
-		caml_leave_blocking_section();
-			app_caml  = caml_copy_int32((int32) this);
+		caml_acquire_runtime_system();
 			
-		    mess_caml = caml_copy_int32((int32) message);
+			//Création couple ocaml/C++ pour message
+			p_omess = alloc_small(1,Abstract_tag);
+			caml_register_global_root(&ocaml_message);
+			ocaml_message = caml_callback(*caml_named_value("new_be_message"), p_omess);
+	 		caml_release_runtime_system();
+				OMessage *omess = new OMessage(ocaml_message, message);	
+			caml_acquire_runtime_system();
+			Field(p_omess,0) = (value)omess;
 			
-			fun = *caml_named_value("OApplication::MessageReceived");
-			
-				callback2(fun, app_caml, mess_caml);
-		caml_enter_blocking_section();
+			fun = caml_get_public_method(interne, hash_variant("messageReceived"));
+			caml_callback2(fun, interne, omess->interne);
+		caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 	CAMLreturn0;
 }
@@ -102,7 +106,6 @@ void OApplication::ReadyToRun() {
 	//**acquire_sem(ocaml_sem);
 		caml_acquire_runtime_system();
 //			//**acquire_sem(callback_sem);
-				caml_c_thread_register();
 				caml_callback(caml_get_public_method(interne, hash_variant("readyToRun")), interne);
 //			//**release_sem(callback_sem);
 		caml_release_runtime_system();
@@ -123,8 +126,7 @@ bool OApplication::QuitRequested(){
 			caml_register_global_root(&res);
 //			//**acquire_sem(callback_sem);
 				printf("[C++]OApplication::QuitRequested(), appel de callback\n");fflush(stdout);
-				caml_c_thread_register();
-				res = caml_callback(*caml_named_value("OApplication::QuitRequested"),app_caml/* *interne*/);
+				res = caml_callback2(caml_get_public_method(interne, hash_variant("quitRequested")),interne, Val_unit);
 				printf("[C++]OApplication::QuitRequested(), retour de callback\n");fflush(stdout);
 //			//**release_sem(callback_sem);
 		caml_enter_blocking_section();
@@ -137,23 +139,26 @@ bool OApplication::QuitRequested(){
 value b_application_signature(value ocaml_objet, value signature)
 {
 //	//**acquire_sem(ocaml_sem);
-		CAMLparam2(ocaml_objet, signature);
-		CAMLlocal1(application); 
+	CAMLparam2(ocaml_objet, signature);
+	CAMLlocal1(p_application); 
 //	//**release_sem(ocaml_sem);
 	
 	OApplication *app;
 	char * s = String_val(signature);
 //	register_global_root(&self); 
+	caml_release_runtime_system();
 		app = new OApplication(ocaml_objet, s);
+	caml_acquire_runtime_system();
 	printf("[C] creation be_application (0x%lx)\n", app);fflush(stdout);
 	
 //	//**acquire_sem(ocaml_sem);
 //		caml_leave_blocking_section();
-			application = caml_copy_int32((int32)app);
-			caml_callback(*caml_named_value("OApplication::Set_be_app"), application);
+		p_application = alloc_small(1,Abstract_tag);
+		Field(p_application,0) = (value)app;	
+		caml_callback(*caml_named_value("OApplication::Set_be_app"), p_application);
 //		caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
-	CAMLreturn(application);
+	CAMLreturn(p_application);
 }
 
 //**************************
@@ -177,18 +182,21 @@ value b_application_messageReceived(value application, value message) {
 value b_application_postMessage(value application, value command) {
 	CAMLparam2(application, command);
 	CAMLlocal1(res_caml);	
-	OApplication *app = (OApplication *)Int32_val(application);
-	uint32 com 		  = Int32_val(command);
+	OApplication *app;
+       
+	uint32 com = Int32_val(command);
 	status_t res;
+	
+	app = (OApplication *)Field(application,0);
 
 	//**release_sem(ocaml_sem);
-	caml_enter_blocking_section();
+	caml_release_runtime_system();
 		res = app->BApplication::PostMessage(com);
 	//**acquire_sem(ocaml_sem);
-	caml_leave_blocking_section();
+	caml_acquire_runtime_system();
+
 	res_caml = caml_copy_int32(res);
 	CAMLreturn(res_caml);
-
 }
 
 //*************
@@ -214,13 +222,13 @@ value b_application_quitRequested(value application) {
 value b_application_readyToRun(value application) {
 	CAMLparam1(application);
 
-	OApplication *app = (OApplication *)Int32_val(application);
-	caml_enter_blocking_section();
+	OApplication *app = (OApplication *)Field(application,0);
+	caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 		app->BApplication::ReadyToRun(); //appel de la méthode originale
 	//**acquire_sem(ocaml_sem);
-	caml_leave_blocking_section();
-	
+	caml_acquire_runtime_system();
+
 	CAMLreturn(Val_unit);
 }
 
@@ -259,14 +267,13 @@ value b_application_run(value application)
 
 //	//**acquire_sem(ocaml_sem);
 //	caml_leave_blocking_section();
-	//caml_c_thread_register();
-	app = (OApplication *)Int32_val(application);
+	app = (OApplication *)Field(application,0);
 
 	caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 	
-	res = app->Run();
-	printf("[C++] b_application_run() : retour de app->Run\n");fflush(stdout);
+		res = app->BApplication::Run();
+		printf("[C++] b_application_run() : retour de app->Run\n");fflush(stdout);
 //	//**acquire_sem(ocaml_sem);
 	caml_acquire_runtime_system();
 	res_caml = copy_int32(res);

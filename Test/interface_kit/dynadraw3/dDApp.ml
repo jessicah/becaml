@@ -22,8 +22,7 @@ class ddApp =
 	
 	method ddApp() =
 		self#be_application ~signature:"application/x-vnd.Be-dynadraw" ();
-		ddWin#dDWindow();
-
+                ddWin#dDWindow();
 			
 	method messageReceived ~message:msg =
 		print_string "[OCaml]dDAPP#MessageReceived\n";flush stdout;

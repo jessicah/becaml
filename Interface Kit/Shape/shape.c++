@@ -53,7 +53,6 @@ status_t OShapeIterator::Iterate(BShape *shape){
 	printf("appel de OShapeIterator->Iterate\n");fflush(stdout);
 //	//**acquire_sem(ocaml_sem);
 	caml_leave_blocking_section();
-	caml_c_thread_register();
 	res_caml = caml_callback(*caml_named_value("OShapeIterator::Iterate"),/* *interne,*/
 									caml_copy_int32((int32)shape));
 	caml_enter_blocking_section();

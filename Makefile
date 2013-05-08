@@ -41,7 +41,7 @@ all: $(LIBOCAML) $(TOPLEVEL)
 
 $(LIBOCAML): $(OCAML_OBJS) $(C_OBJS) 
 	ar rc libbeocaml.a *.o
-	$(OCAMLC) $(OCAMLFLAGS) -a -o $(LIBOCAML) $(OCAML_OBJS) -ccopt -L/Data1/ocaml-beos -cclib /Data1/ocaml-beos/libbeocaml.a -cclib $(BELIB)
+	$(OCAMLC) -thread -g -custom -w mv -ccopt -g -a -o $(LIBOCAML) $(OCAML_OBJS) -ccopt -L/Data1/ocaml-beos -cclib /Data1/ocaml-beos/libbeocaml.a -cclib $(BELIB)
 
 ocaml-beos: $(LIBOCAML)
 	$(OCAMLMKTOP) $(OCAMLFLAGS) -o $(TOPLEVEL) $(LIBOCAML) -cclib $(BELIB)

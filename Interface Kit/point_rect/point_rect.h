@@ -1,9 +1,6 @@
-#ifndef BEOS
-	#define BEOS
-#endif
-
 #include "alloc.h"
 #include "memory.h"
+#include "threads.h"
 
 #include "glue.h"
 #include <Point.h>
@@ -19,8 +16,8 @@ class OPoint : public BPoint, public Glue
 		OPoint(value point_caml,  float x, float y):
 			BPoint(x, y),Glue(point_caml) {}
 		
-		OPoint(BPoint point):
-			BPoint(point),Glue(Val_unit) {}
+//		OPoint(BPoint point):
+//			BPoint(point),Glue(Val_unit) {}
 		
 		OPoint(value point_caml, BPoint point):
 			BPoint(point),Glue(point_caml) {}
@@ -39,7 +36,7 @@ class ORect : public BRect, public Glue
 					BRect(leftTop, rightBottom)
 					,Glue(interne) {};
 					
-				ORect(BRect rect): BRect(rect),Glue(Val_unit) {};
+	//			ORect(BRect rect): BRect(rect),Glue(Val_unit) {};
 				ORect(value interne, BRect rect):
 					BRect(rect)
 					, Glue(interne) {};

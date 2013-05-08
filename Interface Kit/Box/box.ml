@@ -3,7 +3,7 @@ open View;;
 open Rect;;
 open InterfaceDefs;;
 
-external b_box_box : pointer -> string -> int32 -> int32 -> border_style -> pointer = (*"b_box_box_bytecode"*) "b_box_box_native"
+external b_box_box : #be_interne -> pointer -> string -> int32 -> int32 -> border_style -> pointer = "b_box_box_bytecode" "b_box_box_native"
 external b_box_addChild : pointer -> pointer -> unit = "b_box_addChild" 
 external b_box_allAttached : pointer -> unit = "b_box_allAttached"
 external b_box_attachedToWindow : pointer -> unit = "b_box_attachedToWindow"
@@ -21,7 +21,7 @@ class be_box =
 				  						 kB_FRAME_EVENTS) 
 				  						 kB_NAVIGABLE_JUMP)
 				  ?(border = B_FANCY_BORDER) () =
-		self#set_interne (b_box_box (frame#get_interne()) name resizingMode flags border);
+		self#set_interne (b_box_box self (frame#get_interne()) name resizingMode flags border);
 
 	method addChild : 'a 'b.
 		aView:(#be_interne as 'a) ->
