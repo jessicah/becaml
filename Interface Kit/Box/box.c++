@@ -127,7 +127,7 @@ value b_box_box_bytecode(value *argv, int argc) {
 value b_box_addChild(value box, value aView){
 	CAMLparam2(box, aView);
 
-	((BBox *)Int32_val(box))->BBox::AddChild((BView *)Int32_val(aView));
+	((OBox *)Field(box,0))->BBox::AddChild((BView *)Field(aView,0));
 	
 	CAMLreturn(Val_unit);
 
@@ -137,7 +137,7 @@ value b_box_addChild(value box, value aView){
 value b_box_allAttached(value box){
 	CAMLparam1(box);
 	
-	((BBox *)Int32_val(box))->BBox::AllAttached();
+	((OBox *)Field(box,0))->BBox::AllAttached();
 	
 	CAMLreturn(Val_unit);
 }
@@ -145,7 +145,7 @@ value b_box_allAttached(value box){
 value b_box_attachedToWindow(value box){
 	CAMLparam1(box);
 
-	((BBox *)Int32_val(box))->BBox::AttachedToWindow();
+	((OBox *)Field(box,0))->BBox::AttachedToWindow();
 	
 	CAMLreturn(Val_unit);
 }
@@ -153,7 +153,7 @@ value b_box_attachedToWindow(value box){
 value b_box_windowActivated(value box, value active){
 	CAMLparam2(box, active);
 
-	((BBox *)Int32_val(box))->BBox::WindowActivated(Bool_val(active));
+	((OBox *)Field(box,0))->BBox::WindowActivated(Bool_val(active));
 	
 	CAMLreturn(Val_unit);
 }

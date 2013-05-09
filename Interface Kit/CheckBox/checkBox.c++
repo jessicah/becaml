@@ -10,9 +10,11 @@
 
 
 #include "glue.h"
+#include "message.h"
+#include "point_rect.h"
 
 extern "C" {
-	value b_checkBox_checkBox_native(/*value self,*/ value frame, value name, value label, value message, value resizingMode, value flags);
+	value b_checkBox_checkBox_native(value self, value frame, value name, value label, value message, value resizingMode, value flags);
 	value b_checkBox_checkBox_bytecode(value *argv, int argc);
 	value b_checkBox_invoke(value checkBox);
 	value b_checkBox_invoke_message(value checkBox, value message);
@@ -27,11 +29,11 @@ extern "C" {
 }
 
 
-class OCheckBox : public BCheckBox//, public Glue 
+class OCheckBox : public BCheckBox, public Glue 
 {
 
 		public :
-				OCheckBox(/*value self,*/ BRect frame, char *name, char *label, BMessage *message, uint32 resizingMode, uint32 flags);
+				OCheckBox(value self, BRect frame, char *name, char *label, BMessage *message, uint32 resizingMode, uint32 flags);
 
 				status_t Invoke(BMessage *message = NULL);
 				status_t Invoke_prot(BMessage *message = NULL);
@@ -39,25 +41,36 @@ class OCheckBox : public BCheckBox//, public Glue
 
 };
 
-OCheckBox::OCheckBox(/*value self,*/ BRect frame, char *name, char *label, BMessage *message, uint32 resizingMode, uint32 flags):
+OCheckBox::OCheckBox(value self, BRect frame, char *name, char *label, BMessage *message, uint32 resizingMode, uint32 flags):
 	BCheckBox(frame, name, label, message, resizingMode, flags)
-//	,Glue(self)
+	,Glue(self)
 {
 }
 
 status_t OCheckBox::Invoke(BMessage *message){
 	CAMLparam0();
-	CAMLlocal1(res_caml);
+	CAMLlocal3(ocaml_message, p_message, res_caml);
 	status_t res;
 
 //	//**acquire_sem(ocaml_sem);
-		caml_leave_blocking_section();
-			////**acquire_sem(callback_sem);
-				res = caml_callback2(*caml_named_value("OCheckBox#Invoke"), copy_int32((int32)this), 
-															   copy_int32((int32)message));
-			////**release_sem(callback_sem);
-			res_caml=caml_copy_int32(res);
-		caml_enter_blocking_section();
+
+	caml_c_thread_register();
+
+	caml_acquire_runtime_system();
+		p_message = alloc_small(1,Abstract_tag);
+		caml_register_global_root(&p_message);
+
+		ocaml_message = caml_callback(*caml_named_value("new_be_message"), p_message);
+		caml_register_global_root(&ocaml_message);
+	caml_release_runtime_system();
+		OMessage *m = new OMessage(ocaml_message, message);
+	caml_acquire_runtime_system();
+	Field(p_message,0) = (value)ocaml_message;
+////**acquire_sem(callback_sem);
+		res = caml_callback2( caml_get_public_method(interne, hash_variant("invoke")), interne, ocaml_message);
+////**release_sem(callback_sem);
+	caml_release_runtime_system();
+	res_caml=caml_copy_int32(res);
 
 //	//**release_sem(ocaml_sem);
 	CAMLreturn(res_caml);
@@ -84,34 +97,37 @@ status_t OCheckBox::SetTarget(const BHandler *handler, const BLooper *looper = N
 }
 
 //*************************
-value b_checkBox_checkBox_native(/*value self,*/ value frame, value name, value label, value message, value resizingMode, value flags){
-	CAMLparam5(/*self,*/ frame, name, label, message, resizingMode);
-	CAMLxparam1(/*resizingMode,*/ flags);
-	CAMLlocal1(checkBox);
+value b_checkBox_checkBox_native(value self, value frame, value name, value label, value message, value resizingMode, value flags){
+	CAMLparam5(self, frame, name, label, message);
+	CAMLxparam2(resizingMode, flags);
+	CAMLlocal1(p_checkBox);
 	OCheckBox *box;
 	
 	//caml_leave_blocking_section();
-	box = new OCheckBox(//self,
-						*(BRect *)Int32_val(frame), 
+	caml_release_runtime_system();
+		box = new OCheckBox(self,
+						*(ORect *)Field(frame,0), 
 				   		String_val(name), 
 						String_val(label), 
-						(BMessage *)Int32_val(message), 
+						(OMessage *)Field(message,0), 
 						Int32_val(resizingMode), 
 						Int32_val(flags));
-		printf("C 0x%lx : %lx\n", box, sizeof(OCheckBox));
+	caml_acquire_runtime_system();
+	printf("C 0x%lx : %lx\n", box, sizeof(OCheckBox));
 	
 
-	checkBox = copy_int32((value)box);
+	p_checkBox = alloc_small(1,Abstract_tag);
+	Field(p_checkBox,0) = (value)box;
 
 	//caml_enter_blocking_section();
 	
-	CAMLreturn(checkBox);
+	CAMLreturn(p_checkBox);
 
 }
 //****************************
 value b_checkBox_checkBox_bytecode(value *argv, int argc){
 	
-	return b_checkBox_checkBox_native(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]/*, argv[6]*/);
+	return b_checkBox_checkBox_native(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
 }
 
 //*******************
@@ -120,7 +136,7 @@ value b_checkBox_invoke(value checkBox){
 	CAMLlocal1(res);
 
 	//caml_leave_blocking_section();
-		res = copy_int32(((OCheckBox *)Int32_val(checkBox))->Invoke_prot());
+		res = copy_int32(((OCheckBox *)Field(checkBox,0))->Invoke_prot());
 	//caml_enter_blocking_section();
 	
 	CAMLreturn(res);
@@ -132,7 +148,7 @@ value b_checkBox_invoke_message(value checkBox, value message){
 	CAMLlocal1(res);
 
 	//caml_leave_blocking_section();
-		res = copy_int32(((OCheckBox *)Int32_val(checkBox))->Invoke_prot((BMessage *)Int32_val(message)));
+		res = copy_int32(((OCheckBox *)Field(checkBox,0))->Invoke_prot((BMessage *)Int32_val(message)));
 	//caml_enter_blocking_section();
 	
 	CAMLreturn(res);

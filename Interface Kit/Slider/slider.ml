@@ -18,7 +18,7 @@ type hash_mark_location =
 | B_HASH_MARKS_RIGHT 
 ;;
 
-external b_slider_slider : pointer -> string -> string -> pointer -> int32 -> int32 -> thumb_style -> int32 ->
+external b_slider_slider : #be_interne -> pointer -> string -> string -> pointer -> int32 -> int32 -> thumb_style -> int32 ->
 							int32 -> pointer = "b_slider_slider_bytecode" "b_slider_slider_nativecode"
 external b_slider_setHashMarks : pointer -> hash_mark_location -> unit = "b_slider_setHashMarks" 
 external b_slider_setLimitLabels : pointer -> string -> string -> unit = "b_slider_setLimitLabels"
@@ -43,15 +43,16 @@ class be_slider =
 							  			   kB_WILL_DRAW) 
 										   kB_NAVIGABLE) 
 					 () =
-		self#set_interne (b_slider_slider (frame#get_interne()) 
-										  name 
-										  label 
-										  (message#get_interne()) 
-										  minValue 
-										  maxValue 
-										  thumbType 
-										  resizingMode 
-										  flags)
+		self#set_interne (b_slider_slider self
+                                                  (frame#get_interne()) 
+                                                  name 
+                                                  label 
+                                                  (message#get_interne()) 
+                                                  minValue 
+                                                  maxValue 
+                                                  thumbType 
+                                                  resizingMode 
+                                                  flags)
 
 	method setHashMarks ~where =
 		b_slider_setHashMarks (self#get_interne()) where

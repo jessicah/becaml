@@ -8,7 +8,7 @@ open Rect
 open SupportDefs
 open View
 
-external b_checkBox_checkBox : pointer -> string -> string -> pointer -> int32 -> int32 -> pointer = "b_checkBox_checkBox_bytecode" "b_checkBox_checkBox_native"
+external b_checkBox_checkBox : #be_interne -> pointer -> string -> string -> pointer -> int32 -> int32 -> pointer = "b_checkBox_checkBox_bytecode" "b_checkBox_checkBox_native"
 external b_checkBox_resizeToPreferred : pointer -> unit = "b_checkBox_resizeToPreferred"
 external b_checkBox_invoke : pointer -> status_t = "b_checkBox_invoke"
 external b_checkBox_invoke_message : pointer -> pointer -> status_t = "b_checkBox_invoke_message"
@@ -27,7 +27,7 @@ class be_checkBox =
 					 							  kB_FOLLOW_TOP)
 					 ?(flags = Int32.logor kB_WILL_DRAW 
 					 					   kB_NAVIGABLE) () =
-		 self#set_interne(b_checkBox_checkBox (frame#get_interne()) name label (message#get_interne()) resizingMode flags)
+		 self#set_interne(b_checkBox_checkBox self (frame#get_interne()) name label (message#get_interne()) resizingMode flags)
 	method invoke : 'a. ?message:(#be_message as 'a) -> unit -> status_t =
 	 fun ?message () ->
 	 	match message with 
