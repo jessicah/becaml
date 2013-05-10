@@ -181,19 +181,20 @@ value b_rect_rect_leftTop(value interne, value leftTop, value rightBottom) {
 }
 
 value b_rect_rect(value interne, value rect_param) {
-	CAMLparam2(interne, rect_param);
-	CAMLlocal1(rect);
+	CAMLparam1(rect_param);
+	CAMLlocal1(p_rect);
 	//register_global_root(&rect);
 
 	ORect *r;
-	r = new ORect(interne,
-						 *(BRect *)Field(rect_param,0));
-	
+	caml_release_runtime_system();
+		r = new ORect(interne, *(BRect *)Field(rect_param,0));
+	caml_acquire_runtime_system();	
 //	caml_leave_blocking_section();
-		rect = caml_copy_int32((int32)r);
+		p_rect = alloc_small(1,Abstract_tag);
+		Field(p_rect,0)=(value)r;
 //	caml_enter_blocking_section();
 
-	CAMLreturn(rect);
+	CAMLreturn(p_rect);
 }
 
 value b_rect(value interne) {

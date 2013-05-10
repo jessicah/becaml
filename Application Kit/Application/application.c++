@@ -56,6 +56,7 @@ void OApplication::AboutRequested() {
 	//**acquire_sem(ocaml_sem);
 	CAMLparam0();
 	CAMLlocal1(app);
+	//caml_c_thread_register();
 	//**release_sem(ocaml_sem);
 	//**acquire_sem(ocaml_sem);
 			caml_leave_blocking_section();
@@ -70,8 +71,9 @@ void OApplication::AboutRequested() {
 }
 void OApplication::MessageReceived(BMessage *message) {
 	//**acquire_sem(ocaml_sem);
-		CAMLparam0();
-		CAMLlocal3(p_omess,ocaml_message,fun);
+	CAMLparam0();
+	CAMLlocal3(p_omess,ocaml_message,fun);
+	//caml_c_thread_register(); TODO 
 	//**release_sem(ocaml_sem);
 	
 	BMessenger messenger = message->ReturnAddress();
@@ -83,7 +85,7 @@ void OApplication::MessageReceived(BMessage *message) {
 			
 			//Création couple ocaml/C++ pour message
 			p_omess = alloc_small(1,Abstract_tag);
-			caml_register_global_root(&ocaml_message);
+			caml_register_global_root(&p_omess);
 			ocaml_message = caml_callback(*caml_named_value("new_be_message"), p_omess);
 	 		caml_register_global_root(&ocaml_message);
 			
@@ -104,6 +106,7 @@ void OApplication::ReadyToRun() {
 	//**acquire_sem(ocaml_sem);
 	//CAMLparam1(interne);
 	CAMLparam0();
+	//caml_c_thread_register();
 	//**release_sem(ocaml_sem);
 	
 	//**acquire_sem(ocaml_sem);
@@ -120,6 +123,7 @@ bool OApplication::QuitRequested(){
 	//**acquire_sem(ocaml_sem);
 		CAMLparam0();
 		CAMLlocal2(res, app_caml);
+	//caml_c_thread_register();
 	//**release_sem(ocaml_sem);	
 	
 		//**acquire_sem(ocaml_sem);

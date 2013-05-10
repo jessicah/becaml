@@ -46,18 +46,19 @@ OMenuItem::~OMenuItem(){
 
 void OMenuItem::Draw(void) {
 //	CAMLparam1(interne);
-	//**//**acquire_sem(ocaml_sem);
-		CAMLparam0();	
-		CAMLlocal1(mi);
-	//**release_sem(ocaml_sem);
-		caml_leave_blocking_section();
-		
-//			caml_register_global_root(&mi);
-			mi = caml_copy_int32((int32)this);
+//**//**acquire_sem(ocaml_sem);
+	CAMLparam0();	
+//		CAMLlocal1(mi);
+//caml_c_thread_register();
+//**release_sem(ocaml_sem);
+	caml_acquire_runtime_system();
+	
+//		caml_register_global_root(&mi);
+		//mi = caml_copy_int32((int32)this);
 //			//**//**acquire_sem(callback_sem);
-				callback(*caml_named_value("MenuItem#draw"), mi/**interne*/);
+		caml_callback2(caml_get_public_method(interne, hash_variant("draw")),interne, Val_unit);
 //			//**release_sem(callback_sem);
-		caml_enter_blocking_section();
+	caml_release_runtime_system();
 //	//**release_sem(ocaml_sem);
 	CAMLreturn0;
 }
@@ -67,24 +68,33 @@ void OMenuItem::Draw2(void) {
 }
 
 void OMenuItem::GetContentSize(float *width, float *height){
-//	CAMLparam1(interne);
+	//	CAMLparam1(interne);
 		//**//**acquire_sem(ocaml_sem);
 	CAMLparam0();
-	CAMLlocal2(w,h);
+	CAMLlocal2(ocaml_width, ocaml_height);
+	//caml_c_thread_register();
 	printf("[C] OMenuItem::GetContentSize avant register\n");fflush(stdout);
 //	register_global_root(&w);
 //	register_global_root(&h);
 	//**release_sem(ocaml_sem);
 //	caml_leave_blocking_section();
-		w = alloc(1, 0); /*0 = record_tag*/
-		h = alloc(1, 0);
+//		w = alloc(1, 0); /*0 = record_tag*/
+//		h = alloc(1, 0);
+
+	caml_acquire_runtime_system();
+		ocaml_width = caml_alloc_small(1,0);
+		Field(ocaml_width,0) = caml_copy_double(0.0);
+
+		ocaml_height = caml_alloc_small(1,0);
+		Field(ocaml_height,0) = caml_copy_double(0.0);
+
+	//		//**//**acquire_sem(callback_sem);
+		callback3(caml_get_public_method(interne,hash_variant("getContentSize")),interne, ocaml_width, ocaml_height);
+	//		//**release_sem(callback_sem);	
 		
-//		//**//**acquire_sem(callback_sem);
-			callback3(*caml_named_value("MenuItem#getContentSize"),copy_int32((int32)this), /**interne*/w, h);
-//		//**release_sem(callback_sem);	
-	
-	*width = Double_val(Field(w, 0));
-	*height = Double_val(Field(h, 0));
+		*width = Double_val(Field(ocaml_width, 0));
+		*height = Double_val(Field(ocaml_height, 0));
+	caml_release_runtime_system();
 //	caml_enter_blocking_section();
 	
 	CAMLreturn0;
@@ -95,14 +105,15 @@ void OMenuItem::GetContentSize_prot(float *width, float *height) {
 }
 
 status_t OMenuItem::Invoke(BMessage *message){
-	bool new_lock = false;
 //	if (beos_thread != find_thread(NULL)) {
 //		new_lock = true;
 //		//**//**acquire_sem(ocaml_sem);	
 //		beos_thread = find_thread(NULL);
 //	}
-		CAMLparam0();
-		CAMLlocal4(mi, me, caml_res,fun);
+	CAMLparam0();
+	CAMLlocal4(mi, me, caml_res,fun);
+	bool new_lock = false;
+	//caml_c_thread_register();
 
 		//caml_register_global_root(&mi);
 		//caml_register_global_root(&me);
@@ -186,7 +197,7 @@ value b_menuItem_draw(value menuItem){
 	//**release_sem(ocaml_sem);
 	
 //	caml_leave_blocking_section();
-		((OMenuItem *)Int32_val(menuItem))->OMenuItem::Draw2();
+		((OMenuItem *)Field(menuItem,0))->OMenuItem::Draw2();
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -207,15 +218,17 @@ value b_menuItem_frame(value menuItem){
 
 //*************************
 value b_menuItem_getContentSize_prot(value menuItem, value width, value height){
+	CAMLparam3(menuItem, width, height);
 	float w;
 	float h;
-	CAMLparam3(menuItem, width, height);
 	
 //	caml_leave_blocking_section();
-		((OMenuItem *)Int32_val(menuItem))->GetContentSize_prot(&w, &h);
-
-		Store_field(width, 0, copy_double(w));
-		Store_field(height, 0, copy_double(h));
+	
+	caml_release_runtime_system();
+		((OMenuItem *)Field(menuItem,0))->GetContentSize_prot(&w, &h);
+	caml_acquire_runtime_system();
+	Store_field(width, 0, copy_double(w));
+	Store_field(height, 0, copy_double(h));
 	
 //	caml_enter_blocking_section();
 	CAMLreturn(Val_unit);

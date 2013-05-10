@@ -60,6 +60,7 @@ status_t OMenu::SetTargetForItems(BHandler *target){
 	CAMLparam0();
 	CAMLlocal3(p_handler, ocaml_target, caml_status); 
 	OHandler * o_target;	
+	//caml_c_thread_register();
 	
 //	caml_leave_blocking_section();
 //		caml_menu = caml_copy_int32((int32)this);

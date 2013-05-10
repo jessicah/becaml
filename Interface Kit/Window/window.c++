@@ -11,15 +11,16 @@
 #include "alloc.h"
 #include "callback.h"
 #include "signals.h"
+#include "threads.h"
 
 #include <ClassInfo.h>
 #include <Message.h>
 #include <Window.h>
 
 #include "glue.h"
+#include "message.h"
 #include "point_rect.h"
 #include "view.h"
-#include "threads.h"
 
 //extern sem_id callback_sem;
 extern sem_id ocaml_sem;
@@ -102,9 +103,8 @@ void OWindow::MenusBeginning(){
 	//**acquire_sem(ocaml_sem);
 	CAMLparam0();
 	CAMLlocal1( fun);
-		
+	//caml_c_thread_register();	
 	//**release_sem(ocaml_sem);
-	caml_c_thread_register();	
 	caml_acquire_runtime_system();
 //		//**acquire_sem(callback_sem);
 		fun = caml_get_public_method(interne, hash_variant("menusBeginning"));
@@ -116,29 +116,40 @@ void OWindow::MenusBeginning(){
 
 //************************************
 void OWindow::MessageReceived(BMessage *message) {
-	
 	//**acquire_sem(ocaml_sem);
-		CAMLparam0();
-		CAMLlocal3(win_caml, mess_caml,fun);
-printf("[C] OWindow::MessageReceived\n");fflush(stdout);
-		caml_acquire_runtime_system();
-			caml_register_global_root(&win_caml);
-			caml_register_global_root(&mess_caml);
-			caml_register_global_root(&fun);
+	CAMLparam0();
+	CAMLlocal3(p_message, ocaml_message, fun);
+	//caml_c_thread_register();
+	
+	printf("[C] OWindow::MessageReceived\n");fflush(stdout);
+	caml_acquire_runtime_system();
+//		caml_register_global_root(&win_caml);
+//		caml_register_global_root(&mess_caml);
+//		caml_register_global_root(&fun);
 
-			//**release_sem(ocaml_sem);
-			//**acquire_sem(ocaml_sem);
-			printf("OWindow::MessageReceived(%c%c%c%c)\n",
-							message->what >> 24, 
-							message->what >>16, 
-							message->what >> 8,
-							message->what);fflush(stdout);
-			//caml_leave_blocking_section();
-			mess_caml = caml_copy_int32((int32)message);
-			win_caml  = caml_copy_int32((int32)this);	
-			fun = *caml_named_value("OWindow::MessageReceived");
-			caml_callback2(fun,	win_caml, mess_caml);
-		//caml_enter_blocking_section();		
+		//**release_sem(ocaml_sem);
+		//**acquire_sem(ocaml_sem);
+		printf("OWindow::MessageReceived(%c%c%c%c)\n",
+						message->what >> 24, 
+						message->what >>16, 
+						message->what >> 8,
+						message->what);fflush(stdout);
+		//caml_leave_blocking_section();
+		//mess_caml = caml_copy_int32((int32)message);
+		//win_caml  = caml_copy_int32((int32)this);	
+		p_message = alloc_small(1,Abstract_tag);
+		caml_register_global_root(&p_message); //TODO unregister
+
+		
+		ocaml_message = caml_callback(*caml_named_value("new_be_message"), p_message);
+		caml_register_global_root(&ocaml_message);//TODO unregister 
+	caml_release_runtime_system();
+		OMessage *omessage = new OMessage(ocaml_message,message);
+	caml_acquire_runtime_system();	
+		Field(p_message,0) = (value)omessage;
+		fun = caml_get_public_method(interne, hash_variant("messageReceived"));
+		caml_callback2(fun, interne, ocaml_message);
+	//caml_enter_blocking_section();		
 	caml_release_runtime_system();
 		//**release_sem(ocaml_sem);
 		CAMLreturn0;
@@ -146,10 +157,11 @@ printf("[C] OWindow::MessageReceived\n");fflush(stdout);
 
 //************************************
 status_t OWindow::PostMessage(BMessage *message, BHandler *handler, BHandler *replyHandler=NULL){
-	//**acquire_sem(ocaml_sem);
+//**acquire_sem(ocaml_sem);
 	CAMLparam0();
 	CAMLlocal3(v, res_caml, fun);
 	CAMLlocalN(argv, 4);
+	//caml_c_thread_register();
 	
 	caml_register_global_root(&v);
 	caml_register_global_root(&fun);
@@ -187,12 +199,14 @@ status_t OWindow::PostMessage(uint32 command){
 	//**acquire_sem(ocaml_sem);
 	CAMLparam0();
 	CAMLlocal4(win_caml, command_caml, res_caml, fun);
+	//caml_c_thread_register();	
 	printf("[C] OWindow::PostMessage\n");fflush(stdout);
-	caml_register_global_root(&win_caml);
-	caml_register_global_root(&command_caml);
-	caml_register_global_root(&res_caml);
-	caml_register_global_root(&fun);
-	
+	caml_acquire_runtime_system();
+		caml_register_global_root(&win_caml);
+		caml_register_global_root(&command_caml);
+		caml_register_global_root(&res_caml);
+		caml_register_global_root(&fun);
+	caml_release_runtime_system();	
 	//**release_sem(ocaml_sem);
 	
 	BMessage *m;
@@ -200,12 +214,12 @@ status_t OWindow::PostMessage(uint32 command){
 	
 	m = new BMessage(command);
 			
-	caml_leave_blocking_section();
+	caml_acquire_runtime_system();
 		win_caml = caml_copy_int32((int32)this);
 		command_caml = caml_copy_int32(command);
 		res_caml = caml_callback2(fun, win_caml, command_caml);
 		res = Int32_val(res_caml);
-	caml_enter_blocking_section();
+	caml_release_runtime_system();
 	
 	CAMLreturn(res);
 }
@@ -213,13 +227,15 @@ status_t OWindow::PostMessage(uint32 command){
 status_t OWindow::PostMessage(BMessage *message){
 	//CAMLparam1(interne);
 	//**acquire_sem(ocaml_sem);
-		CAMLparam0();
-		CAMLlocal4(win_caml, mes_caml, res_caml, fun);
+	CAMLparam0();
+	CAMLlocal4(win_caml, mes_caml, res_caml, fun);
+	//caml_c_thread_register();	
+	caml_acquire_runtime_system();
 		caml_register_global_root(&win_caml);
 		caml_register_global_root(&mes_caml);
 		caml_register_global_root(&res_caml);
 		caml_register_global_root(&fun);
-	
+	caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 	
 	BMessage *m;
@@ -228,13 +244,13 @@ status_t OWindow::PostMessage(BMessage *message){
 	m = new BMessage(*message);
 	
 	//**acquire_sem(ocaml_sem);
-	caml_leave_blocking_section();
+	caml_acquire_runtime_system();
 		win_caml = caml_copy_int32((int32)this);
 		mes_caml = caml_copy_int32((int32)m);
 		fun = *caml_named_value("OWindow::postMessage_message");
 		res_caml = caml_callback2(fun, win_caml, mes_caml);
 		res = Int32_val(res_caml);
-	caml_enter_blocking_section();
+	caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 
 	CAMLreturn(res);
@@ -243,8 +259,9 @@ status_t OWindow::PostMessage(BMessage *message){
 bool OWindow::QuitRequested() {
 //			CAMLparam1(interne);
 	//**acquire_sem(ocaml_sem);
-		CAMLparam0();
-		CAMLlocal3(win_caml, res_caml, fun);
+	CAMLparam0();
+	CAMLlocal3(win_caml, res_caml, fun);
+	//caml_c_thread_register();
 	//**release_sem(ocaml_sem);
 	
 	OWindow *owin;
@@ -266,6 +283,7 @@ void OWindow::Quit() {
 	//**acquire_sem(ocaml_sem);
 		CAMLparam0();
 		CAMLlocal2(win_caml, fun);
+	//caml_c_thread_register();	
 		
 		
 		caml_acquire_runtime_system();
@@ -286,6 +304,7 @@ void OWindow::Show() {
 //	CAMLparam1(interne);
 	CAMLparam0();
 	CAMLlocal1(win_caml);
+	//caml_c_thread_register();	
 	printf("[C++]OWindow#Show\n");fflush(stdout);
 	caml_acquire_runtime_system();
 		////**acquire_sem(callback_sem);
@@ -451,11 +470,11 @@ value b_window_type_bytecode(value *argv, int argc) {
 } 
 value b_window_quit(value window) {
 	////**acquire_sem(ocaml_sem);
-		CAMLparam1(window);
+	CAMLparam1(window);
 	////**release_sem(ocaml_sem);
 
 	OWindow * win;
-	win = (OWindow *)Int32_val(window);
+	win = (OWindow *)Field(window,0);
 	
 	//**release_sem(ocaml_sem);
 	caml_enter_blocking_section();
@@ -474,10 +493,11 @@ value b_window_quitRequested(value window) {
 	////**release_sem(ocaml_sem);
 	OWindow *owin;
 	bool res;
-	owin = (OWindow *)Int32_val(window);
+	owin = (OWindow *)Field(window,0);
 	printf("[C++] appel de b_window_quitRequested (OWindow =0x%lx\n",owin);fflush(stdout);
-	res = owin->BWindow::QuitRequested();
-
+	caml_release_runtime_system();
+		res = owin->BWindow::QuitRequested();
+	caml_acquire_runtime_system();
 	////**acquire_sem(ocaml_sem);
 //	caml_leave_blocking_section();
 		res_caml = Val_bool(res);
@@ -494,6 +514,7 @@ value b_window_show(value window){
 	OWindow *owindow;
 
 	owindow = (OWindow *)(Field(window,0));
+
 	caml_release_runtime_system();
 		owindow->BWindow::Show();
  	caml_acquire_runtime_system();
@@ -543,9 +564,10 @@ value b_window_addChild_view(value window, value aView){
 	
 	bwin = ((OWindow *)Field(window,0));
 	bview = ((BView *)Field(aView,0));
-	
-	bwin->BWindow::AddChild(bview);
-	
+
+	caml_release_runtime_system();	
+		bwin->BWindow::AddChild(bview);
+	caml_acquire_runtime_system();
 	CAMLreturn(Val_unit);
 }
 

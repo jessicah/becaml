@@ -54,7 +54,7 @@ status_t OCheckBox::Invoke(BMessage *message){
 
 //	//**acquire_sem(ocaml_sem);
 
-	caml_c_thread_register();
+	//caml_c_thread_register();
 
 	caml_acquire_runtime_system();
 		p_message = alloc_small(1,Abstract_tag);
@@ -148,7 +148,7 @@ value b_checkBox_invoke_message(value checkBox, value message){
 	CAMLlocal1(res);
 
 	//caml_leave_blocking_section();
-		res = copy_int32(((OCheckBox *)Field(checkBox,0))->Invoke_prot((BMessage *)Int32_val(message)));
+		res = copy_int32(((OCheckBox *)Field(checkBox,0))->Invoke_prot((OMessage *)Field(message,0)));
 	//caml_enter_blocking_section();
 	
 	CAMLreturn(res);
@@ -160,7 +160,7 @@ value b_checkBox_resizeToPreferred(value checkBox){
 	CAMLparam1(checkBox);
 	
 	//caml_leave_blocking_section();
-		((BCheckBox *)Int32_val(checkBox))->BCheckBox::ResizeToPreferred();
+		((OCheckBox *)Field(checkBox,0))->BCheckBox::ResizeToPreferred();
 	//caml_enter_blocking_section();
 
 	CAMLreturn(Val_unit);
@@ -171,7 +171,7 @@ value b_checkBox_setTarget_view(value checkBox, value view){
 	CAMLparam2(checkBox, view);
 
 	//caml_leave_blocking_section();
-		((BCheckBox *)Int32_val(checkBox))->BCheckBox::SetTarget((BView *)Int32_val(view));
+		((OCheckBox *)Field(checkBox,0))->BCheckBox::SetTarget((BView *)Field(view,0));
 	//caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -182,7 +182,7 @@ value b_checkBox_setTarget_handler(value checkBox, value handler){
 	CAMLparam2(checkBox, handler);
 
 	//caml_leave_blocking_section();
-		((BCheckBox *)Int32_val(checkBox))->BCheckBox::SetTarget((BHandler *)Int32_val(handler));
+		((OCheckBox *)Field(checkBox,0))->BCheckBox::SetTarget((BHandler *)Field(handler,0));
 	//caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -193,7 +193,7 @@ value b_checkBox_setTarget_name(value checkBox, value name){
 	CAMLparam2(checkBox, name);
 
 	//caml_leave_blocking_section();
-			((BCheckBox *)Int32_val(checkBox))->BCheckBox::SetTarget(String_val(name));
+			((OCheckBox *)Field(checkBox,0))->BCheckBox::SetTarget(String_val(name));
 	//caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -204,7 +204,7 @@ value b_checkBox_setValue(value checkBox, value val32){
 	CAMLparam2(checkBox, val32);
 
 	//caml_leave_blocking_section();
-			((BCheckBox *)Int32_val(checkBox))->BCheckBox::SetValue(Int32_val(val32));
+			((OCheckBox *)Field(checkBox,0))->BCheckBox::SetValue(Int32_val(val32));
 	//caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -215,13 +215,13 @@ value b_checkBox_value(value checkBox){
 	CAMLparam1(checkBox);
 	CAMLlocal1(caml_value);
 	
-	BCheckBox *b = (BCheckBox *)Int32_val(checkBox);
+	BCheckBox *b = (OCheckBox *)Field(checkBox,0);
 	int32 res;
 	
 	printf("on = 0x%lx, off = 0x%lx\n", B_CONTROL_ON, B_CONTROL_OFF);fflush(stdout);
 
 	//caml_leave_blocking_section();
-		res = ((BCheckBox *)Int32_val(checkBox))->BCheckBox::Value();
+		res = ((OCheckBox *)Field(checkBox,0))->BCheckBox::Value();
 		caml_value = caml_copy_int32((int32)res);
 	//caml_enter_blocking_section();
 	

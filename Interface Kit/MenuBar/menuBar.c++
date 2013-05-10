@@ -68,10 +68,10 @@ value b_menuBar_menuBar_bytecode(value *argv, int argn){
 //***********************
 value b_menuBar_addItem(value menuBar, value menuItem) {
 	CAMLparam2(menuBar, menuItem);
-	BMenu *me = (OMenuBar *)Field(menuBar,0);
+	BMenuBar *me = (OMenuBar *)Field(menuBar,0);
 	BMenuItem *mi = (OMenuItem *)Field(menuItem,0);
 	
-	CAMLreturn(Val_bool(((OMenuBar *)Field(menuBar,0))->BMenuBar::AddItem((OMenuItem *)Field(menuItem,0))));
+	CAMLreturn(Val_bool(me->BMenuBar::AddItem(mi)));
 }
 
 //***********************

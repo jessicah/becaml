@@ -185,7 +185,8 @@ let new_be_point_x_y p_point x y=
         in
         p#set_interne p_point;
         p#set_x x;
-        p#set_y y
+        p#set_y y;
+        p
 ;;
 
 let new_be_rect p_rect = 
