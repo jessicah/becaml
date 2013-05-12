@@ -54,7 +54,7 @@ external b_view_fillPolygon_pointList_rect : pointer -> 'a array -> int32 -> poi
 external b_view_fillRect : pointer -> pointer -> pattern -> unit = "b_view_fillRect"
 external b_view_frame : pointer -> pointer = "b_view_frame"
 external b_view_getFont : pointer -> pointer -> unit = "b_view_getFont"
-external b_view_getMouse : pointer -> pointer -> int32 ref -> bool -> unit = "b_view_getMouse"
+external b_view_getMouse : pointer -> (#be_interne ref) -> int32 ref -> bool -> unit = "b_view_getMouse"
 external b_view_highColor : pointer -> rgb_color = "b_view_highColor"
 external b_view_invalidate : pointer -> unit = "b_view_invalidate"
 external b_view_invalidate_rect : pointer -> 'a -> unit = "b_view_invalidate_rect"
@@ -265,7 +265,7 @@ class be_view =
 	
 	method getMouse : 'a. location:((#be_point as 'a) ref) -> buttons:(int32 ref) -> ?checkMessageQueue:bool -> unit -> unit =
 		fun ~location ~buttons ?(checkMessageQueue = true) () ->
-		b_view_getMouse (self#get_interne()) (!location#get_interne()) buttons checkMessageQueue
+		b_view_getMouse (self#get_interne()) location buttons checkMessageQueue
 	
 	method highColor () =
 		b_view_highColor (self#get_interne())

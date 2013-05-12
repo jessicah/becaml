@@ -56,8 +56,8 @@ object(self)
 		| Some x, None -> b_point_set_x (self#get_interne()) x
 		| None, Some y -> b_point_set_y (self#get_interne()) y
 		| None, None -> failwith "Parametres de be_point#set manquants."
-	
-	method x =
+	(*TODO renvoyer les attributs x,y au lieu de les chercher côté C++*)
+	method x = 
 		b_point_x (self#get_interne())
 	method y =
 		b_point_y (self#get_interne())
@@ -184,6 +184,7 @@ let new_be_point_x_y p_point x y=
         let p = new be_point
         in
         p#set_interne p_point;
+        Printf.printf "new_be_point_x_y %f %f\n" x y;flush stdout;
         p#set_x x;
         p#set_y y;
         p

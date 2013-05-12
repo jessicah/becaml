@@ -33,7 +33,7 @@ Glue::Glue(value ocaml_objet) {
 	CAMLparam1(ocaml_objet);
 	//caml_c_thread_register();
 	caml_acquire_runtime_system();
-		caml_register_global_root(&ocaml_objet);
+		caml_register_global_root(&interne);
 		interne = ocaml_objet;
 	caml_release_runtime_system();
 	CAMLreturn0;

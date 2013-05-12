@@ -395,10 +395,12 @@ void OView::MouseDown(BPoint where) {
 		caml_register_global_root(&p_wh);
 
 		o_where_x = caml_copy_double(where.x);
+		caml_register_global_root(&o_where_x);
 		o_where_y = caml_copy_double(where.y);
+		caml_register_global_root(&o_where_y);
 		
-		point_caml = caml_callback3(*caml_named_value("new_be_point_x_y"), p_wh, o_where_x, o_where_y);
 		caml_register_global_root(&point_caml);
+		point_caml = caml_callback3(*caml_named_value("new_be_point_x_y"), p_wh, o_where_x, o_where_y);
 
 	caml_release_runtime_system();
 	
@@ -866,14 +868,20 @@ value b_view_getFont(value view, value font){
 //*****************************
 value b_view_getMouse(value view, value location, value buttons, value checkMessageQueue){
 	CAMLparam4(view, location, buttons, checkMessageQueue);
+	CAMLlocal2(ocaml_point,ocaml_point_interne);
 
 	uint32 boutons;
-	
-//		caml_leave_blocking_section();
-		((OView *)Field(view,0))->BView::GetMouse((OPoint *)Field(location,0), 
-											  &boutons, 
-											  (bool)Bool_val(checkMessageQueue));
-		Store_field(buttons, 0, copy_int32(boutons));
+	OView *oview = ((OView *)Field(view,0));
+	ocaml_point = Field(location,0);
+	ocaml_point_interne = caml_callback2(caml_get_public_method(ocaml_point,hash_variant("get_interne")),ocaml_point,Val_unit); 
+	BPoint *bpoint = (OPoint *)Field(ocaml_point_interne,0);
+
+	//		caml_leave_blocking_section();
+	caml_release_runtime_system();
+		oview->BView::GetMouse(bpoint, &boutons, (bool)Bool_val(checkMessageQueue));
+	caml_acquire_runtime_system();
+	Store_field(buttons, 0, copy_int32(boutons));
+	//TODO mettre a jour les champs x et y de !location
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -968,9 +976,14 @@ value b_view_mouseDown(value view, value point){
 	printf("[C]b_view_mouseDown\n");fflush(stdout);
 	
 //	caml_leave_blocking_section();
-		((BView *)Field(view,0))->BView::MouseDown(*(OPoint *)Field(point,0));
+	OView *oview = ((OView *)Field(view,0));
+	OPoint *opoint = (OPoint *)Field(point,0);
+
+	caml_release_runtime_system();
+		oview->BView::MouseDown(*opoint);
 //	caml_enter_blocking_section();
-	
+	caml_acquire_runtime_system();
+
 	CAMLreturn(Val_unit);
 }
 
