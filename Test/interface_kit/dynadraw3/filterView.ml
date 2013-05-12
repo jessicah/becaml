@@ -100,38 +100,54 @@ class filterView =
 		and b = new be_rect
 		in
 		b#be_rect ~rect:(self#bounds()) ();
-		self#getMouse ~location:(ref point) ~buttons ~checkMessageQueue:true ();
-		if (!buttons = kB_PRIMARY_MOUSE_BUTTON)
+                Printf.printf "filterWiew#mouseDown : avant getMouse\n";flush stdout;
+                        self#getMouse ~location:(ref point) ~buttons ~checkMessageQueue:true ();
+                Printf.printf "filterWiew#mouseDown : apres getMouse\n";flush stdout;
+                if (!buttons = kB_PRIMARY_MOUSE_BUTTON)
 		then begin
-			 	 mx := point#x /. b#right;
-				 my := point#y /. b#bottom;
-				 m#set ~x:!mx ~y:!my ();
-				 self#setpos m;
-				 odel#set ~x:0. ~y:0. ();
-				 try 
-				 	while true do
-				 		self#getMouse ~location:(ref point) ~buttons ~checkMessageQueue:true ();
-					 	
-						if (!buttons <> kB_PRIMARY_MOUSE_BUTTON)
-					 	then raise Break;
-							
-				 		mx := point#x /. b#right;
-					 	my := point#y /. b#bottom;
-					 	m#set ~x:!mx ~y:!my ();
-				 		
-						if self#apply m curmass curdrag
-				 		then 
-			 			  (
-						  self#drawSegment();
-						  );
-					 	ignore(snooze( Int64.of_int32 !zzz));
-				 done
-				with Break -> ();
-			 end
-			 else if (!buttons = kB_SECONDARY_MOUSE_BUTTON)
-			 	  then 
-				  	self#clearScreen()
-
+                         Printf.printf "filterWiew#mouseDown : bouton gauche\n";flush stdout;
+                         Printf.printf "filterWiew#mouseDown : b#right b#bottom = %f %f\n" b#right b#bottom;flush stdout;
+                         Printf.printf "filterWiew#mouseDown : point#x point#y = %f %f\n" point#x point#y;flush stdout;
+                         mx := point#x /. b#right;
+                         my := point#y /. b#bottom;
+                         Printf.printf "filterWiew#mouseDown : 1\n" ;flush stdout;
+                         m#set ~x:!mx ~y:!my ();
+                         Printf.printf "filterWiew#mouseDown : 2\n" ;flush stdout;
+                         self#setpos m;
+                         Printf.printf "filterWiew#mouseDown : 3\n" ;flush stdout;
+                         odel#set ~x:0. ~y:0. ();
+                         Printf.printf "filterWiew#mouseDown : 4\n" ;flush stdout;
+                         try 
+                                while true do
+                                                Printf.printf "filterWiew#mouseDown : avant getMouse\n";flush stdout;
+                                        self#getMouse ~location:(ref point) ~buttons ~checkMessageQueue:true ();
+                                                Printf.printf "filterWiew#mouseDown : aapres getMouse\n";flush stdout;
+                                        
+                                        if (!buttons <> kB_PRIMARY_MOUSE_BUTTON)
+                                        then raise Break;
+                                                
+                                        mx := point#x /. b#right;
+                                        my := point#y /. b#bottom;
+                                        m#set ~x:!mx ~y:!my ();
+                                                Printf.printf "filterWiew#mouseDown : avant apply\n";flush stdout;
+                                        
+                                        if self#apply m curmass curdrag
+                                        then 
+                                          (
+                                                Printf.printf "filterWiew#mouseDown : avant drawSegment\n";flush stdout;
+                                          self#drawSegment();
+                                                Printf.printf "filterWiew#mouseDown : avant drawSegment\n";flush stdout;
+                                          );
+                                        ignore(snooze( Int64.of_int32 !zzz));
+                                done
+                         with Break -> ();
+		     end
+		     else if (!buttons = kB_SECONDARY_MOUSE_BUTTON)
+		 	  then  
+                                begin
+                                        Printf.printf "filterWiew#mouseDown : bouton droit\n";flush stdout;
+		  	                self#clearScreen()
+                                end
 	method clearScreen() =
 		Printf.printf "debut de clearScreen.\n";flush stdout;
 		let count = polyList#countItems()
