@@ -1,5 +1,6 @@
 #include "alloc.h"
 #include "memory.h"
+#include "threads.h"
 
 #include "glue.h"
 #include <Polygon.h>
@@ -31,7 +32,10 @@ value b_polygon_polygon(value interne, value pointList, value numPoints) {
 	for(int i = 0 ; i < Int32_val(numPoints) ; i++)
 			liste_points[i] = *(BPoint *)Int32_val(Field(pointList, i));
 
-	be_poly = new OPolygon(interne, liste_points, Int32_val(numPoints));
+	caml_release_runtime_system();
+		be_poly = new OPolygon(interne, liste_points, Int32_val(numPoints));
+	caml_acquire_runtime_system();
+
 	polygon = copy_int32((uint32)be_poly);
 
 //	delete *liste_points;

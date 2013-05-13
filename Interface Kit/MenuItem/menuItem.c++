@@ -193,11 +193,14 @@ value b_menuItem_menuItem(value self, value label, value message, value shortcut
 //*********************
 value b_menuItem_draw(value menuItem){
 	//**//**acquire_sem(ocaml_sem);
-		CAMLparam1(menuItem);
+	CAMLparam1(menuItem);
 	//**release_sem(ocaml_sem);
+	OMenuItem *omenuItem = (OMenuItem *)Field(menuItem,0);
 	
 //	caml_leave_blocking_section();
-		((OMenuItem *)Field(menuItem,0))->OMenuItem::Draw2();
+	caml_release_runtime_system();
+		omenuItem->OMenuItem::Draw2();
+	caml_acquire_runtime_system();		
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
