@@ -20,6 +20,7 @@ extern "C"
 {
  	extern sem_id ocaml_sem;
 	value b_application_signature(value ocaml_objet, value signature);
+	value b_application_aboutRequested(value application);
 	value b_application_messageReceived(value application, value message);
 	value b_application_postMessage(value application, value command);
 	value b_application_quitRequested(value application);
@@ -55,19 +56,16 @@ void OApplication::AboutRequested() {
 	//CAMLparam1(interne);
 	//**acquire_sem(ocaml_sem);
 	CAMLparam0();
-	CAMLlocal1(app);
 	//caml_c_thread_register();
 	//**release_sem(ocaml_sem);
 	//**acquire_sem(ocaml_sem);
-			caml_leave_blocking_section();
-				app = caml_copy_int32((int32)this);
+			caml_acquire_runtime_system();
 				////**acquire_sem(callback_sem);
-					caml_callback(*caml_named_value("OApplication::AboutRequested"),app/**interne*/);
+					caml_callback2(caml_get_public_method(interne, hash_variant("aboutRequested")),interne, Val_unit);
 				////**release_sem(callback_sem);
 			caml_enter_blocking_section();
 	//**release_sem(ocaml_sem);	
 	CAMLreturn0;
-
 }
 void OApplication::MessageReceived(BMessage *message) {
 	//**acquire_sem(ocaml_sem);
@@ -166,6 +164,21 @@ value b_application_signature(value ocaml_objet, value signature)
 //		caml_enter_blocking_section();
 //	//**release_sem(ocaml_sem);
 	CAMLreturn(p_application);
+}
+
+//**************************
+value b_application_aboutRequested(value application) {
+	//**acquire_sem(ocaml_sem);
+		CAMLparam1(application);
+	//**release_sem(ocaml_sem);
+	OApplication *app;
+//	caml_leave_blocking_section();
+	app = (OApplication *)Field(application,0);
+	caml_release_runtime_system();	
+		app->BApplication::AboutRequested();
+	caml_acquire_runtime_system();
+
+	CAMLreturn(Val_unit);
 }
 
 //**************************

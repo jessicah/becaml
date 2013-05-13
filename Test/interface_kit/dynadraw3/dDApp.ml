@@ -72,7 +72,7 @@ class ddApp =
 		alert#be_alert ~title:"About..." 
 		~text:"DynaDraw\n\nOriginal SGI Version, Paul Haeberli 1989\nBe Version, Michael Morrissey" 
 		~button0Label:"Cool!" ();
-		alert#go();
+		ignore (alert#go());
 
 	method quitRequested() =
 		if !bt then (tweakWin#quit());

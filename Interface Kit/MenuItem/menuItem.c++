@@ -111,10 +111,9 @@ status_t OMenuItem::Invoke(BMessage *message){
 //		beos_thread = find_thread(NULL);
 //	}
 	CAMLparam0();
-	CAMLlocal4(mi, me, caml_res,fun);
-	bool new_lock = false;
+	CAMLlocal4(caml_res,fun,ocaml_message,p_message);
+//	bool new_lock = false;
 	//caml_c_thread_register();
-
 		//caml_register_global_root(&mi);
 		//caml_register_global_root(&me);
 		//caml_register_global_root(&caml_res);
@@ -130,15 +129,32 @@ status_t OMenuItem::Invoke(BMessage *message){
 //		//**//**acquire_sem(ocaml_sem);	
 //		beos_thread = find_thread(NULL);
 //	}
-	caml_leave_blocking_section();
-		mi = caml_copy_int32((int32)this);
-		me = caml_copy_int32((int32)message);
-		fun = *caml_named_value("MenuItem#Invoke");
-		
-		res = caml_callback2(*caml_named_value("MenuItem#Invoke"),mi, me);
 
-		caml_res = caml_copy_int32(res);
-	caml_enter_blocking_section();
+
+	if (message != NULL) {
+		caml_acquire_runtime_system();	
+			p_message = alloc_small(1,Abstract_tag);
+			caml_register_global_root(&p_message);
+
+			caml_register_global_root(&ocaml_message);
+			ocaml_message = caml_callback(*caml_named_value("new_be_message"),p_message);
+		caml_release_runtime_system();
+			OMessage *omessage = new OMessage(ocaml_message, message);
+		caml_acquire_runtime_system();
+			Field(p_message,0) = (value)omessage;
+
+			fun = caml_get_public_method(interne, hash_variant("invoke"));
+			res = caml_callback3(fun,interne,ocaml_message,Val_unit);
+			caml_res = caml_copy_int32(res);
+		caml_release_runtime_system();
+	} else {
+		caml_acquire_runtime_system();	
+			fun = caml_get_public_method(interne, hash_variant("invoke"));
+			res = caml_callback3(fun,interne,Val_unit,Val_unit);
+			caml_res = caml_copy_int32(res);
+		caml_release_runtime_system();
+	}
+
 //	if(new_lock) {
 //			//**release_sem(ocaml_sem);	
 //	}
@@ -172,11 +188,13 @@ value b_menuItem_menuItem(value self, value label, value message, value shortcut
 	CAMLlocal1(menuItem);
 	
 //	caml_leave_blocking_section();
+	OMessage *m = (OMessage *)Field(message,0); 
+	char *c_label = String_val(label);
+	
 	caml_release_runtime_system();
-		OMessage *m = (OMessage *)Field(message,0); 
 	
 		OMenuItem *mi = new OMenuItem(self,
-					      String_val(label), 
+					      c_label, 
 			       		      m, 
 		    			      (char)Int_val(shortcut), 
 	   	 			      Int_val(modifiers)
@@ -244,11 +262,13 @@ value b_menuItem_invoke(value menuItem){
 	
 	OMenuItem *m;
 	status_t res;
-	m = (OMenuItem*)Int32_val(menuItem);
+	m = (OMenuItem*)Field(menuItem,0);
 	
 //	//**release_sem(ocaml_sem);
 //	caml_enter_blocking_section;
+	caml_release_runtime_system();
 		res = m->Invoke_prot();
+	caml_acquire_runtime_system();
 //	//**//**acquire_sem(ocaml_sem);
 	
 //	caml_leave_blocking_section();

@@ -19,7 +19,7 @@ extern "C" {
 	value b_alert_alert_spacing_nativecode(value self, value title, value text, value button0Label, value button1Label, value button2Label, value widthStyle, value spacing, value alert_type);
 	value b_alert_go(value alert);
 }
-
+TODO
 class OAlert : public BAlert//, public Glue 
 	{
 		public :

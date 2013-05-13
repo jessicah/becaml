@@ -7,6 +7,7 @@ open SupportDefs;;
 open Threads;;
 
 external b_application_signature : #be_interne -> string -> pointer = "b_application_signature"
+external b_application_aboutRequested : pointer -> unit = "b_application_aboutRequested"
 external b_application_messageReceived : pointer -> pointer -> unit = "b_application_messageReceived"
 external b_application_readyToRun : pointer -> unit = "b_application_readyToRun"
 external b_application_postMessage : pointer -> int32 -> status_t = "b_application_postMessage"
@@ -39,9 +40,9 @@ class be_application =
 						  flush stdout;
 						  b_application_postMessage (self#get_interne()) command
 (*	method be_application_ () = b_application_ self#get_interne()
-	method appResources () = b_application_appResources self#get_interne()
-    method aboutRequested : unit -> unit(* b_application_aboutRequested self#get_interne()*)
-	method appActivated ~active = b_application_appActivated self#get_interne() active
+	method appResources () = b_application_appResources self#get_interne()*)
+            method aboutRequested () = b_application_aboutRequested (self#get_interne())
+(*	method appActivated ~active = b_application_appActivated self#get_interne() active
 	method argvReceived ~argc ~argv = b_application_argvReceived self#get_interne() argc argv
     method getAppInfo ~theInfo = b_application_getAppInfo self#get_interne() theInfo
 	method isLaunching () = b_application_isLaunching self#get_interne()
