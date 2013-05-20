@@ -228,9 +228,6 @@ class dDWindow =
 		fv#sleep ()
 
 	method color () =
-	self#lock();
-		let color = fv#highColor ()
-		in
-		self#unlock();color
+                fv#highColor ()
 
 end;;	

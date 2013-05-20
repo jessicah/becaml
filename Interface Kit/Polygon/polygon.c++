@@ -1,11 +1,13 @@
+#include <Polygon.h>
+#include <Point.h>
+#include <stdio.h>
+
 #include "alloc.h"
 #include "memory.h"
 #include "threads.h"
 
 #include "glue.h"
-#include <Polygon.h>
-#include <Point.h>
-#include <stdio.h>
+#include "point_rect.h"
 
 extern "C" {
 	extern sem_id ocaml_sem;
@@ -22,26 +24,29 @@ class OPolygon : public BPolygon, public Glue {
 
 
 //*********************
-value b_polygon_polygon(value interne, value pointList, value numPoints) {
-	CAMLparam3(interne, pointList, numPoints);
-	CAMLlocal1(polygon);
-    BPoint liste_points[Int32_val(numPoints)];	
-	BPolygon *be_poly;
+value b_polygon_polygon(value self, value pointList, value numPoints) {
+	CAMLparam3(self, pointList, numPoints);
+	CAMLlocal1(p_polygon);
+	BPoint liste_points[Int32_val(numPoints)];	
+	OPolygon *opolygon;
+
+	p_polygon = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&p_polygon);
+
 	//register_global_root(&polygon);
 
 	for(int i = 0 ; i < Int32_val(numPoints) ; i++)
-			liste_points[i] = *(BPoint *)Int32_val(Field(pointList, i));
+		liste_points[i] = *(OPoint *)Field(Field(pointList, i),0);
 
 	caml_release_runtime_system();
-		be_poly = new OPolygon(interne, liste_points, Int32_val(numPoints));
+		opolygon = new OPolygon(self, liste_points, Int32_val(numPoints));
 	caml_acquire_runtime_system();
 
-	polygon = copy_int32((uint32)be_poly);
+	Field(p_polygon,0) = (value)opolygon;
 
 //	delete *liste_points;
 	
-	CAMLreturn(polygon);
-		
+	CAMLreturn(p_polygon);
 }
 
 //*********************

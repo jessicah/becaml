@@ -121,6 +121,7 @@ class filterView =
                                 while true do
                                                 Printf.printf "filterWiew#mouseDown : avant getMouse\n";flush stdout;
                                         self#getMouse ~location:(ref point) ~buttons ~checkMessageQueue:true ();
+                                                Printf.printf "filterWiew#mouseDown : point#x point#y = %f %f\n" (point)#x (point)#y;flush stdout;
                                                 Printf.printf "filterWiew#mouseDown : aapres getMouse\n";flush stdout;
                                         
                                         if (!buttons <> kB_PRIMARY_MOUSE_BUTTON)
@@ -129,7 +130,9 @@ class filterView =
                                         mx := point#x /. b#right;
                                         my := point#y /. b#bottom;
                                         m#set ~x:!mx ~y:!my ();
-                                                Printf.printf "filterWiew#mouseDown : avant apply\n";flush stdout;
+                                               Printf.printf
+                                               "filterWiew#mouseDown : m#x m#y = %f %f\n" m#x m#y;flush stdout;
+                                               Printf.printf "filterWiew#mouseDown : avant apply\n";flush stdout;
                                         
                                         if self#apply m curmass curdrag
                                         then 

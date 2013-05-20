@@ -892,11 +892,13 @@ value b_view_highColor(value view) {
 	CAMLparam1(view);
 	CAMLlocal1(color);
 	rgb_color rgb_color;
-
 //	caml_leave_blocking_section();
-	rgb_color = ((OView *)Field(view,0))->BView::HighColor();
-	
-	register_global_root(&color);
+	OView *oview = (OView *)Field(view,0);
+
+	caml_release_runtime_system();
+		rgb_color = oview->BView::HighColor();
+	caml_acquire_runtime_system();
+	//register_global_root(&color);
 	color = caml_alloc(4, 0 /*tuple */);
 	Store_field(color, 0, Val_int(rgb_color.red));
 	Store_field(color, 1, Val_int(rgb_color.green));
@@ -1211,10 +1213,13 @@ value b_view_strokePolygon_polygon(value view, value polygon, value isClosed, va
 	CAMLparam4(view, polygon, isClosed, aPattern);
 
 //	caml_leave_blocking_section();
-	((OView *)Field(view,0))->StrokePolygon((BPolygon *)Int32_val(polygon), 
-											   Bool_val(isClosed), 
-											   decode_pattern(aPattern));
-	
+	OView *oview = (OView *)Field(view,0);
+	OPolygon *opolygon= (OPolygon*)Field(polygon,0);
+	caml_release_runtime_system();
+		oview->StrokePolygon(opolygon,
+					   Bool_val(isClosed), 
+					   decode_pattern(aPattern));
+	caml_acquire_runtime_system();	
 //	caml_enter_blocking_section();
 	CAMLreturn(Val_unit);
 }
@@ -1223,16 +1228,19 @@ value b_view_strokePolygon_polygon(value view, value polygon, value isClosed, va
 value b_view_strokePolygon_pointList(value view, value pointList, value numPoints, value isClosed, value aPattern)
 {
 	CAMLparam5(view, pointList, numPoints, isClosed, aPattern);
-	BPoint point_liste[Int32_val(numPoints)];
-
+	BPoint point_liste[Int32_val(numPoints)]; //TODO remplacer BPoint par OPoint ?
+	OView *oview = (OView *)Field(view,0);
 //	caml_leave_blocking_section();
+
 	for(int i=0 ; i<Int32_val(numPoints) ; i++)	
 		point_liste[i] = *(OPoint *)Field(Field(pointList, i),0);
 
-	((OView *)Field(view,0))->StrokePolygon(point_liste,
-											 Int32_val(numPoints),
-											 Bool_val(isClosed), 
-											 decode_pattern(aPattern));
+		caml_release_runtime_system();
+			oview->StrokePolygon(point_liste,
+					 Int32_val(numPoints),
+					 Bool_val(isClosed), 
+					 decode_pattern(aPattern));
+		caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(Val_unit);
@@ -1251,7 +1259,7 @@ value b_view_strokePolygon_pointList_rect_nativecode(value view, value pointList
 
 	((OView *)Field(view,0))->StrokePolygon(point_liste,
 											 Int32_val(numPoints),
-											 *(BRect *)Int32_val(rect ),
+											 *(BRect *)Field(rect,0 ),
 											 Bool_val(isClosed), 
 											 decode_pattern(aPattern));
 //	caml_enter_blocking_section();

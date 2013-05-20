@@ -175,12 +175,17 @@ value b_message_addInt64(){}
 value b_message_addInt32(value message, value name, value anInt32){
 	CAMLparam3(message, name, anInt32);
 	CAMLlocal1(caml_status);
+	OMessage *omessage = (OMessage *)Field(message,0);
+	status_t status;
+	char *c_name = String_val(name);
+	uint32 c_anInt32 = Int32_val(anInt32);
 
 //	caml_leave_blocking_section();
-	caml_status =caml_copy_int32(
-		((BMessage *)Int32_val(message))->
-			AddInt32(String_val(name), 
-					 Int32_val(anInt32)));
+	caml_release_runtime_system();
+		status = omessage->AddInt32(c_name, c_anInt32);
+	caml_acquire_runtime_system();
+
+	caml_status =caml_copy_int32(status);
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(caml_status);
@@ -228,21 +233,23 @@ value b_message_findInt16_index(value message, value name, value index, value an
 //***************************
 value b_message_findInt32(value message, value name, value anint32) {
 	CAMLparam3(message, name, anint32);
-	int status;
+	CAMLlocal1(ostatus);
+
+	status_t status;
 	int32 int_found;
 	char *s = String_val(name);
 	
+	OMessage *omessage = (OMessage *)Field(message,0);
+
 //	caml_leave_blocking_section();
-	status = caml_copy_int32(
-					((BMessage *)Int32_val(message))
-					->FindInt32(s, 
-							    &int_found
-							   )
-					); 
-	Store_field(anint32, 0, copy_int32(int_found));
+	caml_release_runtime_system();
+		status = omessage->FindInt32(s, &int_found); 
+		Store_field(anint32, 0, caml_copy_int32(int_found));
+		ostatus = caml_copy_int32(status);
+	caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
 	
-	CAMLreturn(status);
+	CAMLreturn(ostatus);
 }
 
 //***************************

@@ -38,15 +38,19 @@ extern "C" {
 //**************************
 value b_point_point(value interne){
 	CAMLparam1(interne);
-	CAMLlocal1(point);
+	CAMLlocal1(p_point);
+
+	p_point = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&p_point);
+
 	////register_global_root(&point); INUTILE
 	OPoint *p;
 	caml_release_runtime_system();
 		p = new OPoint(interne);
 	caml_acquire_runtime_system();
-	point = copy_int32((int32)p);
+	Field(p_point,0) = (value)p;
 
-	CAMLreturn(point);
+	CAMLreturn(p_point);
 }
 
 //*******************************

@@ -55,21 +55,28 @@ status_t OCheckBox::Invoke(BMessage *message){
 //	//**acquire_sem(ocaml_sem);
 
 	//caml_c_thread_register();
+	if(message != NULL) {
+		caml_acquire_runtime_system();
+			p_message = alloc_small(1,Abstract_tag);
+			caml_register_global_root(&p_message);
 
-	caml_acquire_runtime_system();
-		p_message = alloc_small(1,Abstract_tag);
-		caml_register_global_root(&p_message);
-
-		ocaml_message = caml_callback(*caml_named_value("new_be_message"), p_message);
-		caml_register_global_root(&ocaml_message);
-	caml_release_runtime_system();
-		OMessage *m = new OMessage(ocaml_message, message);
-	caml_acquire_runtime_system();
-	Field(p_message,0) = (value)ocaml_message;
-////**acquire_sem(callback_sem);
-		res = caml_callback2( caml_get_public_method(interne, hash_variant("invoke")), interne, ocaml_message);
-////**release_sem(callback_sem);
-	caml_release_runtime_system();
+			ocaml_message = caml_callback(*caml_named_value("new_be_message"), p_message);
+			caml_register_global_root(&ocaml_message);
+		caml_release_runtime_system();
+			OMessage *m = new OMessage(ocaml_message, message);
+		caml_acquire_runtime_system();
+		Field(p_message,0) = (value)ocaml_message;
+	////**acquire_sem(callback_sem);
+			res = caml_callback3( caml_get_public_method(interne, hash_variant("invoke")), interne, ocaml_message, Val_unit);
+	////**release_sem(callback_sem);
+		caml_release_runtime_system();
+	} else {
+		caml_acquire_runtime_system();
+	////**acquire_sem(callback_sem);
+			res = caml_callback3( caml_get_public_method(interne, hash_variant("invoke")), interne, Val_int(0)/*?message=None*/, Val_unit);
+	////**release_sem(callback_sem);
+		caml_release_runtime_system();
+	}
 	res_caml=caml_copy_int32(res);
 
 //	//**release_sem(ocaml_sem);

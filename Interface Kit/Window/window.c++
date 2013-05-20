@@ -18,6 +18,7 @@
 #include <Window.h>
 
 #include "glue.h"
+#include "handler.h"
 #include "message.h"
 #include "point_rect.h"
 #include "view.h"
@@ -287,7 +288,7 @@ void OWindow::Quit() {
 		
 		
 		caml_acquire_runtime_system();
-			caml_callback(caml_get_public_method(interne,hash_variant("quit")), interne);
+			caml_callback2(caml_get_public_method(interne,hash_variant("quit")), interne, Val_unit);
 		caml_release_runtime_system();
 	//**release_sem(ocaml_sem);
 	CAMLreturn0;
@@ -615,15 +616,17 @@ value b_window_postMessage_handler_message_reply(value window, value handler, va
 value b_window_postMessage_handler_message(value window, value handler, value message){
 	CAMLparam3(window, handler, message);
 	CAMLlocal1(caml_status);
+	status_t status;
+
+	OWindow *w = (OWindow *)Field(window,0);
+	OMessage *m = (OMessage *)Field(message,0);
+	OHandler *h = (OHandler *)Field(handler,0);
 	
-	BMessage *m = new BMessage(*(BMessage *)Int32_val(message));
-	BHandler *h = (BHandler *)Int32_val(handler);
-	
-	caml_leave_blocking_section();
-	
-	caml_status = caml_copy_int32(((BWindow *)Int32_val(window))->BWindow::PostMessage((BMessage *)Int32_val(message),								
-														 (BHandler *)Int32_val(handler)));
-	caml_enter_blocking_section();
+	caml_release_runtime_system();
+		status = w->BWindow::PostMessage(m,h);
+	caml_acquire_runtime_system();
+
+	caml_status = caml_copy_int32(status);
 
 	CAMLreturn(caml_status);
 }
@@ -641,8 +644,8 @@ value b_window_postMessage_message(value window, value message){
 	BMessage *m;
 	OWindow *w;
 
-	m = (BMessage *)Int32_val(message);
-	w = (OWindow *)Int32_val(window);
+	m = (OMessage *)Field(message,0);
+	w = (OWindow *)Field(window,0);
 	
 	printf("appel de b_window_postMessage_message what = %c%c%c%c.\n",
 					m->what >> 24, 
@@ -650,9 +653,9 @@ value b_window_postMessage_message(value window, value message){
 					m->what >> 8,
 					m->what  );fflush(stdout);
 		
-	caml_enter_blocking_section();
+	caml_release_runtime_system();
 		res =	w->BWindow::PostMessage(m);
-	caml_leave_blocking_section();
+	caml_acquire_runtime_system();
 	
 	res_caml = caml_copy_int32(res);
 	
