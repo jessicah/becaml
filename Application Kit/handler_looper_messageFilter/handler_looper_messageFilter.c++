@@ -285,11 +285,19 @@ value b_handler_getSupportedSuites(value handler, value message) {
 }
 //------
 value b_handler_lockLooper(value handler) {
-
-  CAMLparam1(handler);
-  CAMLlocal1(resultat);
-  
- CAMLreturn(Val_bool(((OHandler *)Int32_val(handler))->BHandler::LockLooper()));
+ CAMLparam1(handler);
+ CAMLlocal1(resultat);
+ bool res;
+ 
+ OHandler *ohandler = (OHandler *)Field(handler,0);
+ 
+ caml_release_runtime_system();
+	res = ohandler->LockLooper();
+ caml_acquire_runtime_system();
+ 
+ resultat = Val_bool(res);
+ 
+ CAMLreturn(resultat);
 }
 //--------
 value b_handler_lockLooperWithTimeout(value handler, value timeout){
@@ -300,12 +308,16 @@ value b_handler_lockLooperWithTimeout(value handler, value timeout){
 }
 //------
 value b_handler_unlockLooper(value handler) {
-
   CAMLparam1(handler);
-  
-  ((OHandler *)Int32_val(handler))->BHandler::UnlockLooper();
-  
-  CAMLreturn(Val_unit);
+ 
+  OHandler *ohandler = (OHandler *)Field(handler,0);
+ 
+  caml_release_runtime_system();
+	ohandler->UnlockLooper();
+  caml_acquire_runtime_system();
+ 
+ 
+ CAMLreturn(Val_unit);
 }
 //------
 value b_handler_looper(value handler) {

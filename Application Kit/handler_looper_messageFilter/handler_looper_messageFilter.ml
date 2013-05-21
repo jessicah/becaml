@@ -195,7 +195,7 @@ object(self)
 
    method lockLooper ()                  = b_handler_lockLooper            (self#get_interne())
    method lockLooperWithTimeout ~timeout = b_handler_lockLooperWithTimeout (self#get_interne()) timeout
-   method unlockLooper                   = b_handler_unlockLooper          (self#get_interne())
+   method unlockLooper ()                = b_handler_unlockLooper          (self#get_interne())
    method looper () = 
              let looper = new be_Looper
 			 in 

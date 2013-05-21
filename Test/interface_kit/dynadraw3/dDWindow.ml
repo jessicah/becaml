@@ -1,7 +1,9 @@
 open Glue;;
+
 open Application;;
 open AppDefs;;
 open Errors;;
+open GraphicsDefs;;
 open Handler;;
 open Message;;
 open Menu;;
@@ -228,6 +230,13 @@ class dDWindow =
 		fv#sleep ()
 
 	method color () =
-                fv#highColor ()
+                let rgb_col = ref {red=0;green=0;blue=0;alpha=0}
+                in 
+                if self#lockLooper()
+                then begin
+                        rgb_col := fv#highColor ();
+                        self#unlockLooper();
+                end;
+                !rgb_col
 
 end;;	
