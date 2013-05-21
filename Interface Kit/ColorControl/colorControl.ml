@@ -13,7 +13,7 @@ type color_control_layout =
 | B_CELLS_64x4
 ;;
 
-external b_colorControl_colorControl : pointer -> color_control_layout -> float -> string -> pointer -> bool -> pointer = "b_colorControl_colorControl_bytecode" "b_colorControl_colorControl_native"
+external b_colorControl_colorControl : #be_interne -> pointer -> color_control_layout -> float -> string -> pointer -> bool -> pointer = "b_colorControl_colorControl_bytecode" "b_colorControl_colorControl_native"
 external b_colorControl_setValue : pointer -> rgb_color -> unit = "b_colorControl_setValue"
 external b_colorControl_getPreferredSize : pointer -> float ref -> float ref -> unit = "b_colorControl_getPreferredSize"
 external b_colorControl_valueAsColor : pointer -> rgb_color = "b_colorControl_valueAsColor"
@@ -29,7 +29,8 @@ class be_colorControl =
 						   ?(message : be_message option) 
 						   ?(bufferedDrawing = false) () =
 		match message with 
-		| Some message -> self#set_interne(b_colorControl_colorControl (leftTop#get_interne()) matrix cellSide name (message#get_interne()) bufferedDrawing)
+		| Some message -> self#set_interne(b_colorControl_colorControl
+                self (leftTop#get_interne()) matrix cellSide name (message#get_interne()) bufferedDrawing)
 		| None -> failwith "be_colorControl constructeur non implemente avec un message nul."
 	
 	method setValue ~rgb_color =

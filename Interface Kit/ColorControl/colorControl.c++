@@ -8,8 +8,10 @@
 
 #include <ColorControl.h>
 #include <stdio.h>
-#include "glue.h"
 
+#include "glue.h"
+#include "message.h"
+#include "point_rect.h"
 extern "C" {
 	extern sem_id ocaml_sem;
 	value b_colorControl_colorControl_native(value self, value leftTop, value matrix, value cellSide, value name, value message, value bufferedDrawing);
@@ -45,17 +47,26 @@ value b_colorControl_colorControl_native(value self, value leftTop, value matrix
 	CAMLxparam2( message, bufferedDrawing);
 	CAMLlocal1(caml_cc);
 	OColorControl *cc;
-	
-	cc = new OColorControl(self,
-										  *(BPoint *)Int32_val(leftTop), 
-										  decode_color_control_layout(Int_val(matrix)), 
-										  Double_val(cellSide), 
-										  String_val(name), 
-										  (BMessage *)Int32_val(message), 
-										  Bool_val(bufferedDrawing));
+	OPoint *opoint;
+	OMessage *omessage;
+
+	opoint = (OPoint *)Field(leftTop,0);
+	omessage = (OMessage *)Field(message,0);
+	caml_cc = caml_alloc_small(1,Abstract_tag);
+	caml_register_global_root(&caml_cc);
+
+	caml_release_runtime_system();
+		cc = new OColorControl(self,
+				       *opoint, 
+				       decode_color_control_layout(Int_val(matrix)), 
+				       Double_val(cellSide), 
+				       String_val(name), 
+				       omessage, 
+				       Bool_val(bufferedDrawing));
+	caml_acquire_runtime_system();
 	printf("C 0x%lx : %lx\n", cc, sizeof(OColorControl));	
 //	caml_leave_blocking_section();
-		caml_cc = caml_copy_int32((int32)cc);
+	Field(caml_cc,0) = (value)cc;
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(caml_cc);	
@@ -69,14 +80,21 @@ value b_colorControl_colorControl_bytecode(value *argv, int argc){
 //***************************
 value b_colorControl_setValue(value colorControl, value color){
 	CAMLparam2(colorControl, color);
-	rgb_color couleur;
 	
+	OColorControl *ocolorcontrol;
+
+	rgb_color couleur;
+		
+	ocolorcontrol = (OColorControl *)Field(colorControl,0);
+
 	couleur.red   = Int_val(Field(color, 0));
 	couleur.green = Int_val(Field(color, 1));
 	couleur.blue  = Int_val(Field(color, 2));
 	couleur.alpha = Int_val(Field(color, 3));
 	
-	((BColorControl *)Int32_val(colorControl))->BColorControl::SetValue(couleur);
+	caml_release_runtime_system();
+		ocolorcontrol->SetValue(couleur);
+	caml_acquire_runtime_system();
 	
 	CAMLreturn(Val_unit);
 }
@@ -85,17 +103,22 @@ value b_colorControl_setValue(value colorControl, value color){
 value b_colorControl_getPreferredSize(value colorControl, value width, value height) {
 	CAMLparam3(colorControl, width, height);
 	CAMLlocal2(caml_w, caml_h);
-	float w,h;
+	OColorControl *ocolorcontrol;
 
-	((BColorControl *)Int32_val(colorControl))->BColorControl::GetPreferredSize(&w, &h);
-	
+	float w,h;
+		
+	ocolorcontrol = (OColorControl *)Field(colorControl,0);
+
+	caml_release_runtime_system();
+		ocolorcontrol->BColorControl::GetPreferredSize(&w, &h);
+	caml_acquire_runtime_system();
 //	caml_leave_blocking_section();
 		
-		caml_w = caml_copy_double(w);
-		caml_h = caml_copy_double(h);
-		
-		Store_field(width, 0, caml_w);
-		Store_field(height, 0, caml_h);
+	caml_w = caml_copy_double(w);
+	caml_h = caml_copy_double(h);
+	
+	Store_field(width, 0, caml_w);
+	Store_field(height, 0, caml_h);
 		
 //	caml_enter_blocking_section();
 
@@ -106,16 +129,22 @@ value b_colorControl_getPreferredSize(value colorControl, value width, value hei
 value b_colorControl_valueAsColor(value colorControl){
 	CAMLparam1(colorControl);
 	CAMLlocal1(valeur);
+	
+	OColorControl *ocolorcontrol;
 	rgb_color color;
 	
-	color = ((BColorControl *)Int32_val(colorControl))->BColorControl::ValueAsColor();
+	ocolorcontrol = (OColorControl *)Field(colorControl,0);
+
+	caml_release_runtime_system();
+		color = ocolorcontrol->BColorControl::ValueAsColor();
+	caml_acquire_runtime_system();
 //	caml_leave_blocking_section();
-		valeur = alloc(4, 0);
-	
-		Store_field(valeur, 0, Val_int(color.red));
-		Store_field(valeur, 1, Val_int(color.green));
-		Store_field(valeur, 2, Val_int(color.blue));
-		Store_field(valeur, 3, Val_int(color.alpha));
+	valeur = caml_alloc_small(4, 0);
+
+	Store_field(valeur, 0, Val_int(color.red));
+	Store_field(valeur, 1, Val_int(color.green));
+	Store_field(valeur, 2, Val_int(color.blue));
+	Store_field(valeur, 3, Val_int(color.alpha));
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(valeur);
