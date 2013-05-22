@@ -89,22 +89,47 @@ value b_list_countItems(value list) {
 //***********************
 value b_list_firstItem(value list) {
 	CAMLparam1(list);
-	CAMLlocal1(val);
+	CAMLlocal1(item);
+
+	OList *olist;
+	void *c_item;
+
+	olist = (OList *)Field(list,0);
+	
+	item = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&item);
 
 //	caml_leave_blocking_section();
-		val = caml_copy_int32((value)((BList *)Int32_val(list))->BList::FirstItem());
+	caml_release_runtime_system();
+		c_item = olist->BList::FirstItem();
+	caml_acquire_runtime_system();
+
+	Field(item,0)=(value)c_item;
 //	caml_enter_blocking_section();
 	
-	CAMLreturn(val);
+	CAMLreturn(item);
 }
 
 //**************************
 value b_list_itemAt(value list, value index) {
 	CAMLparam2(list, index);
 	CAMLlocal1(item);
-TODO
+
+	int32 ind = Int32_val(index);
+	OList *olist;
+	void *c_item;
+
+	olist = (OList *)Field(list,0);
+	
+	item = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&item);
+
 //	caml_leave_blocking_section();
-		item =copy_int32((value)((BList *)Int32_val(list))->BList::ItemAt(Int32_val(index)));
+	caml_release_runtime_system();
+		c_item = olist->BList::ItemAt(ind);
+	caml_acquire_runtime_system();
+
+	Field(item,0)=(value)c_item;
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(item);
@@ -113,13 +138,24 @@ TODO
 //*************************
 value b_list_removeItem(value list, value index) {
 	CAMLparam2(list, index);
-	CAMLlocal1(caml_res);
-	void *res;
+	CAMLlocal1(item);
+
+	int32 ind = Int32_val(index);
+	OList *olist;
+	void *c_item;
+
+	olist = (OList *)Field(list,0);
 	
+	item = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&item);
+
 //	caml_leave_blocking_section();
-		res =	((BList *)Int32_val(list))->BList::RemoveItem(Int32_val(index));
-		caml_res = caml_copy_int32((uint32)res);
+	caml_release_runtime_system();
+		c_item = olist->BList::RemoveItem(ind);
+	caml_acquire_runtime_system();
+
+	Field(item,0)=(value)c_item;
 //	caml_enter_blocking_section();
 	
-	CAMLreturn(caml_res);
+	CAMLreturn(item);
 }
