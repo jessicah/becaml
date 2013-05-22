@@ -34,12 +34,15 @@ value b_list_list(value self, value count){
 	//register_global_root(&list);
 	
 //	caml_leave_blocking_section();	
-		OList *bl;
+	OList *bl;
+	list = alloc_small(1,Abstract_tag);
+
 	caml_release_runtime_system();
 		bl = new OList(self, Int32_val(count));
 	caml_acquire_runtime_system();	
+	
 	printf("[C] b_list_list 0x%lx : %lx\n", bl, sizeof(OList));fflush(stdout);
-	list = caml_copy_int32((uint32)bl);
+	Field(list,0) = (value)bl;
 //	caml_enter_blocking_section();
 	
 	CAMLreturn(list);
@@ -49,13 +52,18 @@ value b_list_list(value self, value count){
 value b_list_addItem(value list, value item){
 	CAMLparam2(list, item);
 	CAMLlocal1(caml_bool);
-
+	bool res;
+	
+	OList *bl = (OList *)Field(list,0);
+	void *it = (void *)Field(item,0);
+	
+	printf("[C] b_list_addItem 0x%lx\n",it);fflush(stdout);
 //	caml_leave_blocking_section();
-		BList *bl = ((BList *)Int32_val(list));
-		void *i = (void *)Int32_val(item);
-		printf("[C] b_list_addItem 0x%lx\n",i);fflush(stdout);
-		caml_bool = Val_bool(bl->BList::AddItem(i));
+	caml_release_runtime_system();
+		res = bl->BList::AddItem(it);	
+	caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
+	caml_bool = Val_bool(res);
 	
 	CAMLreturn(caml_bool);
 }
@@ -65,13 +73,17 @@ value b_list_countItems(value list) {
 	CAMLparam1(list);
 	CAMLlocal1(caml_count);
 	int32 count;
+	
+	OList *olist = (OList *)Field(list,0);
 
 //	caml_leave_blocking_section();
-		caml_count = caml_copy_int32(((BList *)Int32_val(list))->BList::CountItems());
+	caml_release_runtime_system();
+		count = olist->BList::CountItems();
+	caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
+	caml_count = caml_copy_int32(count);
 
 	CAMLreturn(caml_count);
-	
 }
 
 //***********************
@@ -90,7 +102,7 @@ value b_list_firstItem(value list) {
 value b_list_itemAt(value list, value index) {
 	CAMLparam2(list, index);
 	CAMLlocal1(item);
-
+TODO
 //	caml_leave_blocking_section();
 		item =copy_int32((value)((BList *)Int32_val(list))->BList::ItemAt(Int32_val(index)));
 //	caml_enter_blocking_section();
