@@ -45,11 +45,11 @@ OMenuItem::~OMenuItem(){
 }
 
 void OMenuItem::Draw(void) {
+caml_c_thread_register();
 //	CAMLparam1(interne);
 //**//**acquire_sem(ocaml_sem);
 	CAMLparam0();	
 //		CAMLlocal1(mi);
-//caml_c_thread_register();
 //**release_sem(ocaml_sem);
 	caml_acquire_runtime_system();
 	
@@ -68,11 +68,11 @@ void OMenuItem::Draw2(void) {
 }
 
 void OMenuItem::GetContentSize(float *width, float *height){
+	caml_c_thread_register();
 	//	CAMLparam1(interne);
 		//**//**acquire_sem(ocaml_sem);
 	CAMLparam0();
 	CAMLlocal2(ocaml_width, ocaml_height);
-	//caml_c_thread_register();
 	printf("[C] OMenuItem::GetContentSize avant register\n");fflush(stdout);
 //	register_global_root(&w);
 //	register_global_root(&h);

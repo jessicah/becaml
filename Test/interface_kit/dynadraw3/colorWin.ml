@@ -19,7 +19,7 @@ class colorWin =
 	
 	method colorWin hand initialColor =
 	Printf.printf "[OCaml]colorWin avant be_window\n";flush stdout;
-		window#be_window ~frame:(let r = new be_rect in r#be_rect ~left:610.0 ~top:550.0 ~right:620.0 ~bottom:560.0 (); r) 
+		self#be_window ~frame:(let r = new be_rect in r#be_rect ~left:610.0 ~top:550.0 ~right:620.0 ~bottom:560.0 (); r) 
 						~title:"Pen Color" ~window_type:B_FLOATING_WINDOW ~flags:kB_NOT_RESIZABLE ();
 	Printf.printf "[OCaml]colorWin apres be_window\n";flush stdout;
 		let w = ref 0.0 and h = ref 0.0

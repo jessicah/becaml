@@ -4,8 +4,8 @@ OCAMLOPT=ocamlopt.opt
 OCAMLDEP=ocamldep
 OCAMLMKTOP=ocamlmktop
 OCAMLBEOSLIB=../../../libbeos.cma
-#OCAMLFLAGS=-thread -g -custom -w mv -ccopt -g -ccopt -L../../.. -I ../../..
-OCAMLFLAGS=-thread -custom -w mv -ccopt -L../../.. -I ../../..
+OCAMLFLAGS=-linkall -thread -g -custom -w mv -ccopt -g -ccopt -L../../.. -I ../../..
+#OCAMLFLAGS=-thread -custom -w mv -ccopt -L../../.. -I ../../..
 OCAMLOPTFLAGS=$(INCLUDES)
 OCAML_SOURCES=msgVals.ml tweakWin.ml colorWin.ml filterView.ml dDWindow.ml dDApp.ml main.ml
 OCAML_OBJS=$(OCAML_SOURCES:.ml=.cmo)

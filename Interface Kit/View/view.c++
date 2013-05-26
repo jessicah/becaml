@@ -194,6 +194,7 @@ void OView::AttachedToWindow(){
 
 //****************************
 void OView::Draw(BRect updateRect) { //OK en 2013 !!!
+	caml_c_thread_register();
 	//**acquire_sem(ocaml_sem);	
 	CAMLparam0();
 	CAMLlocal3(view_caml, rect, p_rect);
@@ -204,7 +205,6 @@ void OView::Draw(BRect updateRect) { //OK en 2013 !!!
 //		caml_register_global_root(&fun);
 //	//**release_sem(ocaml_sem);	
 //
-	//caml_c_thread_register();TODO
 	
 	printf("[C] OView::Draw (0x%lx)\n", (int32)this);fflush(stdout);	
 	
@@ -232,9 +232,9 @@ void OView::Draw(BRect updateRect) { //OK en 2013 !!!
 }
 
 void OView::DrawString (const char *string, BPoint point, escapement_delta *delta =NULL) {
+	//caml_c_thread_register();	
 	CAMLparam0();
 	CAMLlocal3(view_caml, point_caml, caml_string);
-	//caml_c_thread_register();	
 	
 	BPoint *point1;
 	point1 = new BPoint(point);
@@ -336,7 +336,7 @@ void OView::MessageReceived(BMessage *message) {
 	OMessage * omess; 
 //	ocaml_message = (value *)malloc(sizeof(value *));
 	printf("[C] OView::MessageReceived avant register\n");fflush(stdout);
-	//caml_c_thread_register();	
+//	caml_c_thread_register();	
 	
 //	caml_acquire_runtime_system();
 	//m = new BMessage(*message);
@@ -369,6 +369,7 @@ void OView::MessageReceived(BMessage *message) {
 
 //******************************
 void OView::MouseDown(BPoint where) {
+	caml_c_thread_register();
 //	bool new_lock = false;
 //	if (beos_thread != find_thread(NULL)) {
 //		new_lock = true;
@@ -377,7 +378,6 @@ void OView::MouseDown(BPoint where) {
 //	}
 	CAMLparam0();
 	CAMLlocal4(point_caml, p_wh,o_where_x, o_where_y);
-	//caml_c_thread_register();
 //	if(new_lock) {
 //			//**release_sem(ocaml_sem);	
 //	}

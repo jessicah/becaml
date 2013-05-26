@@ -4,7 +4,7 @@ OCAMLOPT=ocamlopt
 OCAMLDEP=ocamldep
 OCAMLMKTOP=ocamlmktop
 
-OCAMLFLAGS=-thread -g -custom -w mv -ccopt -L~/beos unix.cma threads.cma -ccopt -g
+OCAMLFLAGS=-linkall -thread -g -custom -w mv -ccopt -L~/beos unix.cma threads.cma -ccopt -g
 OCAMLOPTFLAGS=$(INCLUDES)
 
 OCAML_OBJS=glue.cmo filePanel.cmo interfaceDefs.cmo graphicsDefs.cmo errors.cmo bstring.cmo \

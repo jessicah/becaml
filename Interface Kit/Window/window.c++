@@ -104,7 +104,7 @@ void OWindow::MenusBeginning(){
 	//**acquire_sem(ocaml_sem);
 	CAMLparam0();
 	CAMLlocal1( fun);
-	//caml_c_thread_register();	
+//	caml_c_thread_register();	
 	//**release_sem(ocaml_sem);
 	caml_acquire_runtime_system();
 //		//**acquire_sem(callback_sem);

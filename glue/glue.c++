@@ -30,8 +30,13 @@
 //***********************
 
 Glue::Glue(value ocaml_objet) {
+/*	thread_info th_info;
+	get_thread_info(find_thread(NULL),&th_info);
+	if (th_info.team != th_info.thread) {
+		caml_c_thread_register();
+	}
+*/	
 	CAMLparam1(ocaml_objet);
-	//caml_c_thread_register();
 	caml_acquire_runtime_system();
 		caml_register_global_root(&interne);
 		interne = ocaml_objet;
