@@ -680,8 +680,16 @@ value b_window_title(value window) {
 //*****************************
 value b_window_resizeTo(value window, value width, value height){
 	CAMLparam3(window, width, height);
-
-	((BWindow *)Int32_val(window))->BWindow::ResizeTo(Double_val(width), Double_val(height));
+	OWindow *w;
+	double c_width = Double_val(width);
+	double c_height = Double_val(height);
+	
+	w = (OWindow *)Field(window,0);
+	
+		
+	caml_release_runtime_system();
+		w->BWindow::ResizeTo(c_width, c_height);
+	caml_acquire_runtime_system();
 	
 	CAMLreturn(Val_unit);
 

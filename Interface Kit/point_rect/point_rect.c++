@@ -76,14 +76,19 @@ value b_point_point_point(value ocaml_point, value param_point){
 //*******************************
 value b_point_point_x_y(value interne, value x, value y){
 	CAMLparam3(interne, x, y);
-	CAMLlocal1(be_point);
-	//register_global_root(&be_point);
-	caml_release_runtime_system();	
-		OPoint *p = new OPoint(interne, Double_val(x), Double_val(y));
-	caml_acquire_runtime_system();
-	be_point = copy_int32((int32)p);
+	CAMLlocal1(p_point);
 
-	CAMLreturn(be_point);
+	p_point = alloc_small(1,Abstract_tag);
+	caml_register_global_root(&p_point);
+
+	////register_global_root(&point); INUTILE
+	OPoint *p;
+	caml_release_runtime_system();
+		p = new OPoint(interne, Double_val(x), Double_val(y));
+	caml_acquire_runtime_system();
+	Field(p_point,0) = (value)p;
+
+	CAMLreturn(p_point);
 }
 
 //*************************

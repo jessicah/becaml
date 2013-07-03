@@ -195,18 +195,24 @@ value b_message_addInt32(value message, value name, value anInt32){
 //***************************
 value b_message_findInt16(value message, value name, value anint16) {
 	CAMLparam3(message, name, anint16);
+	CAMLlocal1(caml_status);
 	int status;
 	int16 int_found;
-TODO	
+	char *cname;
+	OMessage *omessage;
+       
+	omessage = (OMessage *)Field(message,0);
+	cname = String_val(name);
+
 //	caml_leave_blocking_section();
-	status = caml_copy_int32(
-					((BMessage *)Int32_val(message))
-					->FindInt16(String_val(name), 
-							    &int_found));
-	
-	Store_field(anint16, 0, Val_int(int_found));
+	caml_release_runtime_system();
+		status = omessage->FindInt16(cname, &int_found);
+	caml_acquire_runtime_system();
 //	caml_enter_blocking_section();
 	
+	Store_field(anint16, 0, Val_int(int_found));
+	caml_status = caml_copy_int32(status);
+
 	CAMLreturn(status);
 }
 

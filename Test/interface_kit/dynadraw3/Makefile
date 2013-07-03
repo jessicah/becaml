@@ -1,5 +1,5 @@
 GCC=g++
-OCAMLC=ocamlc.opt
+OCAMLC=ocamlopt
 OCAMLOPT=ocamlopt.opt
 OCAMLDEP=ocamldep
 OCAMLMKTOP=ocamlmktop

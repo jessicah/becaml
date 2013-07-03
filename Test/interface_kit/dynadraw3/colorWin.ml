@@ -19,8 +19,10 @@ class colorWin =
 	
 	method colorWin hand initialColor =
 	Printf.printf "[OCaml]colorWin avant be_window\n";flush stdout;
-		self#be_window ~frame:(let r = new be_rect in r#be_rect ~left:610.0 ~top:550.0 ~right:620.0 ~bottom:560.0 (); r) 
-						~title:"Pen Color" ~window_type:B_FLOATING_WINDOW ~flags:kB_NOT_RESIZABLE ();
+		self#be_window ~frame:(let r = new be_rect in 
+		r#be_rect ~left:610.0 ~top:550.0 ~right:620.0 ~bottom:560.0 (); r) 
+						~title:"Pen Color" ~window_type:B_FLOATING_WINDOW
+						 ~flags:kB_NOT_RESIZABLE ();
 	Printf.printf "[OCaml]colorWin apres be_window\n";flush stdout;
 		let w = ref 0.0 and h = ref 0.0
 		in
@@ -35,10 +37,13 @@ class colorWin =
 							  ();
 		cc#setValue initialColor;
 		cc#getPreferredSize w h;
+	        Printf.printf "[OCaml]ccc#getPreferredSize -> w=%f h=%f\n" !w !h;flush stdout;
 		self#resizeTo (!w +. 50.) !h;
 		self#addChild ~aView:(cc :> be_view) ();
 
-		swatch#be_view ~frame:(let _rect = new be_rect in _rect#be_rect ~left:5. ~top:5. ~right:45. ~bottom:((self#bounds())#height() -. 5.) (); _rect)
+		swatch#be_view ~frame:(let _rect = new be_rect in 
+		_rect#be_rect ~left:5. ~top:5. ~right:45.
+		 ~bottom:((self#bounds())#height() -. 5.) (); _rect)
 					   ~name:"swatch"
 					   ~resizingMode:kB_FOLLOW_ALL
 					   ~flags:kB_WILL_DRAW ;
