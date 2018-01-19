@@ -1,4 +1,4 @@
-GCC=g++ -I /boot/common/lib/ocaml/caml/
+GCC=g++ -I ./caml/
 OCAMLC=ocamlc.opt
 OCAMLOPT=ocamlopt
 OCAMLDEP=ocamldep
@@ -12,8 +12,8 @@ OCAML_OBJS=glue.cmo filePanel.cmo interfaceDefs.cmo graphicsDefs.cmo errors.cmo 
 		   supportDefs.cmo message.cmo archivable.cmo messageQueue.cmo \
 		   blist.cmo semaphores.cmo threads.cmo os.cmo \
 		   handler_looper_messageFilter.cmo handler.cmo looper.cmo \
-		   messageFilter.cmo invoker.cmo bitmap.cmo font.cmo polygon.cmo \
-		   view_window.cmo view.cmo picture.cmo shape.cmo textView.cmo scrollBar.cmo \
+		   messageFilter.cmo invoker.cmo bitmap.cmo shape.cmo font.cmo polygon.cmo \
+		   view_window.cmo view.cmo picture.cmo textView.cmo scrollBar.cmo \
 		   scrollView.cmo listItem.cmo stringItem.cmo listView.cmo \
 		   outlineListView.cmo menu_menuItem.cmo menu.cmo menuItem.cmo \
 		   menuBar.cmo box.cmo printJob.cmo stringView.cmo window.cmo \
